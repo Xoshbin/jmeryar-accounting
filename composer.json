@@ -1,0 +1,35 @@
+{
+    "name": "xoshbin/jmeryar-accounting",
+    "type": "library",
+    "license": "LGPL-3.0-only",
+    "autoload": {
+        "psr-4": {
+            "Xoshbin\\JmeryarAccounting\\": "src/",
+            "Xoshbin\\JmeryarAccounting\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Khoshbin",
+            "email": "xoshbin@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^8.2",
+        "illuminate/console": "^10.0|^11.0",
+        "illuminate/database": "^10.0|^11.0",
+        "illuminate/support": "^10.0|^11.0",
+        "filament/filament": "^3.2",
+        "filament/support": "^3.2",
+        "barryvdh/laravel-dompdf": "^3.0",
+        "spatie/laravel-package-tools": "^1.16.1"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Xoshbin\\JmeryarAccounting\\JmeryarAccountingServiceProvider"
+            ]
+        }
+    }
+}

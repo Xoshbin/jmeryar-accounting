@@ -1,0 +1,17 @@
+@import '../../../../filament/filament/resources/css/theme.css';
+
+@config 'tailwind.config.js';
+
+
+
+/*For future, to customize the theme just change the fi classes provided by filament like below*/
+/*dont forget running the npm run dev/build commands*/
+/*and no need to install tailwind through npm*/
+
+/*.fi-simple-layout {*/
+/*    @apply bg-red-200;*/
+/*}*/
+
+/*.fi-simple-main {*/
+/*    @apply bg-red-100;*/
+/*}*/
