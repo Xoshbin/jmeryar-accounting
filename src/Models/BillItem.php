@@ -2,6 +2,7 @@
 
 namespace Xoshbin\JmeryarAccounting\Models;
 
+use Xoshbin\JmeryarAccounting\Database\Factories\BillItemFactory;
 use Xoshbin\JmeryarAccounting\Observers\BillItemObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -33,6 +34,11 @@ class BillItem extends Model
         'untaxed_amount' => MoneyCast::class,
         'tax_amount' => MoneyCast::class,
     ];
+
+    protected static function newFactory()
+    {
+        return BillItemFactory::new();
+    }
 
     public function bill(): BelongsTo
     {

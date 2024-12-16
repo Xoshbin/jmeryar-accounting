@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Xoshbin\JmeryarAccounting\Database\Factories\CustomerFactory;
 
 class Account extends Model
 {
@@ -28,6 +29,11 @@ class Account extends Model
     public const TYPE_EQUITY = 'Equity';
     public const TYPE_REVENUE = 'Revenue';
     public const TYPE_EXPENSE = 'Expense';
+
+    protected static function newFactory()
+    {
+        return CustomerFactory::new();
+    }
 
     public function parent(): BelongsTo
     {

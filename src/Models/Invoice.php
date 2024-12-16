@@ -2,6 +2,7 @@
 
 namespace Xoshbin\JmeryarAccounting\Models;
 
+use Xoshbin\JmeryarAccounting\Database\Factories\InvoiceFactory;
 use Xoshbin\JmeryarAccounting\Observers\InvoiceObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -47,6 +48,11 @@ class Invoice extends Model
     public const TYPE_SENT = 'Sent';
     public const TYPE_PARTIAL = 'Partial';
     public const TYPE_PAID = 'Paid';
+
+    protected static function newFactory()
+    {
+        return InvoiceFactory::new();
+    }
 
     // Relationships
     public function customer(): BelongsTo

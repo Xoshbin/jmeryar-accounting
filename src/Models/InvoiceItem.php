@@ -2,6 +2,7 @@
 
 namespace Xoshbin\JmeryarAccounting\Models;
 
+use Xoshbin\JmeryarAccounting\Database\Factories\InvoiceItemFactory;
 use Xoshbin\JmeryarAccounting\Observers\InvoiceItemObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -31,6 +32,11 @@ class InvoiceItem extends Model
         'untaxed_amount' => MoneyCast::class,
         'tax_amount' => MoneyCast::class,
     ];
+
+    protected static function newFactory()
+    {
+        return InvoiceItemFactory::new();
+    }
 
     public function invoice(): BelongsTo
     {

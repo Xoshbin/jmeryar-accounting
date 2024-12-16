@@ -5,7 +5,13 @@
     "autoload": {
         "psr-4": {
             "Xoshbin\\JmeryarAccounting\\": "src/",
-            "Xoshbin\\JmeryarAccounting\\Database\\Seeders\\": "database/seeders/"
+            "Xoshbin\\JmeryarAccounting\\Database\\Seeders\\": "database/seeders/",
+            "Xoshbin\\JmeryarAccounting\\Database\\Factories\\": "database/factories/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Xoshbin\\JmeryarAccounting\\Tests\\": "tests/"
         }
     },
     "authors": [
@@ -31,5 +37,8 @@
                 "Xoshbin\\JmeryarAccounting\\JmeryarAccountingServiceProvider"
             ]
         }
+    },
+    "require-dev": {
+        "orchestra/testbench": "9.x-dev"
     }
 }

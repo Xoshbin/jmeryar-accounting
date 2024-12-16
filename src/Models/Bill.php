@@ -2,6 +2,7 @@
 
 namespace Xoshbin\JmeryarAccounting\Models;
 
+use Xoshbin\JmeryarAccounting\Database\Factories\BillFactory;
 use Xoshbin\JmeryarAccounting\Observers\BillObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -47,6 +48,11 @@ class Bill extends Model
     public const TYPE_RECEIVED = 'Received';
     public const TYPE_PARTIAL = 'Partial';
     public const TYPE_PAID = 'Paid';
+
+    protected static function newFactory()
+    {
+        return BillFactory::new();
+    }
 
     public function supplier(): BelongsTo
     {

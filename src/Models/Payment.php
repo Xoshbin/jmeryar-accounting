@@ -2,6 +2,7 @@
 
 namespace Xoshbin\JmeryarAccounting\Models;
 
+use Xoshbin\JmeryarAccounting\Database\Factories\PaymentFactory;
 use Xoshbin\JmeryarAccounting\Observers\PaymentObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -35,6 +36,11 @@ class Payment extends Model
 
     public const TYPE_INCOME = 'Income';
     public const TYPE_EXPENSE = 'Expense';
+
+    protected static function newFactory()
+    {
+        return PaymentFactory::new();
+    }
 
     /**
      * Define the polymorphic relationship to the parent model (e.g., Invoice, Bill).
