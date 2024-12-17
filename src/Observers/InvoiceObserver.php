@@ -71,15 +71,21 @@ class InvoiceObserver
             'credit' => $invoice->untaxed_amount,
         ]);
 
-        $taxReceivableAccountId = Account::where('name', 'Tax Received')
-            ->first()
-            ->id;
+        // Create tax entry only if tax amount is not null and greater than zero
+        if (!is_null($invoice->tax_amount) && $invoice->tax_amount > 0) {
+            $taxReceivableAccount = Account::where('name', 'Tax Received')->first();
 
-        $taxReceivableEntry = JournalEntry::create([
-            'account_id' => $taxReceivableAccountId,
-            'credit' => $invoice->tax_amount,
-            'debit' => 0,
-        ]);
+            if ($taxReceivableAccount) {
+                $taxReceivableEntry = JournalEntry::create([
+                    'account_id' => $taxReceivableAccount->id,
+                    'credit' => $invoice->tax_amount,
+                    'debit' => 0,
+                ]);
+
+                // Attach tax journal entry to the invoice
+                $invoice->journalEntries()->attach($taxReceivableEntry->id);
+            }
+        }
 
         // Accounts receivable entry (debit)
         $accountsReceivableEntry = JournalEntry::create([
@@ -91,7 +97,6 @@ class InvoiceObserver
         // Attach journal entries to the invoice
         $invoice->journalEntries()->attach([
             $revenueEntry->id,
-            $taxReceivableEntry->id,
             $accountsReceivableEntry->id,
         ]);
     }

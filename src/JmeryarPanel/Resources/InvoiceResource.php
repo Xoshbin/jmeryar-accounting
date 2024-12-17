@@ -230,11 +230,20 @@ class InvoiceResource extends Resource
                                         Forms\Components\Select::make('tax_id')
                                             ->label(function ($state, callable $get) {
                                                 if ($state !== null) {
-                                                    $tax = $state ? Tax::find($state) : 0;
+                                                    $tax = $state ? Tax::find($state) : null;
+
                                                     if ($tax instanceof Collection) {
-                                                        return 'Tax ' . ($get('unit_price') * $get('quantity')) * ($tax->first()->amount / 100);
+                                                        $taxAmount = optional($tax->first())->amount; // Safely access 'amount'
+                                                    } else {
+                                                        $taxAmount = optional($tax)->amount; // Safely access 'amount' on the single Tax
                                                     }
-                                                    return 'Tax ' . ($get('unit_price') * $get('quantity')) * ($tax->amount / 100);
+
+                                                    if ($taxAmount !== null) {
+                                                        $totalTax = ($get('unit_price') * $get('quantity')) * ($taxAmount / 100);
+                                                        return 'Tax ' . $totalTax;
+                                                    } else {
+                                                        return 'Tax 0'; // Default value when tax amount is null
+                                                    }
                                                 } else {
                                                     return 'Tax';
                                                 }
