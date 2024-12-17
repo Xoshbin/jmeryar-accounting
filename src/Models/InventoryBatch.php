@@ -12,7 +12,6 @@ class InventoryBatch extends Model
 
     protected $fillable = [
         'product_id',
-        'bill_item_id',
         'expiry_date',
         'quantity',
         'cost_price',
@@ -27,10 +26,5 @@ class InventoryBatch extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
-    }
-
-    public function billItem()
-    {
-        return $this->belongsTo(BillItem::class);
     }
 }
