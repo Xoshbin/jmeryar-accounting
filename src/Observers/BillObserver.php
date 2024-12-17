@@ -72,16 +72,22 @@ class BillObserver
 //            'label' => $bill->billItems->first()->product->name, //TODO:: add the name of the product as label
         ]);
 
-        // Step 2: Debit the Tax Paid (Expense or Asset) for the tax amount
-        $taxPaidAccount = Account::where('name', 'Tax Paid') // Assuming the "Tax Paid" account exists
+        // Create tax entry only if tax amount is not null and greater than zero
+        if (!is_null($bill->tax_amount) && $bill->tax_amount > 0) {
+            $taxPaidAccount = Account::where('name', 'Tax Paid') // Assuming the "Tax Paid" account exists
             ->first();
-
-        $taxPaidEntry = JournalEntry::create([
-            'account_id' => $taxPaidAccount->id,
-            'debit' => $bill->tax_amount,
-            'credit' => 0,
+            if ($taxPaidAccount) {
+                $taxPaidEntry = JournalEntry::create([
+                    'account_id' => $taxPaidAccount->id,
+                    'debit' => $bill->tax_amount,
+                    'credit' => 0,
 //            'label' => $bill->taxes->first()->name, //TODO:: same as the product, add the name of the tax
-        ]);
+                ]);
+
+                // Attach tax journal entry to the invoice
+                $bill->journalEntries()->attach($taxPaidEntry->id);
+            }
+        }
 
         // Step 3: Credit Accounts Payable for the total amount (untaxed + tax)
         $accountsPayableEntry = JournalEntry::create([
@@ -94,7 +100,6 @@ class BillObserver
         // Step 4: Attach the journal entries to the bill
         $bill->journalEntries()->attach([
             $expenseEntry->id,
-            $taxPaidEntry->id,
             $accountsPayableEntry->id,
         ]);
     }
