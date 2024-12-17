@@ -98,7 +98,7 @@ class InvoiceResource extends Resource
                                 ])
                                 ->columns(1),
                         ])
-                        ->columnSpan(2), // Left side takes two-thirds of the grid
+                            ->columnSpan(2), // Left side takes two-thirds of the grid
 
                         // Right Side: Payments Section
                         Forms\Components\Grid::make(1) // Takes up one-third of the width
@@ -119,33 +119,33 @@ class InvoiceResource extends Resource
                                         ->readOnly(),
                                 ]),
                             Forms\Components\Section::make('')
-                            ->schema([
-                                Forms\Components\TextInput::make('total_paid_amount')
-                                    ->label('Total Paid Amount')
-                                    ->formatStateUsing(fn($state, $record) => $record->total_paid_amount ?? 0)
-                                    ->readOnly(),
-                                Forms\Components\TextInput::make('amount_due')
-                                    ->label('Amount Due')
-                                    ->formatStateUsing(fn($state, $record) => ($record->total_amount ?? 0) - ($record->total_paid_amount ?? 0))
-                                    ->readOnly(),
-                                Forms\Components\DatePicker::make('due_date')
-                                    ->label('Due Date')
-                                    ->nullable(),
-                                Forms\Components\Select::make('currency_id')
-                                    ->label('Currency')
-                                    ->default(fn()=> Setting::first()?->currency->id)
-                                    ->relationship('currency', 'code')
-                                    ->disabled(fn($record) => $record?->status !== 'Draft' && $record !== null)
-                            ])
+                                ->schema([
+                                    Forms\Components\TextInput::make('total_paid_amount')
+                                        ->label('Total Paid Amount')
+                                        ->formatStateUsing(fn($state, $record) => $record->total_paid_amount ?? 0)
+                                        ->readOnly(),
+                                    Forms\Components\TextInput::make('amount_due')
+                                        ->label('Amount Due')
+                                        ->formatStateUsing(fn($state, $record) => ($record->total_amount ?? 0) - ($record->total_paid_amount ?? 0))
+                                        ->readOnly(),
+                                    Forms\Components\DatePicker::make('due_date')
+                                        ->label('Due Date')
+                                        ->nullable(),
+                                    Forms\Components\Select::make('currency_id')
+                                        ->label('Currency')
+                                        ->default(fn() => Setting::first()?->currency->id)
+                                        ->relationship('currency', 'code')
+                                        ->disabled(fn($record) => $record?->status !== 'Draft' && $record !== null)
+                                ])
                         ])
-                        ->columnSpan(1), // Right side takes one-third of the grid
+                            ->columnSpan(1), // Right side takes one-third of the grid
                     ]),
 
                 // Tabs for Invoices and Payments, placed outside the left-right split layout
                 Forms\Components\Tabs::make('Invoice Tabs')
                     ->schema([
                         Forms\Components\Tabs\Tab::make('Invoice Items')
-                            ->badge(fn ($get) => count($get('invoiceItems') ?? []))
+                            ->badge(fn($get) => count($get('invoiceItems') ?? []))
                             ->icon('heroicon-m-queue-list')
                             ->schema([
                                 Forms\Components\Repeater::make('invoiceItems')
@@ -180,7 +180,18 @@ class InvoiceResource extends Resource
                                             ])
                                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                                 if ($state) {
-                                                    $product = Product::find($state);
+                                                    $product = null;
+
+                                                    if ($state instanceof Collection) {
+                                                        // If $state is a collection, use the first product's ID
+                                                        $product = $state->first();
+                                                    } elseif ($state instanceof Product) {
+                                                        // If $state is already a Product instance, use it directly
+                                                        $product = $state;
+                                                    } else {
+                                                        // If $state is an ID, find the Product by ID
+                                                        $product = Product::find($state);
+                                                    }
                                                     if ($product) {
                                                         // Get the latest inventory batch for the product
                                                         $latestBatch = $product->inventoryBatches()->orderBy('created_at', 'asc')->first();
@@ -209,7 +220,7 @@ class InvoiceResource extends Resource
                                             ->columnSpan(1)
                                             ->numeric()
                                             ->live(debounce: 600)
-                                            ->afterStateUpdated(function($state, callable $set, callable $get) {
+                                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                                 $taxId = $get('taxes');
                                                 $tax = $taxId ? Tax::find($taxId) : null;
                                                 $unitPrice = $get('unit_price') ?? 0;
@@ -221,7 +232,7 @@ class InvoiceResource extends Resource
                                             ->numeric()
                                             ->live(debounce: 600)
                                             ->required(fn($get) => $get('quantity') > 0)
-                                            ->afterStateUpdated(function($state, callable $set, callable $get){
+                                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                                 $taxId = $get('taxes');
                                                 $tax = $taxId ? Tax::find($taxId) : null;
                                                 $quantity = $get('quantity') ?? 0;
@@ -285,7 +296,7 @@ class InvoiceResource extends Resource
                                     }),
                             ]),
                         Forms\Components\Tabs\Tab::make('Invoice Payments')
-                            ->badge(fn ($get) => count($get('payments') ?? []))
+                            ->badge(fn($get) => count($get('payments') ?? []))
                             ->icon('heroicon-m-banknotes')
                             ->schema([
                                 Forms\Components\Repeater::make('payments')
@@ -302,11 +313,11 @@ class InvoiceResource extends Resource
                                             ->relationship('currency', 'code')
                                             ->disabled(fn($record) => $record?->status === 'Paid' && $record !== null)
                                             ->live(debounce: 600)
-                                            ->afterStateUpdated(function($state, callable $set, callable $get) {
+                                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                                 $currency = Currency::find($state);
                                                 $invoiceCurrency = Currency::find($get('../../currency_id'));
                                                 $rate = $currency->code === $invoiceCurrency->code ? 1 : $currency->exchangeRatesAsTarget->first()->rate;
-                                                $set('exchange_rate', $rate?? 0);
+                                                $set('exchange_rate', $rate ?? 0);
                                             }),
                                         Forms\Components\TextInput::make('amount')
                                             ->label('Amount')
@@ -314,7 +325,7 @@ class InvoiceResource extends Resource
                                             ->live(debounce: 600)
                                             ->postfix('*')
                                             ->required()
-                                            ->afterStateUpdated(function($state, callable $set, callable $get) {
+                                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                                 $exchange_rate = $get('exchange_rate') ?? 0;
                                                 $set('amount_in_invoice_currency', $exchange_rate * $state);
                                             }),
@@ -349,7 +360,7 @@ class InvoiceResource extends Resource
                                         $set('total_paid_amount', $totalPaidAmount);
                                         $set('amount_due', $get('total_amount') - $totalPaidAmount);
                                     })
-                                    ->itemLabel(fn (array $state): ?string => $state['payment_date'] . ' ' . $state['amount_in_invoice_currency'] ?? null),
+                                    ->itemLabel(fn(array $state): ?string => $state['payment_date'] . ' ' . $state['amount_in_invoice_currency'] ?? null),
                             ])
                     ])
                     ->columnSpan('full'),
