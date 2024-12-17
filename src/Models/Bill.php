@@ -49,11 +49,6 @@ class Bill extends Model
     public const TYPE_PARTIAL = 'Partial';
     public const TYPE_PAID = 'Paid';
 
-    protected static function newFactory()
-    {
-        return BillFactory::new();
-    }
-
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);

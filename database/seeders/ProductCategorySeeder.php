@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Xoshbin\JmeryarAccounting\Database\Seeders;
 
 use Xoshbin\JmeryarAccounting\Models\ProductCategory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;

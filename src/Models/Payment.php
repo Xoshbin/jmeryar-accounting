@@ -37,11 +37,6 @@ class Payment extends Model
     public const TYPE_INCOME = 'Income';
     public const TYPE_EXPENSE = 'Expense';
 
-    protected static function newFactory()
-    {
-        return PaymentFactory::new();
-    }
-
     /**
      * Define the polymorphic relationship to the parent model (e.g., Invoice, Bill).
      */

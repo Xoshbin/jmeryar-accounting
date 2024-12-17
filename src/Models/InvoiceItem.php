@@ -33,11 +33,6 @@ class InvoiceItem extends Model
         'tax_amount' => MoneyCast::class,
     ];
 
-    protected static function newFactory()
-    {
-        return InvoiceItemFactory::new();
-    }
-
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);

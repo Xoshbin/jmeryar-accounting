@@ -30,12 +30,6 @@ class Tax extends Model
     const TYPE_PRODUCT = 'Active';
     const TYPE_SERVICE = 'Inactive';
 
-
-    protected static function newFactory()
-    {
-        return TaxFactory::new();
-    }
-
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Tax::class, 'parent_id');

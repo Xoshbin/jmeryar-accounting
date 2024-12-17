@@ -3,14 +3,17 @@
 namespace Xoshbin\JmeryarAccounting\Database\Factories;
 
 use Xoshbin\JmeryarAccounting\Models\Bill;
+use Xoshbin\JmeryarAccounting\Models\BillItem;
 use Xoshbin\JmeryarAccounting\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\BillItem>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Xoshbin\JmeryarAccounting\Models\BillItem>
  */
 class BillItemFactory extends Factory
 {
+
+    protected $model = BillItem::class;
     /**
      * Define the model's default state.
      *

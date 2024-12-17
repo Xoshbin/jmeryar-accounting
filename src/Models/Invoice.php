@@ -49,11 +49,6 @@ class Invoice extends Model
     public const TYPE_PARTIAL = 'Partial';
     public const TYPE_PAID = 'Paid';
 
-    protected static function newFactory()
-    {
-        return InvoiceFactory::new();
-    }
-
     // Relationships
     public function customer(): BelongsTo
     {

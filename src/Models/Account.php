@@ -30,11 +30,6 @@ class Account extends Model
     public const TYPE_REVENUE = 'Revenue';
     public const TYPE_EXPENSE = 'Expense';
 
-    protected static function newFactory()
-    {
-        return CustomerFactory::new();
-    }
-
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'parent_id');

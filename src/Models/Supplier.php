@@ -19,11 +19,6 @@ class Supplier extends Model
         'address',
     ];
 
-    protected static function newFactory()
-    {
-        return SupplierFactory::new();
-    }
-
     public function bills(): HasMany
     {
         return $this->hasMany(Bill::class);

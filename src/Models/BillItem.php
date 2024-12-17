@@ -35,11 +35,6 @@ class BillItem extends Model
         'tax_amount' => MoneyCast::class,
     ];
 
-    protected static function newFactory()
-    {
-        return BillItemFactory::new();
-    }
-
     public function bill(): BelongsTo
     {
         return $this->belongsTo(Bill::class);

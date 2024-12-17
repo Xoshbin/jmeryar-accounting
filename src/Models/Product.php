@@ -30,11 +30,6 @@ class Product extends Model
     const TYPE_PRODUCT = 'Product';
     const TYPE_SERVICE = 'Service';
 
-    protected static function newFactory()
-    {
-        return ProductFactory::new();
-    }
-
     public function inventoryBatches()
     {
         return $this->hasMany(InventoryBatch::class);

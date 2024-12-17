@@ -3,12 +3,14 @@
 namespace Xoshbin\JmeryarAccounting\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Xoshbin\JmeryarAccounting\Models\Tax;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Tax>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Xoshbin\JmeryarAccounting\Models\Tax>
  */
 class TaxFactory extends Factory
 {
+    protected $model = Tax::class;
     /**
      * Define the model's default state.
      *

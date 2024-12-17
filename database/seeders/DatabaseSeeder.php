@@ -1,15 +1,14 @@
 <?php
 
-namespace Database\Seeders;
+namespace Xoshbin\JmeryarAccounting\Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class JmeryarSeeder extends Seeder
+class DatabaseSeeder extends Seeder
 {
     /**
      * Seed the application's database.
-     * sail artisan migrate:reset && sail artisan migrate && sail artisan db:seed --class=JmeryarSeeder
      */
     public function run(): void
     {
@@ -18,7 +17,7 @@ class JmeryarSeeder extends Seeder
             ProductCategorySeeder::class,
             CurrencySeeder::class,
             TaxSeeder::class,
-            SettingSeeder::class,
+            SettingSeeder::class
         ]);
     }
 }

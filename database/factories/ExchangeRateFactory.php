@@ -4,12 +4,15 @@ namespace Xoshbin\JmeryarAccounting\Database\Factories;
 
 use Xoshbin\JmeryarAccounting\Models\Currency;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Xoshbin\JmeryarAccounting\Models\ExchangeRate;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ExchangeRate>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Xoshbin\JmeryarAccounting\Models\ExchangeRate>
  */
 class ExchangeRateFactory extends Factory
 {
+
+    protected $model = ExchangeRate::class;
     /**
      * Define the model's default state.
      *

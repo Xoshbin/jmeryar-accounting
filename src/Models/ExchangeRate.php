@@ -17,11 +17,6 @@ class ExchangeRate extends Model
         'rate',
     ];
 
-    protected static function newFactory()
-    {
-        return ExchangeRateFactory::new();
-    }
-
     public function baseCurrency(): BelongsTo{
         return $this->belongsTo(Currency::class, 'base_currency_id');
     }

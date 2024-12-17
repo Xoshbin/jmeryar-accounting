@@ -18,11 +18,7 @@ class Customer extends Model
         'phone',
         'address',
     ];
-
-    protected static function newFactory()
-    {
-        return CustomerFactory::new();
-    }
+    
     public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class);

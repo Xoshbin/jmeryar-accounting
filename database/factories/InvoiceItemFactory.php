@@ -3,14 +3,16 @@
 namespace Xoshbin\JmeryarAccounting\Database\Factories;
 
 use Xoshbin\JmeryarAccounting\Models\Invoice;
+use Xoshbin\JmeryarAccounting\Models\InvoiceItem;
 use Xoshbin\JmeryarAccounting\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\InvoiceItem>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Xoshbin\JmeryarAccounting\Models\InvoiceItem>
  */
 class InvoiceItemFactory extends Factory
 {
+    protected $model = InvoiceItem::class;
     /**
      * Define the model's default state.
      *
