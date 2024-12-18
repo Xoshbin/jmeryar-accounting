@@ -25,6 +25,7 @@ beforeEach(function () {
         'bill_id' => $bill->id,
         'product_id' => $this->product->id,
         'quantity' => 2,
+        'cost_price' => 100,
         'unit_price' => 200,
         'tax_amount' => 0,
     ]);
@@ -63,11 +64,11 @@ it('restores inventory to the correct batches when an (invoice item) is deleted'
     $customer = Customer::factory()->create();
     $invoice = Invoice::factory()->create(['customer_id' => $customer->id]);
 
-    $batch1 = $this->product->inventoryBatches()->oldest()->first();
-    $originalBatch1Quantity = $batch1->quantity;
+    $batch = $this->product->inventoryBatches()->oldest()->first();
+    $originalBatch1Quantity = $batch->quantity;
 
     // Create two invoice items with different batches
-    $invoiceItem1 = InvoiceItem::factory()->create([
+    $invoiceItem = InvoiceItem::factory()->create([
         'invoice_id' => $invoice->id,
         'product_id' => $this->product->id,
         'quantity' => 1,
@@ -76,11 +77,15 @@ it('restores inventory to the correct batches when an (invoice item) is deleted'
         'tax_amount' => 0,
     ]);
 
-    // Delete the invoice items
-    $invoiceItem1->delete();
+    $batch->refresh(); // update batch after each event
+    expect($batch->quantity)->not()->toBe($originalBatch1Quantity);
 
+    // Delete the invoice items
+    $invoiceItem->delete();
+
+    $batch->refresh(); // update batch after each event
     // Assert that the batch quantities are restored
-    expect($batch1->quantity)->toBe($originalBatch1Quantity);
+    expect($batch->quantity)->toBe($originalBatch1Quantity);
 });
 
 it('restores inventory to the correct batches when an (invoice) is deleted', function () {
@@ -89,11 +94,11 @@ it('restores inventory to the correct batches when an (invoice) is deleted', fun
     $customer = Customer::factory()->create();
     $invoice = Invoice::factory()->create(['customer_id' => $customer->id]);
 
-    $batch1 = $this->product->inventoryBatches()->oldest()->first();
-    $originalBatch1Quantity = $batch1->quantity;
+    $batch = $this->product->inventoryBatches()->oldest()->first();
+    $originalBatch1Quantity = $batch->quantity;
 
     // Create two invoice items with different batches
-    $invoiceItem1 = InvoiceItem::factory()->create([
+    $invoiceItem = InvoiceItem::factory()->create([
         'invoice_id' => $invoice->id,
         'product_id' => $this->product->id,
         'quantity' => 1,
@@ -102,11 +107,18 @@ it('restores inventory to the correct batches when an (invoice) is deleted', fun
         'tax_amount' => 0,
     ]);
 
-    // Delete the invoice items
+    $batch->refresh(); // update batch after each event
+    expect($batch->quantity)->not()->toBe($originalBatch1Quantity);
+
+
+    // Delete the invoice
     $invoice->delete();
 
+    $batch->refresh(); // update batch after each event
+    $batch = $this->product->inventoryBatches()->oldest()->first();
+
     // Assert that the batch quantities are restored
-    expect($batch1->quantity)->toBe($originalBatch1Quantity);
+    expect($batch->quantity)->toBe($originalBatch1Quantity);
 });
 
 it('attaches the correct journal entries to the invoice', function () {
@@ -130,60 +142,6 @@ it('attaches the correct journal entries to the invoice', function () {
 
     expect($debitEntry->debit)->toBe(400.0);
     expect($creditEntry->credit)->toBe(0.0);
-});
-
-it('restores the correct inventory quantity to the specific batch when an invoice item is deleted', function () {
-    // Create an invoice with an item
-    $customer = Customer::factory()->create();
-    $invoice = Invoice::factory()->create(['customer_id' => $customer->id]);
-    $invoiceItem = InvoiceItem::factory()->create([
-        'invoice_id' => $invoice->id,
-        'product_id' => $this->product->id,
-        'quantity' => 2,
-        'unit_price' => 200,
-        'total_price' => 400, // 2 * 200
-        'tax_amount' => 0,
-    ]);
-
-    $batch = $this->product->inventoryBatches()->oldest()->first();
-    $originalBatchQuantity = $batch->quantity;
-    $batch->decrement('quantity', $invoiceItem->quantity);
-
-    // Delete the invoice item
-    $invoiceItem->delete();
-
-    // Refresh the batch to get the updated quantity
-    $batch->refresh();
-
-    // Assert that the batch quantity is restored to its original value
-    expect($batch->quantity)->toBe($originalBatchQuantity);
-});
-
-it('restores the correct inventory quantities to the respective batches when an invoice is deleted', function () {
-    // Create an invoice with an item
-    $customer = Customer::factory()->create();
-    $invoice = Invoice::factory()->create(['customer_id' => $customer->id]);
-    $invoiceItem = InvoiceItem::factory()->create([
-        'invoice_id' => $invoice->id,
-        'product_id' => $this->product->id,
-        'quantity' => 2,
-        'unit_price' => 200,
-        'total_price' => 400, // 2 * 200
-        'tax_amount' => 0,
-    ]);
-
-    $batch = $this->product->inventoryBatches()->oldest()->first();
-    $originalBatchQuantity = $batch->quantity;
-    $batch->decrement('quantity', $invoiceItem->quantity);
-
-    // Delete the invoice
-    $invoice->delete();
-
-    // Refresh the batch to get the updated quantity
-    $batch->refresh();
-
-    // Assert that the batch quantity is restored to its original value
-    expect($batch->quantity)->toBe($originalBatchQuantity);
 });
 
 it('attaches two journal entries to the invoice when there is no tax', function () {

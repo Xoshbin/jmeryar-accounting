@@ -41,6 +41,22 @@ class InvoiceItemObserver
     }
 
     /**
+     * Update inventory quantities based on changes to the invoice item.
+     */
+    protected function updateInventoryBatch(InvoiceItem $invoiceItem): void
+    {
+        $originalQuantity = $invoiceItem->getOriginal('quantity');
+        $newQuantity = $invoiceItem->quantity;
+        $quantityDifference = $newQuantity - $originalQuantity;
+
+        if ($quantityDifference > 0) {
+            $this->deductInventoryFromBatches($invoiceItem, $quantityDifference);
+        } elseif ($quantityDifference < 0) {
+            $this->restoreInventoryToBatches($invoiceItem, abs($quantityDifference));
+        }
+    }
+
+    /**
      * Deduct inventory quantity from batches for an invoice item, using FIFO logic.
      */
     protected function deductInventoryFromBatches(InvoiceItem $invoiceItem): void
@@ -55,22 +71,6 @@ class InvoiceItemObserver
                 $remainingQuantity -= $batch->quantity;
                 $batch->update(['quantity' => 0]);
             }
-        }
-    }
-
-    /**
-     * Update inventory quantities based on changes to the invoice item.
-     */
-    protected function updateInventoryBatch(InvoiceItem $invoiceItem): void
-    {
-        $originalQuantity = $invoiceItem->getOriginal('quantity');
-        $newQuantity = $invoiceItem->quantity;
-        $quantityDifference = $newQuantity - $originalQuantity;
-
-        if ($quantityDifference > 0) {
-            $this->deductInventoryFromBatches($invoiceItem, $quantityDifference);
-        } elseif ($quantityDifference < 0) {
-            $this->restoreInventoryToBatches($invoiceItem, abs($quantityDifference));
         }
     }
 

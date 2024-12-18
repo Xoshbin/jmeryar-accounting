@@ -30,7 +30,9 @@ class BillFactory extends Factory
             'status' => $this->faker->randomElement(['Draft', 'Received']),
             'expense_account_id' => Account::where('type', Account::TYPE_EXPENSE)->first()->id,
             'liability_account_id' => Account::where('type', Account::TYPE_LIABILITY)->first()->id,
-            'currency_id' => 2
+            'currency_id' => 2,
+            'tax_amount' => 0,
+            'untaxed_amount' => 0
         ];
     }
 }

@@ -64,30 +64,13 @@ class BillObserver
 
     protected function createBillJournalEntries(Bill $bill): void
     {
-        // Step 1: Debit the Expense Account for the untaxed portion
+        // Debit the Expense Account for the untaxed portion
         $expenseEntry = JournalEntry::create([
             'account_id' => $bill->expense_account_id, // Expense account for the untaxed portion
             'debit' => $bill->untaxed_amount,
             'credit' => 0,
 //            'label' => $bill->billItems->first()->product->name, //TODO:: add the name of the product as label
         ]);
-
-        // Create tax entry only if tax amount is not null and greater than zero
-        if (!is_null($bill->tax_amount) && $bill->tax_amount > 0) {
-            $taxPaidAccount = Account::where('name', 'Tax Paid') // Assuming the "Tax Paid" account exists
-            ->first();
-            if ($taxPaidAccount) {
-                $taxPaidEntry = JournalEntry::create([
-                    'account_id' => $taxPaidAccount->id,
-                    'debit' => $bill->tax_amount,
-                    'credit' => 0,
-//            'label' => $bill->taxes->first()->name, //TODO:: same as the product, add the name of the tax
-                ]);
-
-                // Attach tax journal entry to the invoice
-                $bill->journalEntries()->attach($taxPaidEntry->id);
-            }
-        }
 
         // Step 3: Credit Accounts Payable for the total amount (untaxed + tax)
         $accountsPayableEntry = JournalEntry::create([
@@ -102,6 +85,24 @@ class BillObserver
             $expenseEntry->id,
             $accountsPayableEntry->id,
         ]);
+
+        // Create tax entry only if tax amount is not null and greater than zero
+        if (!is_null($bill->tax_amount) && $bill->tax_amount > 0.0) {
+            $taxPaidAccount = Account::where('name', 'Tax Paid') // Assuming the "Tax Paid" account exists
+            ->first();
+
+            if ($taxPaidAccount) {
+                $taxPaidEntry = JournalEntry::create([
+                    'account_id' => $taxPaidAccount->id,
+                    'debit' => $bill->tax_amount,
+                    'credit' => 0,
+//            'label' => $bill->taxes->first()->name, //TODO:: same as the product, add the name of the tax
+                ]);
+
+                // Attach tax journal entry to the invoice
+                $bill->journalEntries()->attach($taxPaidEntry->id);
+            }
+        }
     }
 
     /**
