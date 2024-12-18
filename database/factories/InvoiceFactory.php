@@ -30,7 +30,8 @@ class InvoiceFactory extends Factory
             'status' => $this->faker->randomElement(['Draft', 'Sent']),
             'revenue_account_id' => Account::where('type', Account::TYPE_REVENUE)->first()->id,
             'inventory_account_id' => Account::where('type', Account::TYPE_ASSET)->first()->id,
-            'currency_id' => 2
+            'currency_id' => 2,
+            'tax_amount' => 0
         ];
     }
 }
