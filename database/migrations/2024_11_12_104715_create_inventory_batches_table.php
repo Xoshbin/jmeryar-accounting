@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('unit_price');
             $table->date('expiry_date')->nullable();
             $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->foreignId('bill_item_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
