@@ -91,7 +91,12 @@ class BillItemObserver
     protected function updateBillTotal(BillItem $billItem): void
     {
         $bill = $billItem->bill;
-        $totalAmount = $bill->billItems->sum('total_cost');
+
+        // Calculate the total amount including taxes
+        $totalAmount = $bill->billItems->sum(function ($item) {
+            return $item->total_cost + $item->tax_amount;
+        });
+
         $bill->update(['total_amount' => $totalAmount]);
     }
 }
