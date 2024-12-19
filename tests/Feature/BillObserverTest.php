@@ -176,8 +176,8 @@ it('attaches three journal entries to the bill when there is tax', function () {
 it('updates inventory and journal entries when a bill item quantity is updated', function () {
     $bill = Bill::factory()->create([
         'supplier_id' => $this->supplier->id,
-        'total_amount' => 400,
-        'untaxed_amount' => 400,
+        'total_amount' => 200,
+        'untaxed_amount' => 200,
     ]);
 
     $billItem = BillItem::factory()->create([
@@ -186,7 +186,7 @@ it('updates inventory and journal entries when a bill item quantity is updated',
         'quantity' => 2,
         'cost_price' => 100,
         'unit_price' => 200,
-        'total_cost' => 400, // 1 * 200
+        'total_cost' => 200, // 1 * 200
         'tax_amount' => 0,
         'untaxed_amount' => 200,
     ]);
@@ -212,7 +212,7 @@ it('updates inventory and journal entries when a bill item quantity is updated',
     $debitEntry = $bill->journalEntries()->where('debit', '>', 0)->first();
     $creditEntry = $bill->journalEntries()->where('type', '>', 0)->first();
 
-    expect($debitEntry->debit)->toBe(400.0);
+    expect($debitEntry->debit)->toBe(200.0);
     expect($creditEntry->credit)->toBe(0.0);
 });
 
