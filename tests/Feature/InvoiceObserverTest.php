@@ -31,6 +31,7 @@ beforeEach(function () {
     ]);
 
     $this->product->inventoryBatches()->create([
+        'bill_item_id' => $this->billItem->id,
         'expiry_date' => now()->addDays(30),
         'quantity' => 2,
         'cost_price' => 100,
