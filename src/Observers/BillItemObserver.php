@@ -93,10 +93,12 @@ class BillItemObserver
         $bill = $billItem->bill;
 
         // Calculate the total amount including taxes
-        $totalAmount = $bill->billItems->sum(function ($item) {
-            return $item->total_cost + $item->tax_amount;
-        });
+        $totalAmount = $bill->billItems->sum('total_cost');
+        $untaxedAmount = $bill->billItems->sum('untaxed_amount');
 
-        $bill->update(['total_amount' => $totalAmount]);
+        $bill->update([
+            'untaxed_amount' => $untaxedAmount,
+            'total_amount' => $totalAmount
+        ]);
     }
 }

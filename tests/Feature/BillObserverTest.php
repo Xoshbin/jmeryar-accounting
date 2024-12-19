@@ -313,8 +313,48 @@ it('calculates taxes correctly for multiple bill items with the same product but
     $bill->refresh();
 
     // Calculate the expected total amount
-    $expectedTotalAmount = $billItem1->total_cost + $billItem1->tax_amount + $billItem2->total_cost + $billItem2->tax_amount;
+    $expectedTotalAmount = $billItem1->total_cost + $billItem2->total_cost;
 
     // Assert that the bill's total_amount is correct
     $this->assertEquals($expectedTotalAmount, $bill->total_amount);
+});
+
+it('calculates the untaxed amount of the bill correctly', function () {
+    // Create a bill
+    $bill = Bill::factory()->create([
+        'supplier_id' => $this->supplier->id
+    ]);
+
+    $billItem1 = BillItem::factory()->create([
+        'bill_id' => $bill->id,
+        'product_id' => $this->product->id,
+        'quantity' => 2,
+        'cost_price' => 100,
+        'total_cost' => 2 * 100 + (2 * 100 * (15 / 100)), // 2 * 100
+        'tax_amount' => 2 * 100 * (15 / 100), // With tax
+        'untaxed_amount' => 2 * 100,
+    ]);
+
+    $billItem1->taxes()->attach(1, ['tax_amount' => 2 * 100 * (15 / 100)]);
+
+    $billItem2 = BillItem::factory()->create([
+        'bill_id' => $bill->id,
+        'product_id' => $this->product->id,
+        'quantity' => 3,
+        'cost_price' => 50,
+        'total_cost' => 3 * 50 + (3 * 50 * (5 / 100)), // 3 * 50
+        'tax_amount' => 3 * 50 * (5 / 100), // With tax
+        'untaxed_amount' => 3 * 50,
+    ]);
+
+    $billItem2->taxes()->attach(2, ['tax_amount' => 3 * 50 * (5 / 100)]);
+
+    // Refresh the bill to ensure the total_amount is updated
+    $bill->refresh();
+
+    // Calculate the expected untaxed amount
+    $expectedUntaxedAmount = $billItem1->untaxed_amount + $billItem2->untaxed_amount;
+
+    // Assert that the bill's untaxed_amount is correct
+    $this->assertEquals($expectedUntaxedAmount, $bill->untaxed_amount);
 });
