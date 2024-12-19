@@ -7,7 +7,6 @@ use Xoshbin\JmeryarAccounting\Models\Supplier;
 use Xoshbin\JmeryarAccounting\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Xoshbin\JmeryarAccounting\Models\Tax;
-use Xoshbin\JmeryarAccounting\Observers\BillItemObserver;
 
 uses(RefreshDatabase::class);
 
@@ -106,7 +105,7 @@ it('attaches the correct journal entries to the bill', function () {
         'supplier_id' => $this->supplier->id,
         'total_amount' => 400,
         'untaxed_amount' => 400,
-        ]);
+    ]);
 
     BillItem::factory()->create([
         'bill_id' => $bill->id,
@@ -221,7 +220,9 @@ it('updates inventory and journal entries when a bill item quantity is updated',
 it('deletes taxes when an bill item is deleted', function () {
     $bill = Bill::factory()->create([
         'supplier_id' => $this->supplier->id,
-        'tax_amount' => (2 * 100) * 0.10 // add tax amount
+        'tax_amount' => (4 * 100) * 0.10, // add tax amount
+        'total_amount' => 440,
+        'untaxed_amount' => 400,
     ]);
 
     $billItem = BillItem::factory()->create([
@@ -230,8 +231,8 @@ it('deletes taxes when an bill item is deleted', function () {
         'quantity' => 2,
         'cost_price' => 100,
         'unit_price' => 200,
-        'total_cost' => 400, // 2 * 200
-        'tax_amount' => 10, // With tax
+        'total_cost' => 440, // 2 * 200
+        'tax_amount' => 40, // With tax
         'untaxed_amount' => 400,
     ]);
 
@@ -250,7 +251,9 @@ it('deletes taxes when an bill item is deleted', function () {
 it('deletes taxes when an bill is deleted', function () {
     $bill = Bill::factory()->create([
         'supplier_id' => $this->supplier->id,
-        'tax_amount' => (2 * 100) * 0.10 // add tax amount
+        'tax_amount' => (4 * 100) * 0.10, // add tax amount
+        'total_amount' => 440,
+        'untaxed_amount' => 400,
     ]);
 
     $billItem = BillItem::factory()->create([
@@ -259,8 +262,8 @@ it('deletes taxes when an bill is deleted', function () {
         'quantity' => 2,
         'cost_price' => 100,
         'unit_price' => 200,
-        'total_cost' => 400, // 2 * 200
-        'tax_amount' => 10, // With tax
+        'total_cost' => 440, // 2 * 200
+        'tax_amount' => 40, // With tax
         'untaxed_amount' => 400,
     ]);
 
@@ -274,4 +277,44 @@ it('deletes taxes when an bill is deleted', function () {
     $bill->delete();
 
     expect($billItem->taxes()->count())->toBe(0);
+});
+
+it('calculates taxes correctly for multiple bill items with the same product but different prices and taxes', function () {
+    // Create a bill
+    $bill = Bill::factory()->create([
+        'supplier_id' => $this->supplier->id
+    ]);
+
+    $billItem1 = BillItem::factory()->create([
+        'bill_id' => $bill->id,
+        'product_id' => $this->product->id,
+        'quantity' => 2,
+        'cost_price' => 100,
+        'total_cost' => 2 * 100 + (2 * 100 * (15 / 100)), // 2 * 100
+        'tax_amount' => 2 * 100 * (15 / 100), // With tax
+        'untaxed_amount' => 2 * 100,
+    ]);
+
+    $billItem1->taxes()->attach(1, ['tax_amount' => 2 * 100 * (15 / 100)]);
+
+    $billItem2 = BillItem::factory()->create([
+        'bill_id' => $bill->id,
+        'product_id' => $this->product->id,
+        'quantity' => 3,
+        'cost_price' => 50,
+        'total_cost' => 3 * 50 + (3 * 50 * (5 / 100)), // 3 * 50
+        'tax_amount' => 3 * 50 * (5 / 100), // With tax
+        'untaxed_amount' => 3 * 50,
+    ]);
+
+    $billItem2->taxes()->attach(2, ['tax_amount' => 3 * 50 * (5 / 100)]);
+
+    // Refresh the bill to ensure the total_amount is updated
+    $bill->refresh();
+
+    // Calculate the expected total amount
+    $expectedTotalAmount = $billItem1->total_cost + $billItem1->tax_amount + $billItem2->total_cost + $billItem2->tax_amount;
+
+    // Assert that the bill's total_amount is correct
+    $this->assertEquals($expectedTotalAmount, $bill->total_amount);
 });
