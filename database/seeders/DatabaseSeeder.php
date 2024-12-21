@@ -4,6 +4,7 @@ namespace Xoshbin\JmeryarAccounting\Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Xoshbin\JmeryarAccounting\Models\ExchangeRate;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,6 +17,7 @@ class DatabaseSeeder extends Seeder
             AccountSeeder::class,
             ProductCategorySeeder::class,
             CurrencySeeder::class,
+            ExchangeRateSeeder::class,
             TaxSeeder::class,
             SettingSeeder::class
         ]);
