@@ -629,6 +629,19 @@ it('attaches the correct journal entries when a bill is paid with tax', function
     // at this level there should be 5 records of journal entries
     expect($journalEntriesCount)->toBe(5);
 
+    // Assert that the journal entries have the correct amounts and accounts
+    $accountsPayableEntry = $payment->journalEntries()
+        ->where('account_id', Account::where('name', 'Accounts Payable')->first()->id)
+        ->where('debit', 220 * 100)
+        ->first();
+
+    $cashEntry = $payment->journalEntries()
+        ->where('account_id', Account::where('name', 'Cash')->first()->id)
+        ->where('credit', 220 * 100)
+        ->first();
+
+    expect($accountsPayableEntry)->not->toBeNull();
+    expect($cashEntry)->not->toBeNull();
 
     $bill->refresh();
 
@@ -691,6 +704,20 @@ it('attaches the correct journal entries when a bill is partially paid without t
     $journalEntriesCount = JournalEntry::count();
     // at this level there should be 5 records of journal entries
     expect($journalEntriesCount)->toBe(4);
+
+    // Assert that the journal entries have the correct amounts and accounts
+    $accountsPayableEntry = $payment->journalEntries()
+        ->where('account_id', Account::where('name', 'Accounts Payable')->first()->id)
+        ->where('debit', 100 * 100)
+        ->first();
+
+    $cashEntry = $payment->journalEntries()
+        ->where('account_id', Account::where('name', 'Cash')->first()->id)
+        ->where('credit', 100 * 100)
+        ->first();
+
+    expect($accountsPayableEntry)->not->toBeNull();
+    expect($cashEntry)->not->toBeNull();
 
     $bill->refresh();
 
@@ -760,6 +787,19 @@ it('attaches the correct journal entries when a bill is partially paid with tax'
     // at this level there should be 5 records of journal entries
     expect($journalEntriesCount)->toBe(5);
 
+    // Assert that the journal entries have the correct amounts and accounts
+    $accountsPayableEntry = $payment->journalEntries()
+        ->where('account_id', Account::where('name', 'Accounts Payable')->first()->id)
+        ->where('debit', 110 * 100)
+        ->first();
+
+    $cashEntry = $payment->journalEntries()
+        ->where('account_id', Account::where('name', 'Cash')->first()->id)
+        ->where('credit', 110 * 100)
+        ->first();
+
+    expect($accountsPayableEntry)->not->toBeNull();
+    expect($cashEntry)->not->toBeNull();
 
     $bill->refresh();
 
