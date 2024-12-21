@@ -8,6 +8,7 @@ use Xoshbin\JmeryarAccounting\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Xoshbin\JmeryarAccounting\Models\Account;
 use Xoshbin\JmeryarAccounting\Models\Currency;
+use Xoshbin\JmeryarAccounting\Models\JournalEntry;
 use Xoshbin\JmeryarAccounting\Models\Tax;
 
 /**
@@ -443,6 +444,30 @@ it('calculates the untaxed amount of the bill correctly', function () {
 });
 
 it('attaches the correct journal entries when a bill is paid without tax', function () {
+
+    /**
+     * The journal entries for a bill are recorded in two stages:
+     *
+     * Stage 1: When the bill is received
+     * | Date       | Account              | Debit  | Credit |
+     * |------------|----------------------|--------|--------|
+     * | YYYY-MM-DD | Expense Account      | 200    |        | 
+     * | YYYY-MM-DD | Tax Payable Account  | 200    |        |
+     * | YYYY-MM-DD | Accounts Payable     |        | 200    | 
+     *
+     * Stage 2: When the bill is paid
+     * | Date       | Account              | Debit  | Credit |
+     * |------------|----------------------|--------|--------|
+     * | YYYY-MM-DD | Accounts Payable     | 200    |        |
+     * | YYYY-MM-DD | Cash/Bank Account    |        | 200    | 
+     *
+     * Explanation:
+     * - Accounts Payable: Credited when the bill is received (liability), debited when paid.
+     * - Expense Account: Debited with the specific expense amount (e.g., "Rent Expense").
+     * - Tax Payable Account: Debited with the tax amount.
+     * - Cash/Bank Account: Credited when the bill is paid, reducing the balance.
+     */
+
     // Create a bill with no tax
     $bill = Bill::factory()->create([
         'supplier_id' => $this->supplier->id,
@@ -461,36 +486,6 @@ it('attaches the correct journal entries when a bill is paid without tax', funct
         'untaxed_amount' => 200,
     ]);
 
-    /**
-     * The journal entries for a bill are recorded in two stages:
-     *
-     *
-     * Stage 2: When the bill is paid
-     * | Date       | Account              | Debit  | Credit |
-     * |------------|----------------------|--------|--------|
-     * | YYYY-MM-DD | Accounts Payable     | 200    |        |
-     * | YYYY-MM-DD | Cash/Bank Account    |        | 200    | 
-     *
-     * Explanation:
-     * - Accounts Payable: Credited when the bill is received (liability), debited when paid.
-     * - Expense Account: Debited with the specific expense amount (e.g., "Rent Expense").
-     * - Tax Payable Account: Debited with the tax amount.
-     * - Cash/Bank Account: Credited when the bill is paid, reducing the balance.
-     */
-
-    $payment = $bill->payments()->create([
-        'amount' => 200,
-        'payment_date' => now(),
-        'payment_method' => 'Cash',
-        'payment_type' => 'Expense',
-        'currency_id' => Currency::where('code', 'USD')->first()->id,
-        'exchange_rate' => 1,
-        'amount_in_invoice_currency' => 200,
-    ]);
-
-    expect($payment->transactions()->count())->toBe(1);
-    expect($payment->amount)->toBe(200.0);
-
     // Assert that exactly two journal entries are created and attached to the bill
     expect($bill->journalEntries()->count())->toBe(2);
 
@@ -506,6 +501,38 @@ it('attaches the correct journal entries when a bill is paid without tax', funct
     expect($expenseEntry->account_id)->toBe(Account::where('type', Account::TYPE_EXPENSE)->first()->id);
     expect($expenseEntry->debit)->toBe(200.0);
 
+    // Stage 2: Pay the bill
+    $payment = $bill->payments()->create([
+        'amount' => 200,
+        'payment_date' => now(),
+        'payment_method' => 'Cash',
+        'payment_type' => 'Expense',
+        'currency_id' => Currency::where('code', 'USD')->first()->id,
+        'exchange_rate' => 1,
+        'amount_in_invoice_currency' => 200,
+    ]);
+
+    // Assert that the transaction has two journal entries
+    expect($payment->journalEntries()->count())->toBe(2);
+
+    $journalEntriesCount = JournalEntry::count();
+    // at this level there should be 5 records of journal entries
+    expect($journalEntriesCount)->toBe(4);
+
+    // Assert that the journal entries have the correct amounts and accounts
+    $accountsPayableEntry = $payment->journalEntries()
+        ->where('account_id', Account::where('name', 'Accounts Payable')->first()->id)
+        ->where('debit', 200 * 100)
+        ->first();
+
+    $cashEntry = $payment->journalEntries()
+        ->where('account_id', Account::where('name', 'Cash')->first()->id)
+        ->where('credit', 200 * 100)
+        ->first();
+
+    expect($accountsPayableEntry)->not->toBeNull();
+    expect($cashEntry)->not->toBeNull();
+
     $bill->refresh();
 
     expect($bill->status)->toBe('Paid');
@@ -517,24 +544,6 @@ it('attaches the correct journal entries when a bill is paid without tax', funct
 });
 
 it('attaches the correct journal entries when a bill is paid with tax', function () {
-    // Create a bill with tax
-    $bill = Bill::factory()->create([
-        'supplier_id' => $this->supplier->id,
-        'total_amount' => 220, // Includes tax
-        'tax_amount' => 20,
-        'untaxed_amount' => 200,
-    ]);
-
-    BillItem::factory()->create([
-        'bill_id' => $bill->id,
-        'product_id' => $this->product->id,
-        'quantity' => 2,
-        'cost_price' => 100,
-        'unit_price' => 200,
-        'total_cost' => 220, // (2 * 100) + 20
-        'tax_amount' => 20,
-        'untaxed_amount' => 200,
-    ]);
 
     /**
      * The journal entries for a bill are recorded in two stages:
@@ -559,18 +568,25 @@ it('attaches the correct journal entries when a bill is paid with tax', function
      * - Cash/Bank Account: Credited when the bill is paid, reducing the balance.
      */
 
-    $payment = $bill->payments()->create([
-        'amount' => 220,
-        'payment_date' => now(),
-        'payment_method' => 'Cash',
-        'payment_type' => 'Expense',
-        'currency_id' => Currency::where('code', 'USD')->first()->id,
-        'exchange_rate' => 1,
-        'amount_in_invoice_currency' => 200,
+
+    // Create a bill with tax
+    $bill = Bill::factory()->create([
+        'supplier_id' => $this->supplier->id,
+        'total_amount' => 220, // Includes tax
+        'tax_amount' => 20,
+        'untaxed_amount' => 200,
     ]);
 
-    expect($payment->transactions()->count())->toBe(1);
-    expect($payment->amount)->toBe(220.0);
+    BillItem::factory()->create([
+        'bill_id' => $bill->id,
+        'product_id' => $this->product->id,
+        'quantity' => 2,
+        'cost_price' => 100,
+        'unit_price' => 200,
+        'total_cost' => 220, // (2 * 100) + 20
+        'tax_amount' => 20,
+        'untaxed_amount' => 200,
+    ]);
 
     // Assert that exactly three journal entries are created and attached to the bill
     expect($bill->journalEntries()->count())->toBe(3);
@@ -593,9 +609,161 @@ it('attaches the correct journal entries when a bill is paid with tax', function
     expect($taxPayableEntry->debit)->toBe(20.0);
 
 
+    // stage 2: Pay the bill
+
+    $payment = $bill->payments()->create([
+        'amount' => 220,
+        'payment_date' => now(),
+        'payment_method' => 'Cash',
+        'payment_type' => 'Expense',
+        'currency_id' => Currency::where('code', 'USD')->first()->id,
+        'exchange_rate' => 1,
+        'amount_in_invoice_currency' => 200,
+    ]);
+
+    expect($payment->journalEntries()->count())->toBe(2);
+    expect($payment->amount)->toBe(220.0);
+
+    $journalEntriesCount = JournalEntry::count();
+
+    // at this level there should be 5 records of journal entries
+    expect($journalEntriesCount)->toBe(5);
+
+
     $bill->refresh();
 
     expect($bill->status)->toBe('Paid');
+
+    // Ensure total debits equal total credits
+    $totalDebits = $bill->journalEntries()->sum('debit');
+    $totalCredits = $bill->journalEntries()->sum('credit');
+    expect($totalDebits)->toBe($totalCredits);
+});
+
+it('attaches the correct journal entries when a bill is partially paid without tax', function () {
+    // Create a bill with no tax
+    $bill = Bill::factory()->create([
+        'supplier_id' => $this->supplier->id,
+        'total_amount' => 200,
+        'untaxed_amount' => 200,
+    ]);
+
+    BillItem::factory()->create([
+        'bill_id' => $bill->id,
+        'product_id' => $this->product->id,
+        'quantity' => 2,
+        'cost_price' => 100,
+        'unit_price' => 200,
+        'total_cost' => 200, // 2 * 100
+        'tax_amount' => 0, // No tax
+        'untaxed_amount' => 200,
+    ]);
+
+    // Assert that exactly two journal entries are created and attached to the bill
+    expect($bill->journalEntries()->count())->toBe(2);
+
+    // Assert that the journal entries have the correct amounts and accounts
+    $accountsPayableEntry = $bill->journalEntries()->where('credit', 200 * 100)->first(); // * 100 CastMoney
+    $expenseEntry = $bill->journalEntries()->where('debit', 200 * 100)->first();
+
+    // Assert Accounts Payable entry
+    expect($accountsPayableEntry->account_id)->toBe(Account::where('type', Account::TYPE_LIABILITY)->first()->id);
+    expect($accountsPayableEntry->credit)->toBe(200.0);
+
+    // Assert Expense entry
+    expect($expenseEntry->account_id)->toBe(Account::where('type', Account::TYPE_EXPENSE)->first()->id);
+    expect($expenseEntry->debit)->toBe(200.0);
+
+    // Partial payment
+    $payment = $bill->payments()->create([
+        'amount' => 100,
+        'payment_date' => now(),
+        'payment_method' => 'Cash',
+        'payment_type' => 'Expense',
+        'currency_id' => Currency::where('code', 'USD')->first()->id,
+        'exchange_rate' => 1,
+        'amount_in_invoice_currency' => 200,
+    ]);
+
+    expect($payment->journalEntries()->count())->toBe(2);
+    expect($payment->amount)->toBe(100.0);
+
+    $journalEntriesCount = JournalEntry::count();
+    // at this level there should be 5 records of journal entries
+    expect($journalEntriesCount)->toBe(4);
+
+    $bill->refresh();
+
+    expect($bill->status)->toBe('Partial');
+
+    // Ensure total debits equal total credits
+    $totalDebits = $bill->journalEntries()->sum('debit');
+    $totalCredits = $bill->journalEntries()->sum('credit');
+    expect($totalDebits)->toBe($totalCredits);
+});
+
+it('attaches the correct journal entries when a bill is partially paid with tax', function () {
+    // Create a bill with tax
+    $bill = Bill::factory()->create([
+        'supplier_id' => $this->supplier->id,
+        'total_amount' => 220, // Includes tax
+        'tax_amount' => 20,
+        'untaxed_amount' => 200,
+    ]);
+
+    BillItem::factory()->create([
+        'bill_id' => $bill->id,
+        'product_id' => $this->product->id,
+        'quantity' => 2,
+        'cost_price' => 100,
+        'unit_price' => 200,
+        'total_cost' => 220, // (2 * 100) + 20
+        'tax_amount' => 20,
+        'untaxed_amount' => 200,
+    ]);
+
+    // Assert that exactly three journal entries are created and attached to the bill
+    expect($bill->journalEntries()->count())->toBe(3);
+
+    // Assert that the journal entries have the correct amounts and accounts
+    $accountsPayableEntry = $bill->journalEntries()->where('credit', 220 * 100)->first(); // * 100 CastMoney
+    $expenseEntry = $bill->journalEntries()->where('debit', 200 * 100)->first();
+    $taxPayableEntry = $bill->journalEntries()->where('debit', 20 * 100)->first();
+
+    // Assert Accounts Payable entry
+    expect($accountsPayableEntry->account_id)->toBe(Account::where('type', Account::TYPE_LIABILITY)->first()->id);
+    expect($accountsPayableEntry->credit)->toBe(220.0);
+
+    // Assert Expense entry
+    expect($expenseEntry->account_id)->toBe(Account::where('type', Account::TYPE_EXPENSE)->first()->id);
+    expect($expenseEntry->debit)->toBe(200.0);
+
+    // Assert Tax Payable entry
+    expect($taxPayableEntry->account_id)->toBe(Account::where('name', 'Tax Payable')->first()->id);
+    expect($taxPayableEntry->debit)->toBe(20.0);
+
+    // Partial payment
+    $payment = $bill->payments()->create([
+        'amount' => 110,
+        'payment_date' => now(),
+        'payment_method' => 'Cash',
+        'payment_type' => 'Expense',
+        'currency_id' => Currency::where('code', 'USD')->first()->id,
+        'exchange_rate' => 1,
+        'amount_in_invoice_currency' => 110,
+    ]);
+
+    expect($payment->journalEntries()->count())->toBe(2);
+    expect($payment->amount)->toBe(110.0);
+
+    $journalEntriesCount = JournalEntry::count();
+    // at this level there should be 5 records of journal entries
+    expect($journalEntriesCount)->toBe(5);
+
+
+    $bill->refresh();
+
+    expect($bill->status)->toBe('Partial');
 
     // Ensure total debits equal total credits
     $totalDebits = $bill->journalEntries()->sum('debit');
