@@ -3,6 +3,7 @@
 namespace Xoshbin\JmeryarAccounting\Services;
 
 use Xoshbin\JmeryarAccounting\Models\Bill;
+use Xoshbin\JmeryarAccounting\Models\Invoice;
 use Xoshbin\JmeryarAccounting\Models\JournalEntry;
 use Xoshbin\JmeryarAccounting\Models\Account;
 
@@ -59,6 +60,58 @@ class JournalEntriesService
         // Assuming there is a relationship between Bill and JournalEntry
         foreach ($bill->journalEntries as $entry) {
             $entry->deleteQuietly();
+        }
+    }
+
+    /**
+     * Create journal entries for the invoice.
+     */
+    public function createInvoiceJournalEntries(Invoice $invoice): void
+    {
+        // Revenue entry (credit)
+        $revenueEntry = JournalEntry::create([
+            'account_id' => $invoice->revenue_account_id,
+            'debit' => 0,
+            'credit' => $invoice->untaxed_amount,
+        ]);
+
+        // Create tax entry only if tax amount is not null and greater than zero
+        if (!is_null($invoice->tax_amount) && $invoice->tax_amount > 0) {
+            $taxReceivableAccount = Account::where('name', 'Tax Received')->first();
+
+            if ($taxReceivableAccount) {
+                $taxReceivableEntry = JournalEntry::create([
+                    'account_id' => $taxReceivableAccount->id,
+                    'credit' => $invoice->tax_amount,
+                    'debit' => 0,
+                ]);
+
+                // Attach tax journal entry to the invoice
+                $invoice->journalEntries()->attach($taxReceivableEntry->id);
+            }
+        }
+
+        // Accounts receivable entry (debit)
+        $accountsReceivableEntry = JournalEntry::create([
+            'account_id' => $invoice->inventory_account_id,
+            'debit' => $invoice->total_amount,
+            'credit' => 0,
+        ]);
+
+        // Attach journal entries to the invoice
+        $invoice->journalEntries()->attach([
+            $revenueEntry->id,
+            $accountsReceivableEntry->id,
+        ]);
+    }
+
+    /**
+     * Delete all journal entries related to the invoice.
+     */
+    public function deleteInvoiceJournalEntries(Invoice $invoice): void
+    {
+        foreach ($invoice->journalEntries as $entry) {
+            $entry->delete();
         }
     }
 }

@@ -3,13 +3,14 @@
 namespace Xoshbin\JmeryarAccounting\Services;
 
 use Xoshbin\JmeryarAccounting\Models\BillItem;
+use Xoshbin\JmeryarAccounting\Models\InvoiceItem;
 
 class InventoryBatchService
 {
     /**
      * Update or create the inventory batch associated with the bill item.
      */
-    public function updateInventoryBatch(BillItem $billItem): void
+    public function updateBillInventoryBatch(BillItem $billItem): void
     {
         $product = $billItem->product;
 
@@ -33,6 +34,56 @@ class InventoryBatchService
                 'cost_price' => $billItem->cost_price,
                 'unit_price' => $billItem->unit_price,
             ]);
+        }
+    }
+
+    /**
+     * Update inventory quantities based on changes to the invoice item.
+     */
+    public function updateInvoiceInventoryBatch(InvoiceItem $invoiceItem): void
+    {
+        $originalQuantity = $invoiceItem->getOriginal('quantity');
+        $newQuantity = $invoiceItem->quantity;
+        $quantityDifference = $newQuantity - $originalQuantity;
+
+        if ($quantityDifference > 0) {
+            $this->deductInventoryFromBatches($invoiceItem, $quantityDifference);
+        } elseif ($quantityDifference < 0) {
+            $this->restoreInventoryToBatches($invoiceItem, abs($quantityDifference));
+        }
+    }
+
+    /**
+     * Deduct inventory quantity from batches for an invoice item, using FIFO logic.
+     */
+    public function deductInventoryFromBatches(InvoiceItem $invoiceItem): void
+    {
+        $remainingQuantity = $invoiceItem->quantity;
+
+        foreach ($invoiceItem->product->inventoryBatches()->oldest()->get() as $batch) {
+            if ($batch->quantity >= $remainingQuantity) {
+                $batch->decrement('quantity', $remainingQuantity);
+                break;
+            } else {
+                $remainingQuantity -= $batch->quantity;
+                $batch->update(['quantity' => 0]);
+            }
+        }
+    }
+
+    /**
+     * Restore inventory to batches when an invoice item is deleted or quantity is reduced.
+     */
+    public function restoreInventoryToBatches(InvoiceItem $invoiceItem, int $quantityToRestore = null): void
+    {
+        $restoreQuantity = $quantityToRestore ?? $invoiceItem->quantity;
+
+        foreach ($invoiceItem->product->inventoryBatches()->oldest()->get() as $batch) {
+            $batch->increment('quantity', $restoreQuantity);
+            $restoreQuantity -= $batch->quantity;
+            if ($restoreQuantity <= 0) {
+                break;
+            }
         }
     }
 }

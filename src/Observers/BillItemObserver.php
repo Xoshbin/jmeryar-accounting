@@ -23,7 +23,7 @@ class BillItemObserver
      */
     public function created(BillItem $billItem): void
     {
-        $this->inventoryBatchService->updateInventoryBatch($billItem);
+        $this->inventoryBatchService->updateBillInventoryBatch($billItem);
 
         // Add the item into the inventory or update the existing batch
         $this->billService->updateBillTotal($billItem);
@@ -34,7 +34,7 @@ class BillItemObserver
      */
     public function updated(BillItem $billItem): void
     {
-        $this->inventoryBatchService->updateInventoryBatch($billItem);
+        $this->inventoryBatchService->updateBillInventoryBatch($billItem);
 
         // Add the item into the inventory or update the existing batch
         $this->billService->updateBillTotal($billItem);
