@@ -6,7 +6,6 @@ use Filament\Contracts\Plugin;
 use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Xoshbin\JmeryarAccounting\JmeryarPanel\Pages\FinanceDashboard;
-use Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\BillResource;
 
 class Accounting implements Plugin
 {
