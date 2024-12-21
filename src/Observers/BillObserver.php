@@ -2,21 +2,24 @@
 
 namespace Xoshbin\JmeryarAccounting\Observers;
 
-use Xoshbin\JmeryarAccounting\Models\Account;
 use Xoshbin\JmeryarAccounting\Models\Bill;
-use Xoshbin\JmeryarAccounting\Models\JournalEntry;
-use Xoshbin\JmeryarAccounting\Models\Tax;
-use Filament\Facades\Filament;
+use Xoshbin\JmeryarAccounting\Services\JournalEntriesService;
 
 class BillObserver
 {
+    protected $journalEntryService;
+
+    public function __construct(JournalEntriesService $journalEntryService)
+    {
+        $this->journalEntryService = $journalEntryService;
+    }
 
     /**
      * Handle the Bill "created" event.
      */
     public function created(Bill $bill): void
     {
-        $this->createBillJournalEntries($bill);
+        $this->journalEntryService->createBillJournalEntries($bill);
     }
 
     /**
@@ -25,10 +28,11 @@ class BillObserver
     public function updated(Bill $bill): void
     {
         // Delete existing journal entries for the bill
-        $this->deleteBillJournalEntries($bill);
+        $this->journalEntryService->deleteBillJournalEntries($bill);
+
 
         // Recreate journal entries with updated amounts
-        $this->createBillJournalEntries($bill);
+        $this->journalEntryService->createBillJournalEntries($bill);
     }
 
     /**
@@ -59,60 +63,6 @@ class BillObserver
         }
 
         // Delete bill journal entries
-        $this->deleteBillJournalEntries($bill);
-    }
-
-    protected function createBillJournalEntries(Bill $bill): void
-    {
-        // Debit the Expense Account for the untaxed portion
-        $expenseEntry = JournalEntry::create([
-            'account_id' => $bill->expense_account_id, // Expense account for the untaxed portion
-            'debit' => $bill->untaxed_amount,
-            'credit' => 0,
-//            'label' => $bill->billItems->first()->product->name, //TODO:: add the name of the product as label
-        ]);
-
-        // Step 3: Credit Accounts Payable for the total amount (untaxed + tax)
-        $accountsPayableEntry = JournalEntry::create([
-            'account_id' => $bill->liability_account_id, // Accounts Payable
-            'debit' => 0, // Total amount
-            'credit' => $bill->total_amount,
-//            'label' => '',
-        ]);
-
-        // Step 4: Attach the journal entries to the bill
-        $bill->journalEntries()->attach([
-            $expenseEntry->id,
-            $accountsPayableEntry->id,
-        ]);
-
-        // Create tax entry only if tax amount is not null and greater than zero
-        if (!is_null($bill->tax_amount) && $bill->tax_amount > 0.0) {
-            $taxPaidAccount = Account::where('name', 'Tax Paid') // Assuming the "Tax Paid" account exists
-            ->first();
-
-            if ($taxPaidAccount) {
-                $taxPaidEntry = JournalEntry::create([
-                    'account_id' => $taxPaidAccount->id,
-                    'debit' => $bill->tax_amount,
-                    'credit' => 0,
-//            'label' => $bill->taxes->first()->name, //TODO:: same as the product, add the name of the tax
-                ]);
-
-                // Attach tax journal entry to the invoice
-                $bill->journalEntries()->attach($taxPaidEntry->id);
-            }
-        }
-    }
-
-    /**
-     * Delete all journal entries related to the bill.
-     */
-    protected function deleteBillJournalEntries(Bill $bill): void
-    {
-        // Assuming there is a relationship between Bill and JournalEntry
-        foreach ($bill->journalEntries as $entry) {
-            $entry->delete();
-        }
+        $this->journalEntryService->deleteBillJournalEntries($bill);
     }
 }

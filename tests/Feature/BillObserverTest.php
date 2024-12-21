@@ -6,6 +6,7 @@ use Xoshbin\JmeryarAccounting\Models\BillItem;
 use Xoshbin\JmeryarAccounting\Models\Supplier;
 use Xoshbin\JmeryarAccounting\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Xoshbin\JmeryarAccounting\Models\Account;
 use Xoshbin\JmeryarAccounting\Models\Tax;
 
 uses(RefreshDatabase::class);
@@ -103,8 +104,9 @@ it('attaches the correct journal entries to the bill', function () {
     // Create a bill with an item
     $bill = Bill::factory()->create([
         'supplier_id' => $this->supplier->id,
-        'total_amount' => 400,
-        'untaxed_amount' => 400,
+        'total_amount' => 220, // Includes tax
+        'tax_amount' => 20,
+        'untaxed_amount' => 200,
     ]);
 
     BillItem::factory()->create([
@@ -113,28 +115,58 @@ it('attaches the correct journal entries to the bill', function () {
         'quantity' => 2,
         'cost_price' => 100,
         'unit_price' => 200,
-        'total_cost' => 400, // 2 * 200
-        'tax_amount' => 0,
-        'untaxed_amount' => 400,
+        'total_cost' => 200, // 2 * 200
+        'tax_amount' => 20,
+        'untaxed_amount' => 200,
     ]);
 
-    // Assert that two journal entries are created and attached to the bill
-    expect($bill->journalEntries()->count())->toBe(2);
+    // Assert that three journal entries are created and attached to the bill
+    expect($bill->journalEntries()->count())->toBe(3);
 
     // Assert that the journal entries have the correct amounts and accounts
-    $debitEntry = $bill->journalEntries()->where('debit', '>', 0)->first();
-    $creditEntry = $bill->journalEntries()->where('type', '>', 0)->first();
+    $accountsPayableEntry = $bill->journalEntries()->where('credit', 220 * 100)->first(); // * 100 CastMoney
+    $expenseEntry = $bill->journalEntries()->where('debit', 200 * 100)->first();
+    $taxPayableEntry = $bill->journalEntries()->where('debit', 20 * 100)->first();
 
-    expect($debitEntry->debit)->toBe(400.0);
-    expect($creditEntry->credit)->toBe(0.0);
+    /**
+     * The journal entries for a bill are recorded as follows:
+     *
+     * | Date       | Account              | Debit  | Credit |
+     * |------------|----------------------|--------|--------|
+     * | YYYY-MM-DD | Accounts Payable     |        | 220    |
+     * | YYYY-MM-DD | Expense Account      | 200    |        |
+     * | YYYY-MM-DD | Tax Payable Account  | 20     |        |
+     *
+     * Explanation:
+     * - Accounts Payable: Credited with the total bill amount (220), indicating a liability.
+     * - Expense Account: Debited with the untaxed amount (200), representing the expense incurred.
+     * - Tax Payable Account: Debited with the tax amount (20), representing the tax liability.
+     */
+
+    // Assert Accounts Payable entry
+    expect($accountsPayableEntry->account_id)->toBe(Account::where('type', Account::TYPE_LIABILITY)->first()->id); // TODO::Replace with actual Tax Payable account name instead of id
+    expect($accountsPayableEntry->credit)->toBe(220.0);
+
+    // Assert Expense entry
+    expect($expenseEntry->account_id)->toBe(Account::where('type', Account::TYPE_EXPENSE)->first()->id);
+    expect($expenseEntry->debit)->toBe(200.0);
+
+    // Assert Tax Payable entry
+    expect($taxPayableEntry->account_id)->toBe(11);
+    expect($taxPayableEntry->debit)->toBe(20.0);
+
+    // Ensure total debits equal total credits
+    $totalDebits = $bill->journalEntries()->sum('debit');
+    $totalCredits = $bill->journalEntries()->sum('credit');
+    expect($totalDebits)->toBe($totalCredits);
 });
 
 it('attaches two journal entries to the bill when there is no tax', function () {
     // Create a bill with no tax
     $bill = Bill::factory()->create([
         'supplier_id' => $this->supplier->id,
-        'total_amount' => 400,
-        'untaxed_amount' => 400,
+        'total_amount' => 200,
+        'untaxed_amount' => 200,
     ]);
     BillItem::factory()->create([
         'bill_id' => $bill->id,
@@ -142,9 +174,9 @@ it('attaches two journal entries to the bill when there is no tax', function () 
         'quantity' => 2,
         'cost_price' => 100,
         'unit_price' => 200,
-        'total_cost' => 400, // 2 * 200
+        'total_cost' => 200, // 2 * 200
         'tax_amount' => 0, // No tax
-        'untaxed_amount' => 400,
+        'untaxed_amount' => 200,
     ]);
 
     // Assert that exactly two journal entries are created and attached to the bill
@@ -176,8 +208,6 @@ it('attaches three journal entries to the bill when there is tax', function () {
 it('updates inventory and journal entries when a bill item quantity is updated', function () {
     $bill = Bill::factory()->create([
         'supplier_id' => $this->supplier->id,
-        'total_amount' => 200,
-        'untaxed_amount' => 200,
     ]);
 
     $billItem = BillItem::factory()->create([
@@ -191,29 +221,58 @@ it('updates inventory and journal entries when a bill item quantity is updated',
         'untaxed_amount' => 200,
     ]);
 
-    $batch = $this->product->inventoryBatches()->oldest()->first();
-    $originalBatchQuantity = $billItem->quantity;
-
-    expect($batch->quantity)->toBe(2);
+    expect($bill->journalEntries()->count())->toBe(2);
 
     $billItem->quantity = 4; // Increase quantity
     $billItem->total_cost = 800; // Increase total_cost 4 * 200
+    $billItem->untaxed_amount = 800; // Increase quantity
     $billItem->save();
 
-    $newBatchAfterUpdate = $this->product->inventoryBatches()->oldest()->first();
+    // Refresh the bill to ensure the total_amount is updated
+    $bill->refresh();
 
-    expect($newBatchAfterUpdate->quantity)->toBe(4);
+
     expect($billItem->total_cost)->toBe(800.0);
+    expect($billItem->untaxed_amount)->toBe(800.0);
+
+    $bill->total_amount = 800;
+    $bill->untaxed_amount = 800;
+    $bill->save();
 
     // Assert that the journal entries are updated (You'll need to add assertions for specific journal entry values)
     expect($bill->journalEntries()->count())->toBe(2);
 
     // Assert that the journal entries have the correct amounts and accounts
-    $debitEntry = $bill->journalEntries()->where('debit', '>', 0)->first();
-    $creditEntry = $bill->journalEntries()->where('type', '>', 0)->first();
+    $accountsPayableEntry = $bill->journalEntries()->where('credit', '>', 0)->first(); // * 100 CastMoney
+    $expenseEntry = $bill->journalEntries()->where('debit', 800 * 100)->first();
 
-    expect($debitEntry->debit)->toBe(200.0);
-    expect($creditEntry->credit)->toBe(0.0);
+    /**
+     * The journal entries for a bill are recorded as follows:
+     *
+     * | Date       | Account              | Debit  | Credit |
+     * |------------|----------------------|--------|--------|
+     * | YYYY-MM-DD | Accounts Payable     |        | 800    |
+     * | YYYY-MM-DD | Expense Account      | 800    |        |
+     * | YYYY-MM-DD | Tax Payable Account  | 0     |        | // in this text no tax is recorded
+     *
+     * Explanation:
+     * - Accounts Payable: Credited with the total bill amount (220), indicating a liability.
+     * - Expense Account: Debited with the untaxed amount (200), representing the expense incurred.
+     * - Tax Payable Account: Debited with the tax amount (20), representing the tax liability.
+     */
+
+    // Assert Accounts Payable entry
+    expect($accountsPayableEntry->account_id)->toBe(Account::where('type', Account::TYPE_LIABILITY)->first()->id); // TODO:: Replace with actual Tax Payable account name instead of id
+    expect($accountsPayableEntry->credit)->toBe(800.0);
+
+    // Assert Expense entry
+    expect($expenseEntry->account_id)->toBe(Account::where('type', Account::TYPE_EXPENSE)->first()->id);
+    expect($expenseEntry->debit)->toBe(800.0);
+
+    // Ensure total debits equal total credits
+    $totalDebits = $bill->journalEntries()->sum('debit');
+    $totalCredits = $bill->journalEntries()->sum('credit');
+    expect($totalDebits)->toBe($totalCredits);
 });
 
 

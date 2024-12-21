@@ -24,7 +24,6 @@ class Account extends Model
     ];
 
     public const TYPE_ASSET = 'Asset';
-    public const TYPE_ACCOUNTS_RECEIVABLE = 'Accounts Receivable';
     public const TYPE_LIABILITY = 'Liability';
     public const TYPE_EQUITY = 'Equity';
     public const TYPE_REVENUE = 'Revenue';
