@@ -57,4 +57,9 @@ class Payment extends Model
     {
         return $this->morphToMany(Transaction::class, 'transactionable');
     }
+
+    public function journalEntries(): MorphToMany
+    {
+        return $this->morphToMany(JournalEntry::class, 'j_entryable', 'j_entryables');
+    }
 }
