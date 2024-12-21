@@ -7,7 +7,31 @@ use Xoshbin\JmeryarAccounting\Models\Supplier;
 use Xoshbin\JmeryarAccounting\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Xoshbin\JmeryarAccounting\Models\Account;
+use Xoshbin\JmeryarAccounting\Models\Currency;
 use Xoshbin\JmeryarAccounting\Models\Tax;
+
+/**
+ * The journal entries for a bill are recorded in two stages:
+ *
+ * Stage 1: When the bill is received
+ * | Date       | Account              | Debit  | Credit |
+ * |------------|----------------------|--------|--------|
+ * | YYYY-MM-DD | Expense Account      | Amount |        | 
+ * | YYYY-MM-DD | Tax Payable Account  | Amount |        |
+ * | YYYY-MM-DD | Accounts Payable     |        | Amount | 
+ *
+ * Stage 2: When the bill is paid
+ * | Date       | Account              | Debit  | Credit |
+ * |------------|----------------------|--------|--------|
+ * | YYYY-MM-DD | Accounts Payable     | Amount |        |
+ * | YYYY-MM-DD | Cash/Bank Account    |        | Amount | 
+ *
+ * Explanation:
+ * - Accounts Payable: Credited when the bill is received (liability), debited when paid.
+ * - Expense Account: Debited with the specific expense amount (e.g., "Rent Expense").
+ * - Tax Payable Account: Debited with the tax amount.
+ * - Cash/Bank Account: Credited when the bill is paid, reducing the balance.
+ */
 
 uses(RefreshDatabase::class);
 
@@ -144,7 +168,7 @@ it('attaches the correct journal entries to the bill', function () {
      */
 
     // Assert Accounts Payable entry
-    expect($accountsPayableEntry->account_id)->toBe(Account::where('type', Account::TYPE_LIABILITY)->first()->id); // TODO::Replace with actual Tax Payable account name instead of id
+    expect($accountsPayableEntry->account_id)->toBe(Account::where('type', Account::TYPE_LIABILITY)->first()->id);
     expect($accountsPayableEntry->credit)->toBe(220.0);
 
     // Assert Expense entry
@@ -152,7 +176,7 @@ it('attaches the correct journal entries to the bill', function () {
     expect($expenseEntry->debit)->toBe(200.0);
 
     // Assert Tax Payable entry
-    expect($taxPayableEntry->account_id)->toBe(11);
+    expect($taxPayableEntry->account_id)->toBe(Account::where('name', 'Tax Payable')->first()->id);
     expect($taxPayableEntry->debit)->toBe(20.0);
 
     // Ensure total debits equal total credits
@@ -262,7 +286,7 @@ it('updates inventory and journal entries when a bill item quantity is updated',
      */
 
     // Assert Accounts Payable entry
-    expect($accountsPayableEntry->account_id)->toBe(Account::where('type', Account::TYPE_LIABILITY)->first()->id); // TODO:: Replace with actual Tax Payable account name instead of id
+    expect($accountsPayableEntry->account_id)->toBe(Account::where('type', Account::TYPE_LIABILITY)->first()->id);
     expect($accountsPayableEntry->credit)->toBe(800.0);
 
     // Assert Expense entry
@@ -416,4 +440,165 @@ it('calculates the untaxed amount of the bill correctly', function () {
 
     // Assert that the bill's untaxed_amount is correct
     $this->assertEquals($expectedUntaxedAmount, $bill->untaxed_amount);
+});
+
+it('attaches the correct journal entries when a bill is paid without tax', function () {
+    // Create a bill with no tax
+    $bill = Bill::factory()->create([
+        'supplier_id' => $this->supplier->id,
+        'total_amount' => 200,
+        'untaxed_amount' => 200,
+    ]);
+
+    BillItem::factory()->create([
+        'bill_id' => $bill->id,
+        'product_id' => $this->product->id,
+        'quantity' => 2,
+        'cost_price' => 100,
+        'unit_price' => 200,
+        'total_cost' => 200, // 2 * 100
+        'tax_amount' => 0, // No tax
+        'untaxed_amount' => 200,
+    ]);
+
+    /**
+     * The journal entries for a bill are recorded in two stages:
+     *
+     *
+     * Stage 2: When the bill is paid
+     * | Date       | Account              | Debit  | Credit |
+     * |------------|----------------------|--------|--------|
+     * | YYYY-MM-DD | Accounts Payable     | 200    |        |
+     * | YYYY-MM-DD | Cash/Bank Account    |        | 200    | 
+     *
+     * Explanation:
+     * - Accounts Payable: Credited when the bill is received (liability), debited when paid.
+     * - Expense Account: Debited with the specific expense amount (e.g., "Rent Expense").
+     * - Tax Payable Account: Debited with the tax amount.
+     * - Cash/Bank Account: Credited when the bill is paid, reducing the balance.
+     */
+
+    $payment = $bill->payments()->create([
+        'amount' => 200,
+        'payment_date' => now(),
+        'payment_method' => 'Cash',
+        'payment_type' => 'Expense',
+        'currency_id' => Currency::where('code', 'USD')->first()->id,
+        'exchange_rate' => 1,
+        'amount_in_invoice_currency' => 200,
+    ]);
+
+    expect($payment->transactions()->count())->toBe(1);
+    expect($payment->amount)->toBe(200.0);
+
+    // Assert that exactly two journal entries are created and attached to the bill
+    expect($bill->journalEntries()->count())->toBe(2);
+
+    // Assert that the journal entries have the correct amounts and accounts
+    $accountsPayableEntry = $bill->journalEntries()->where('credit', 200 * 100)->first(); // * 100 CastMoney
+    $expenseEntry = $bill->journalEntries()->where('debit', 200 * 100)->first();
+
+    // Assert Accounts Payable entry
+    expect($accountsPayableEntry->account_id)->toBe(Account::where('type', Account::TYPE_LIABILITY)->first()->id);
+    expect($accountsPayableEntry->credit)->toBe(200.0);
+
+    // Assert Expense entry
+    expect($expenseEntry->account_id)->toBe(Account::where('type', Account::TYPE_EXPENSE)->first()->id);
+    expect($expenseEntry->debit)->toBe(200.0);
+
+    $bill->refresh();
+
+    expect($bill->status)->toBe('Paid');
+
+    // Ensure total debits equal total credits
+    $totalDebits = $bill->journalEntries()->sum('debit');
+    $totalCredits = $bill->journalEntries()->sum('credit');
+    expect($totalDebits)->toBe($totalCredits);
+});
+
+it('attaches the correct journal entries when a bill is paid with tax', function () {
+    // Create a bill with tax
+    $bill = Bill::factory()->create([
+        'supplier_id' => $this->supplier->id,
+        'total_amount' => 220, // Includes tax
+        'tax_amount' => 20,
+        'untaxed_amount' => 200,
+    ]);
+
+    BillItem::factory()->create([
+        'bill_id' => $bill->id,
+        'product_id' => $this->product->id,
+        'quantity' => 2,
+        'cost_price' => 100,
+        'unit_price' => 200,
+        'total_cost' => 220, // (2 * 100) + 20
+        'tax_amount' => 20,
+        'untaxed_amount' => 200,
+    ]);
+
+    /**
+     * The journal entries for a bill are recorded in two stages:
+     *
+     * Stage 1: When the bill is received
+     * | Date       | Account              | Debit  | Credit |
+     * |------------|----------------------|--------|--------|
+     * | YYYY-MM-DD | Expense Account      | Amount |        | 
+     * | YYYY-MM-DD | Tax Payable Account  | Amount |        |
+     * | YYYY-MM-DD | Accounts Payable     |        | Amount | 
+     *
+     * Stage 2: When the bill is paid
+     * | Date       | Account              | Debit  | Credit |
+     * |------------|----------------------|--------|--------|
+     * | YYYY-MM-DD | Accounts Payable     | Amount |        |
+     * | YYYY-MM-DD | Cash/Bank Account    |        | Amount | 
+     *
+     * Explanation:
+     * - Accounts Payable: Credited when the bill is received (liability), debited when paid.
+     * - Expense Account: Debited with the specific expense amount (e.g., "Rent Expense").
+     * - Tax Payable Account: Debited with the tax amount.
+     * - Cash/Bank Account: Credited when the bill is paid, reducing the balance.
+     */
+
+    $payment = $bill->payments()->create([
+        'amount' => 220,
+        'payment_date' => now(),
+        'payment_method' => 'Cash',
+        'payment_type' => 'Expense',
+        'currency_id' => Currency::where('code', 'USD')->first()->id,
+        'exchange_rate' => 1,
+        'amount_in_invoice_currency' => 200,
+    ]);
+
+    expect($payment->transactions()->count())->toBe(1);
+    expect($payment->amount)->toBe(220.0);
+
+    // Assert that exactly three journal entries are created and attached to the bill
+    expect($bill->journalEntries()->count())->toBe(3);
+
+    // Assert that the journal entries have the correct amounts and accounts
+    $accountsPayableEntry = $bill->journalEntries()->where('credit', 220 * 100)->first(); // * 100 CastMoney
+    $expenseEntry = $bill->journalEntries()->where('debit', 200 * 100)->first();
+    $taxPayableEntry = $bill->journalEntries()->where('debit', 20 * 100)->first();
+
+    // Assert Accounts Payable entry
+    expect($accountsPayableEntry->account_id)->toBe(Account::where('type', Account::TYPE_LIABILITY)->first()->id);
+    expect($accountsPayableEntry->credit)->toBe(220.0);
+
+    // Assert Expense entry
+    expect($expenseEntry->account_id)->toBe(Account::where('type', Account::TYPE_EXPENSE)->first()->id);
+    expect($expenseEntry->debit)->toBe(200.0);
+
+    // Assert Tax Payable entry
+    expect($taxPayableEntry->account_id)->toBe(Account::where('name', 'Tax Payable')->first()->id);
+    expect($taxPayableEntry->debit)->toBe(20.0);
+
+
+    $bill->refresh();
+
+    expect($bill->status)->toBe('Paid');
+
+    // Ensure total debits equal total credits
+    $totalDebits = $bill->journalEntries()->sum('debit');
+    $totalCredits = $bill->journalEntries()->sum('credit');
+    expect($totalDebits)->toBe($totalCredits);
 });
