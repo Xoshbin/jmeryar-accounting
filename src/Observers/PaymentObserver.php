@@ -110,11 +110,10 @@ class PaymentObserver
     protected function updateParentStatus($parent, float $paymentAmount): void
     {
         if ($paymentAmount < $parent->total_amount) {
-            $parent->status = 'partial';
+            $parent->status = 'Partial';
         } else {
-            $parent->status = 'paid';
+            $parent->status = 'Paid';
         }
         $parent->save();
     }
 }
-
