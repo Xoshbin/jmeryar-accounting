@@ -35,7 +35,7 @@ class JournalEntriesService
 
         // Create tax entry only if tax amount is not null and greater than zero
         if (!is_null($bill->tax_amount) && $bill->tax_amount > 0.0) {
-            $taxPaidAccount = Account::where('name', 'Tax Paid') // Assuming the "Tax Paid" account exists
+            $taxPaidAccount = Account::where('name', 'Tax Payable') // Assuming the "Tax Payable" account exists
                 ->first();
 
             if ($taxPaidAccount) {
