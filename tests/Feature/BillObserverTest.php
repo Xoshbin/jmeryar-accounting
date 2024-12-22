@@ -54,9 +54,9 @@ it('attaches journal entries to the bill', function () {
         'quantity' => 2,
         'cost_price' => 100,
         'unit_price' => 200,
-        'total_cost' => 400, // 2 * 200
+        'total_cost' => 200, // 2 * 200
         'tax_amount' => 0,
-        'untaxed_amount' => 400,
+        'untaxed_amount' => 200,
     ]);
 
     // Assert that journal entries are created and attached to the bill
@@ -184,6 +184,9 @@ it('attaches the correct journal entries to the bill', function () {
     $totalDebits = $bill->journalEntries()->sum('debit');
     $totalCredits = $bill->journalEntries()->sum('credit');
     expect($totalDebits)->toBe($totalCredits);
+
+    // Assert that the bill's untaxed_amount is correct
+    expect($bill->untaxed_amount)->toBe(200.0);
 });
 
 it('attaches two journal entries to the bill when there is no tax', function () {
@@ -206,13 +209,18 @@ it('attaches two journal entries to the bill when there is no tax', function () 
 
     // Assert that exactly two journal entries are created and attached to the bill
     expect($bill->journalEntries()->count())->toBe(2);
+
+    // Assert that the bill's untaxed_amount is correct
+    expect($bill->untaxed_amount)->toBe(200.0);
 });
 
 it('attaches three journal entries to the bill when there is tax', function () {
     // Create a bill with tax
     $bill = Bill::factory()->create([
         'supplier_id' => $this->supplier->id,
-        'tax_amount' => (2 * 100) * 0.10 // add tax amount
+        'total_amount' => 210,
+        'tax_amount' => (2 * 100) * 0.10,
+        'tax_amount' => (2 * 100)
     ]);
 
     BillItem::factory()->create([
@@ -221,9 +229,9 @@ it('attaches three journal entries to the bill when there is tax', function () {
         'quantity' => 2,
         'cost_price' => 100,
         'unit_price' => 200,
-        'total_cost' => 400, // 2 * 200
-        'tax_amount' => 10, // With tax
-        'untaxed_amount' => 400,
+        'total_cost' => 210, // 2 * 100 + 10
+        'tax_amount' => (2 * 100) * 0.10, // With tax
+        'untaxed_amount' => 200,
     ]);
 
     // Assert that exactly three journal entries are created and attached to the bill
@@ -298,6 +306,9 @@ it('updates inventory and journal entries when a bill item quantity is updated',
     $totalDebits = $bill->journalEntries()->sum('debit');
     $totalCredits = $bill->journalEntries()->sum('credit');
     expect($totalDebits)->toBe($totalCredits);
+
+    // Assert that the bill's untaxed_amount is correct
+    expect($bill->untaxed_amount)->toBe(800.0);
 });
 
 
@@ -541,6 +552,9 @@ it('attaches the correct journal entries when a bill is paid without tax', funct
     $totalDebits = $bill->journalEntries()->sum('debit');
     $totalCredits = $bill->journalEntries()->sum('credit');
     expect($totalDebits)->toBe($totalCredits);
+
+    // Assert that the bill's untaxed_amount is correct
+    expect($bill->untaxed_amount)->toBe(200.0);
 });
 
 it('attaches the correct journal entries when a bill is paid with tax', function () {
@@ -651,6 +665,9 @@ it('attaches the correct journal entries when a bill is paid with tax', function
     $totalDebits = $bill->journalEntries()->sum('debit');
     $totalCredits = $bill->journalEntries()->sum('credit');
     expect($totalDebits)->toBe($totalCredits);
+
+    // Assert that the bill's untaxed_amount is correct
+    expect($bill->untaxed_amount)->toBe(200.0);
 });
 
 it('attaches the correct journal entries when a bill is partially paid without tax', function () {
@@ -727,6 +744,9 @@ it('attaches the correct journal entries when a bill is partially paid without t
     $totalDebits = $bill->journalEntries()->sum('debit');
     $totalCredits = $bill->journalEntries()->sum('credit');
     expect($totalDebits)->toBe($totalCredits);
+
+    // Assert that the bill's untaxed_amount is correct
+    expect($bill->untaxed_amount)->toBe(200.0);
 });
 
 it('attaches the correct journal entries when a bill is partially paid with tax', function () {
@@ -809,4 +829,7 @@ it('attaches the correct journal entries when a bill is partially paid with tax'
     $totalDebits = $bill->journalEntries()->sum('debit');
     $totalCredits = $bill->journalEntries()->sum('credit');
     expect($totalDebits)->toBe($totalCredits);
+
+    // Assert that the bill's untaxed_amount is correct
+    expect($bill->untaxed_amount)->toBe(200.0);
 });
