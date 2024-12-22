@@ -109,8 +109,10 @@ class PaymentObserver
     {
         if ($paymentAmount < $parent->total_amount) {
             $parent->status = 'Partial';
+            $parent->amount_due = $parent->total_amount - $paymentAmount;
         } else {
             $parent->status = 'Paid';
+            $parent->amount_due = $parent->total_amount - $paymentAmount;
         }
         $parent->save();
     }
