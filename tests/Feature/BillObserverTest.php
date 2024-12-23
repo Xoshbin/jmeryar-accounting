@@ -50,6 +50,7 @@ function createBill($supplier, $quantity, $costPrice, $taxPercent = 0): Bill
         'total_amount' => ($quantity * $costPrice) + (($quantity * $costPrice) * ($taxPercent / 100)),
         'tax_amount' => ($quantity * $costPrice) * ($taxPercent / 100),
         'untaxed_amount' => $quantity * $costPrice,
+        'amount_due' => ($quantity * $costPrice) + (($quantity * $costPrice) * ($taxPercent / 100)),
     ]);
 
     return $bill;
@@ -873,3 +874,49 @@ it('calculates bill amounts correctly when bill item is updated', function () {
     // Verify that total_amount equals untaxed_amount plus tax_amount
     expect($bill->total_amount)->toBe($bill->untaxed_amount + $bill->tax_amount);
 });
+
+it('calculates amount_due correctly when bill is partially paid', function () {
+    $quantity = 2;
+    $costPrice = 100;
+    $taxPercent = 15;
+
+    $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
+    $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
+
+    // Initial amount due should equal total amount
+    expect($bill->amount_due)->toBe(230.0);
+    expect($bill->total_amount)->toBe(230.0);
+    expect($bill->status)->toBe('Draft');
+
+    // Make first partial payment
+    $currency_id = Currency::where('code', 'USD')->first()->id;
+    $payment1 = createPayment($bill, 100, 'Cash', 'Expense', $currency_id, 1, 230);
+
+    $bill->refresh();
+
+    // Check amount due after first payment
+    expect($bill->amount_due)->toBe(130.0);
+    expect($bill->status)->toBe('Partial');
+
+    // Make second partial payment
+    $payment2 = createPayment($bill, 80, 'Cash', 'Expense', $currency_id, 1, 230);
+
+    $bill->refresh();
+
+    // Check amount due after second payment
+    expect($bill->amount_due)->toBe(50.0);
+    expect($bill->status)->toBe('Partial');
+
+    // Make final payment
+    $payment3 = createPayment($bill, 50, 'Cash', 'Expense', $currency_id, 1, 230);
+
+    $bill->refresh();
+
+    // Check amount due after final payment
+    expect($bill->amount_due)->toBe(0.0);
+    expect($bill->status)->toBe('Paid');
+
+    // Verify total payments equal total amount
+    $totalPayments = $bill->payments()->sum('amount');
+    expect($totalPayments)->toBe(230 * 100);
+})->only();

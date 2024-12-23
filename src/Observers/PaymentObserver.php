@@ -68,7 +68,7 @@ class PaymentObserver
         }
 
         // Update the status of the parent based on the payment amount
-        $this->updateParentStatus($parent, $payment->amount);
+        $this->updateParentStatus($parent);
     }
 
     /**
@@ -105,14 +105,15 @@ class PaymentObserver
     /**
      * Update the status of the parent model (e.g., Invoice or Bill) based on the payment.
      */
-    protected function updateParentStatus($parent, float $paymentAmount): void
+    protected function updateParentStatus($parent): void
     {
-        if ($paymentAmount < $parent->total_amount) {
+        $totalAmount = $parent->payments->sum('amount');
+        if ($totalAmount < $parent->total_amount) {
             $parent->status = 'Partial';
-            $parent->amount_due = $parent->total_amount - $paymentAmount;
+            $parent->amount_due = $parent->total_amount - $totalAmount;
         } else {
             $parent->status = 'Paid';
-            $parent->amount_due = $parent->total_amount - $paymentAmount;
+            $parent->amount_due = $parent->total_amount - $totalAmount;
         }
         $parent->save();
     }
