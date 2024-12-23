@@ -2,9 +2,8 @@
 
 namespace Xoshbin\JmeryarAccounting\Database\Seeders;
 
-use Xoshbin\JmeryarAccounting\Models\Account;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Xoshbin\JmeryarAccounting\Models\Account;
 
 class AccountSeeder extends Seeder
 {

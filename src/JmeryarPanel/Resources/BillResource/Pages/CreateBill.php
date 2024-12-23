@@ -2,9 +2,9 @@
 
 namespace Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\BillResource\Pages;
 
-use Xoshbin\JmeryarAccounting\Models\Account;
 use Filament\Resources\Pages\CreateRecord;
 use Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\BillResource;
+use Xoshbin\JmeryarAccounting\Models\Account;
 
 class CreateBill extends CreateRecord
 {
@@ -17,6 +17,6 @@ class CreateBill extends CreateRecord
 
         //TODO:: Check if it's good to attach tax to the bill directly beside billitem
 
-        return  $data;
+        return $data;
     }
 }

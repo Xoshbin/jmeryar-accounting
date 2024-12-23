@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Xoshbin\JmeryarAccounting\Casts\MoneyCast;
-use Xoshbin\JmeryarAccounting\Database\Factories\ProductFactory;
 
 class Product extends Model
 {
@@ -28,13 +27,13 @@ class Product extends Model
     ];
 
     const TYPE_PRODUCT = 'Product';
+
     const TYPE_SERVICE = 'Service';
 
     public function inventoryBatches()
     {
         return $this->hasMany(InventoryBatch::class);
     }
-
 
     public function category(): BelongsTo
     {

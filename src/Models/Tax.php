@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Xoshbin\JmeryarAccounting\Database\Factories\TaxFactory;
 
 class Tax extends Model
 {
@@ -28,6 +27,7 @@ class Tax extends Model
     ];
 
     const STATUS_ACTIVE = 'Active';
+
     const STATUS_INACTIVE = 'Inactive';
 
     public function parent(): BelongsTo

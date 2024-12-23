@@ -2,10 +2,10 @@
 
 namespace Xoshbin\JmeryarAccounting\Database\Factories;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Xoshbin\JmeryarAccounting\Models\Invoice;
 use Xoshbin\JmeryarAccounting\Models\InvoiceItem;
 use Xoshbin\JmeryarAccounting\Models\Product;
-use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Xoshbin\JmeryarAccounting\Models\InvoiceItem>
@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class InvoiceItemFactory extends Factory
 {
     protected $model = InvoiceItem::class;
+
     /**
      * Define the model's default state.
      *
@@ -28,7 +29,7 @@ class InvoiceItemFactory extends Factory
             'product_id' => Product::inRandomOrder()->first()->id,
             'quantity' => $quantity,
             'unit_price' => $unitPrice,
-            'total_price' => $unitPrice * $quantity
+            'total_price' => $unitPrice * $quantity,
         ];
     }
 }

@@ -11,6 +11,7 @@ use Xoshbin\JmeryarAccounting\Models\Customer;
 class CustomerFactory extends Factory
 {
     protected $model = Customer::class;
+
     /**
      * Define the model's default state.
      *
@@ -22,7 +23,7 @@ class CustomerFactory extends Factory
             'name' => $this->faker->company,
             'email' => $this->faker->unique()->safeEmail,
             'phone' => $this->faker->phoneNumber,
-            'address' => $this->faker->address
+            'address' => $this->faker->address,
         ];
     }
 }

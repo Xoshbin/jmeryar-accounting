@@ -2,8 +2,6 @@
 
 namespace Xoshbin\JmeryarAccounting\Models;
 
-use Xoshbin\JmeryarAccounting\Database\Factories\PaymentFactory;
-use Xoshbin\JmeryarAccounting\Observers\PaymentObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Xoshbin\JmeryarAccounting\Casts\MoneyCast;
+use Xoshbin\JmeryarAccounting\Observers\PaymentObserver;
 
 #[ObservedBy([PaymentObserver::class])]
 class Payment extends Model
@@ -35,6 +34,7 @@ class Payment extends Model
     ];
 
     public const TYPE_INCOME = 'Income';
+
     public const TYPE_EXPENSE = 'Expense';
 
     /**

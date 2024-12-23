@@ -5,7 +5,6 @@ namespace Xoshbin\JmeryarAccounting\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Xoshbin\JmeryarAccounting\Database\Factories\ExchangeRateFactory;
 
 class ExchangeRate extends Model
 {
@@ -17,11 +16,13 @@ class ExchangeRate extends Model
         'rate',
     ];
 
-    public function baseCurrency(): BelongsTo{
+    public function baseCurrency(): BelongsTo
+    {
         return $this->belongsTo(Currency::class, 'base_currency_id');
     }
 
-    public function targetCurrency(): BelongsTo{
+    public function targetCurrency(): BelongsTo
+    {
         return $this->belongsTo(Currency::class, 'target_currency_id');
     }
 }

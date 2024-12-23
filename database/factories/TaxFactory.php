@@ -11,6 +11,7 @@ use Xoshbin\JmeryarAccounting\Models\Tax;
 class TaxFactory extends Factory
 {
     protected $model = Tax::class;
+
     /**
      * Define the model's default state.
      *

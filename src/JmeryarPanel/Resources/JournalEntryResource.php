@@ -2,19 +2,18 @@
 
 namespace Xoshbin\JmeryarAccounting\JmeryarPanel\Resources;
 
-use Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\JournalEntryResource\Pages;
-use Xoshbin\JmeryarAccounting\Models\JournalEntry;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
+use Xoshbin\JmeryarAccounting\Models\JournalEntry;
 
 class JournalEntryResource extends Resource
 {
     protected static ?string $model = JournalEntry::class;
 
-//    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    //    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationGroup = 'Accounting';
 
@@ -60,9 +59,9 @@ class JournalEntryResource extends Resource
                 //
             ])
             ->actions([
-//                Tables\Actions\EditAction::make(),
+                //                Tables\Actions\EditAction::make(),
                 Action::make('item')
-                    ->label(function (JournalEntry $record){
+                    ->label(function (JournalEntry $record) {
                         // Attempt to get a Bill or Invoice associated with the JournalEntry
                         $bill = $record->bills->first();
                         $invoice = $record->invoices->first();
@@ -91,14 +90,12 @@ class JournalEntryResource extends Resource
                         }
 
                         return '#'; // Fallback URL or handle cases with no associated records
-                    })
-
-
+                    }),
 
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-//                    Tables\Actions\DeleteBulkAction::make(),
+                    //                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

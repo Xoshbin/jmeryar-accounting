@@ -9,6 +9,7 @@ use Xoshbin\JmeryarAccounting\Services\InvoiceService;
 class InvoiceItemObserver
 {
     protected $inventoryBatchService;
+
     protected $invoiceService;
 
     public function __construct(InventoryBatchService $inventoryBatchService, InvoiceService $invoiceService)
@@ -16,6 +17,7 @@ class InvoiceItemObserver
         $this->inventoryBatchService = $inventoryBatchService;
         $this->invoiceService = $invoiceService;
     }
+
     /**
      * Handle the InvoiceItem "created" event.
      */
@@ -46,8 +48,6 @@ class InvoiceItemObserver
         $this->invoiceService->updateInvoiceTotal($invoiceItem);
         $this->deleteTaxes($invoiceItem);
     }
-
-
 
     // Delete associated taxes
     private function deleteTaxes($invoiceItem)

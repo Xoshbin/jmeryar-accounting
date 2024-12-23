@@ -2,24 +2,21 @@
 
 namespace Xoshbin\JmeryarAccounting\JmeryarPanel\Resources;
 
-use Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\CurrencyResource\Pages;
-use Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\CurrencyResource\RelationManagers;
-use Xoshbin\JmeryarAccounting\Models\Currency;
-use Xoshbin\JmeryarAccounting\Models\Setting;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Xoshbin\JmeryarAccounting\Models\Currency;
+use Xoshbin\JmeryarAccounting\Models\Setting;
 
 class CurrencyResource extends Resource
 {
     protected static ?string $model = Currency::class;
 
-//    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    //    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationGroup = 'Configuration';
-
 
     public static function form(Form $form): Form
     {
@@ -53,17 +50,17 @@ class CurrencyResource extends Resource
                                     Forms\Components\Select::make('status')
                                         ->options([
                                             'Active' => 'Active',
-                                            'Inactive' => 'Inactive'
+                                            'Inactive' => 'Inactive',
                                         ])
                                         ->default('Active')
                                         ->required(),
-                                ])
+                                ]),
                             ])
-                            ->columnSpan(1)
+                            ->columnSpan(1),
                     ]),
 
                 Forms\Components\Tabs::make('Exchange Rate Tab')
-                    ->disabled(fn($record) => Setting::first()?->currency->code === $record->code)
+                    ->disabled(fn ($record) => Setting::first()?->currency->code === $record->code)
                     ->schema([
                         Forms\Components\Tabs\Tab::make('Exchange Rates')
                             ->badge(fn ($get) => count($get('exchangeRatesAsTarget') ?? []))
@@ -76,8 +73,8 @@ class CurrencyResource extends Resource
                                     ->columns(4)
                                     ->schema([
                                         Forms\Components\TextInput::make('rate')
-                                            ->label(function (){
-                                                return Setting::first()?->currency->code . ' per unit';
+                                            ->label(function () {
+                                                return Setting::first()?->currency->code.' per unit';
                                             })
                                             ->numeric()
                                             ->live(debounce: 600)
@@ -90,8 +87,8 @@ class CurrencyResource extends Resource
                                             }),
 
                                         Forms\Components\TextInput::make('unit_per_base_currency')
-                                            ->label(function (){
-                                                return 'Unit per ' . Setting::first()?->currency->code;
+                                            ->label(function () {
+                                                return 'Unit per '.Setting::first()?->currency->code;
                                             })
                                             ->numeric()
                                             ->live(debounce: 300)
@@ -112,17 +109,17 @@ class CurrencyResource extends Resource
                                             }),
                                         Forms\Components\DateTimePicker::make('created_at')
                                             ->default(now())
-                                            ->label('Date and Time')
+                                            ->label('Date and Time'),
                                     ])
                                     ->mutateRelationshipDataBeforeCreateUsing(function (array $data, $record): array {
                                         $data['base_currency_id'] = Currency::first()->get('id');
                                         $data['target_currency_id'] = $record->id;
 
                                         return $data;
-                                    })
-                                ])
-                        ])
-                        ->columnSpan('full')
+                                    }),
+                            ]),
+                    ])
+                    ->columnSpan('full'),
             ]);
     }
 

@@ -2,7 +2,6 @@
 
 namespace Xoshbin\JmeryarAccounting\Observers;
 
-
 use Xoshbin\JmeryarAccounting\Models\Account;
 use Xoshbin\JmeryarAccounting\Models\JournalEntry;
 use Xoshbin\JmeryarAccounting\Models\Payment;
@@ -49,7 +48,7 @@ class PaymentObserver
 
         $transaction = Transaction::create([
             'date' => $payment->payment_date,
-            'note' => 'Transaction for payment ID ' . $payment->id,
+            'note' => 'Transaction for payment ID '.$payment->id,
             'amount' => $payment->amount,
             'transaction_type' => $parent instanceof \Xoshbin\JmeryarAccounting\Models\Invoice ? 'Credit' : 'Debit',
         ]);

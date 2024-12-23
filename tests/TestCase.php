@@ -12,10 +12,10 @@ use Filament\Notifications\NotificationsServiceProvider;
 use Filament\Support\SupportServiceProvider;
 use Filament\Tables\TablesServiceProvider;
 use Filament\Widgets\WidgetsServiceProvider;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Livewire\LivewireServiceProvider;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
 use Xoshbin\JmeryarAccounting\JmeryarAccountingServiceProvider;
-use Illuminate\Database\Eloquent\Factories\Factory;
 
 abstract class TestCase extends \Orchestra\Testbench\TestCase
 {
@@ -23,7 +23,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     {
         parent::setUp();
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'Xoshbin\\JmeryarAccounting\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
+            fn (string $modelName) => 'Xoshbin\\JmeryarAccounting\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
     }
 

@@ -40,7 +40,6 @@ class JournalEntry extends Model
         return $this->morphedByMany(Payment::class, 'j_entryable', 'j_entryables', 'journal_entry_id', 'j_entryable_id');
     }
 
-
     public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class);

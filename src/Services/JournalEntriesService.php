@@ -2,10 +2,10 @@
 
 namespace Xoshbin\JmeryarAccounting\Services;
 
+use Xoshbin\JmeryarAccounting\Models\Account;
 use Xoshbin\JmeryarAccounting\Models\Bill;
 use Xoshbin\JmeryarAccounting\Models\Invoice;
 use Xoshbin\JmeryarAccounting\Models\JournalEntry;
-use Xoshbin\JmeryarAccounting\Models\Account;
 
 class JournalEntriesService
 {
@@ -42,7 +42,7 @@ class JournalEntriesService
         ]);
 
         // Create tax entry only if tax amount is not null and greater than zero
-        if (!is_null($bill->tax_amount) && $bill->tax_amount > 0.0) {
+        if (! is_null($bill->tax_amount) && $bill->tax_amount > 0.0) {
             $taxPaidAccount = Account::where('name', 'Tax Payable') // Assuming the "Tax Payable" account exists
                 ->first();
 
@@ -85,7 +85,7 @@ class JournalEntriesService
         ]);
 
         // Create tax entry only if tax amount is not null and greater than zero
-        if (!is_null($invoice->tax_amount) && $invoice->tax_amount > 0) {
+        if (! is_null($invoice->tax_amount) && $invoice->tax_amount > 0) {
             $taxReceivableAccount = Account::where('name', 'Tax Received')->first();
 
             if ($taxReceivableAccount) {

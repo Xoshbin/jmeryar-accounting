@@ -2,10 +2,10 @@
 
 namespace Xoshbin\JmeryarAccounting\Database\Factories;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Xoshbin\JmeryarAccounting\Models\Account;
 use Xoshbin\JmeryarAccounting\Models\Bill;
 use Xoshbin\JmeryarAccounting\Models\Supplier;
-use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Xoshbin\JmeryarAccounting\Models\Bill>
@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class BillFactory extends Factory
 {
     protected $model = Bill::class;
+
     /**
      * Define the model's default state.
      *
@@ -32,7 +33,7 @@ class BillFactory extends Factory
             'liability_account_id' => Account::where('type', Account::TYPE_LIABILITY)->first()->id,
             'currency_id' => 2,
             'tax_amount' => 0,
-            'untaxed_amount' => 0
+            'untaxed_amount' => 0,
         ];
     }
 }

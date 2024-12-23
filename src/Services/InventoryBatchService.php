@@ -74,7 +74,7 @@ class InventoryBatchService
     /**
      * Restore inventory to batches when an invoice item is deleted or quantity is reduced.
      */
-    public function restoreInventoryToBatches(InvoiceItem $invoiceItem, int $quantityToRestore = null): void
+    public function restoreInventoryToBatches(InvoiceItem $invoiceItem, ?int $quantityToRestore = null): void
     {
         $restoreQuantity = $quantityToRestore ?? $invoiceItem->quantity;
 

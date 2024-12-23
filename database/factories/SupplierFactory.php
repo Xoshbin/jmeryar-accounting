@@ -11,6 +11,7 @@ use Xoshbin\JmeryarAccounting\Models\Supplier;
 class SupplierFactory extends Factory
 {
     protected $model = Supplier::class;
+
     /**
      * Define the model's default state.
      *

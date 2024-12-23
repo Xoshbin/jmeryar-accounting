@@ -2,20 +2,18 @@
 
 namespace Xoshbin\JmeryarAccounting\JmeryarPanel\Resources;
 
-use Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\ProductCategoryResource\Pages;
-use Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\ProductCategoryResource\RelationManagers;
-use Xoshbin\JmeryarAccounting\Models\ProductCategory;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Xoshbin\JmeryarAccounting\Models\ProductCategory;
 
 class ProductCategoryResource extends Resource
 {
     protected static ?string $model = ProductCategory::class;
 
-//    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    //    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationGroup = 'Inventory';
 
@@ -67,7 +65,7 @@ class ProductCategoryResource extends Resource
     public static function getRelations(): array
     {
         return [
-            \Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\ProductCategoryResource\RelationManagers\ProductsRelationManager::class
+            \Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\ProductCategoryResource\RelationManagers\ProductsRelationManager::class,
         ];
     }
 

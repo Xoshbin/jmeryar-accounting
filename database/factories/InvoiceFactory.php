@@ -2,9 +2,9 @@
 
 namespace Xoshbin\JmeryarAccounting\Database\Factories;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Xoshbin\JmeryarAccounting\Models\Account;
 use Xoshbin\JmeryarAccounting\Models\Customer;
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Xoshbin\JmeryarAccounting\Models\Invoice;
 
 /**
@@ -13,6 +13,7 @@ use Xoshbin\JmeryarAccounting\Models\Invoice;
 class InvoiceFactory extends Factory
 {
     protected $model = Invoice::class;
+
     /**
      * Define the model's default state.
      *
@@ -31,7 +32,7 @@ class InvoiceFactory extends Factory
             'revenue_account_id' => Account::where('type', Account::TYPE_REVENUE)->first()->id,
             'inventory_account_id' => Account::where('type', Account::TYPE_ASSET)->first()->id,
             'currency_id' => 2,
-            'tax_amount' => 0
+            'tax_amount' => 0,
         ];
     }
 }

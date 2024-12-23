@@ -6,7 +6,6 @@ use Xoshbin\JmeryarAccounting\Models\InvoiceItem;
 
 class InvoiceService
 {
-
     /**
      * Update the total amount of the associated invoice.
      */

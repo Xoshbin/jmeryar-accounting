@@ -2,7 +2,6 @@
 
 namespace Xoshbin\JmeryarAccounting\JmeryarPanel\Pages;
 
-use Xoshbin\JmeryarAccounting\Models\Setting;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -11,12 +10,13 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Exceptions\Halt;
+use Xoshbin\JmeryarAccounting\Models\Setting;
 
 class Settings extends Page implements HasForms
 {
     use InteractsWithForms;
 
-//    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    //    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     public ?array $data = [];
 
@@ -75,10 +75,10 @@ class Settings extends Page implements HasForms
                                             ->image()
                                             ->disk('public')
                                             ->columnSpanFull(),
-                                    ])
+                                    ]),
                             ])
-                            ->columnSpan(1)
-                    ])
+                            ->columnSpan(1),
+                    ]),
             ])
             ->model($this->setting) // Bind the form to the `Setting` model
             ->statePath('data');
@@ -89,7 +89,7 @@ class Settings extends Page implements HasForms
         return [
             Action::make('save')
                 ->label(__('JmeryarPanel-panels::resources/pages/edit-record.form.actions.save.label'))
-                ->submit('save')
+                ->submit('save'),
         ];
     }
 

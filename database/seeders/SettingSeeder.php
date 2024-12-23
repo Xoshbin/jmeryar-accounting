@@ -2,9 +2,8 @@
 
 namespace Xoshbin\JmeryarAccounting\Database\Seeders;
 
-use Xoshbin\JmeryarAccounting\Models\Setting;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Xoshbin\JmeryarAccounting\Models\Setting;
 
 class SettingSeeder extends Seeder
 {
@@ -20,8 +19,8 @@ class SettingSeeder extends Seeder
                 'company_phone' => '1234567890',
                 'company_address' => '123 Main St',
                 'company_website' => 'jmeryar.com',
-                'currency_id' => 1
-            ]
+                'currency_id' => 1,
+            ],
         ];
         Setting::insert($settings);
     }

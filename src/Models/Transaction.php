@@ -24,6 +24,7 @@ class Transaction extends Model
     ];
 
     public const TYPE_DEBIT = 'Debit';
+
     public const TYPE_CREDIT = 'Credit';
 
     /**

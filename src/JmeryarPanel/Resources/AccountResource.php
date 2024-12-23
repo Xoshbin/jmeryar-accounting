@@ -2,20 +2,18 @@
 
 namespace Xoshbin\JmeryarAccounting\JmeryarPanel\Resources;
 
-use Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\AccountResource\Pages;
-use Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\AccountResource\RelationManagers;
-use Xoshbin\JmeryarAccounting\Models\Account;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Xoshbin\JmeryarAccounting\Models\Account;
 
 class AccountResource extends Resource
 {
     protected static ?string $model = Account::class;
 
-//    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    //    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationGroup = 'Accounting';
 

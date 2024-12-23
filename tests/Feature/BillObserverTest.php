@@ -1,15 +1,15 @@
 <?php
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Xoshbin\JmeryarAccounting\Database\Seeders\DatabaseSeeder;
+use Xoshbin\JmeryarAccounting\Models\Account;
 use Xoshbin\JmeryarAccounting\Models\Bill;
 use Xoshbin\JmeryarAccounting\Models\BillItem;
-use Xoshbin\JmeryarAccounting\Models\Supplier;
-use Xoshbin\JmeryarAccounting\Models\Product;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Xoshbin\JmeryarAccounting\Models\Account;
 use Xoshbin\JmeryarAccounting\Models\Currency;
 use Xoshbin\JmeryarAccounting\Models\JournalEntry;
 use Xoshbin\JmeryarAccounting\Models\Payment;
+use Xoshbin\JmeryarAccounting\Models\Product;
+use Xoshbin\JmeryarAccounting\Models\Supplier;
 use Xoshbin\JmeryarAccounting\Models\Tax;
 
 /**
@@ -18,15 +18,15 @@ use Xoshbin\JmeryarAccounting\Models\Tax;
  * Stage 1: When the bill is received
  * | Date       | Account              | Debit  | Credit |
  * |------------|----------------------|--------|--------|
- * | YYYY-MM-DD | Expense Account      | Amount |        | 
+ * | YYYY-MM-DD | Expense Account      | Amount |        |
  * | YYYY-MM-DD | Tax Payable Account  | Amount |        |
- * | YYYY-MM-DD | Accounts Payable     |        | Amount | 
+ * | YYYY-MM-DD | Accounts Payable     |        | Amount |
  *
  * Stage 2: When the bill is paid
  * | Date       | Account              | Debit  | Credit |
  * |------------|----------------------|--------|--------|
  * | YYYY-MM-DD | Accounts Payable     | Amount |        |
- * | YYYY-MM-DD | Cash/Bank Account    |        | Amount | 
+ * | YYYY-MM-DD | Cash/Bank Account    |        | Amount |
  *
  * Explanation:
  * - Accounts Payable: Credited when the bill is received (liability), debited when paid.
@@ -34,7 +34,6 @@ use Xoshbin\JmeryarAccounting\Models\Tax;
  * - Tax Payable Account: Debited with the tax amount.
  * - Cash/Bank Account: Credited when the bill is paid, reducing the balance.
  */
-
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
@@ -142,7 +141,6 @@ it('creates a bill with multiple items correctly', function () {
     expect($bill->untaxed_amount)->toBe($billItem1->untaxed_amount + $billItem2->untaxed_amount);
     expect($bill->tax_amount)->toBe($expectedTaxAmount);
 });
-
 
 it('attaches journal entries to the bill', function () {
     $quantity = 2;
@@ -252,7 +250,7 @@ it('deletes taxes when an bill item is deleted', function () {
 
     $billItem->taxes()->attach([
         'tax_id' => $tax->id,
-        'tax_amount' => ($quantity * $costPrice) * $taxPercent
+        'tax_amount' => ($quantity * $costPrice) * $taxPercent,
     ]);
 
     $billItem->delete();
@@ -273,7 +271,7 @@ it('deletes taxes when an bill is deleted', function () {
 
     $billItem->taxes()->attach([
         'tax_id' => $tax->id,
-        'tax_amount' => ($quantity * $costPrice) * $taxPercent
+        'tax_amount' => ($quantity * $costPrice) * $taxPercent,
     ]);
 
     $bill->delete();
@@ -294,7 +292,7 @@ it('calculates the untaxed amount of the bill correctly', function () {
 
     $billItem->taxes()->attach([
         'tax_id' => $tax->id,
-        'tax_amount' => ($quantity * $costPrice) * $taxPercent
+        'tax_amount' => ($quantity * $costPrice) * $taxPercent,
     ]);
 
     $billItem2 = createBillItem($bill, $this->product, 3, 50, $taxPercent);
@@ -326,9 +324,8 @@ it('attaches the correct journal entries to the bill', function () {
 
     $billItem->taxes()->attach([
         'tax_id' => $tax->id,
-        'tax_amount' => ($quantity * $costPrice) * $taxPercent
+        'tax_amount' => ($quantity * $costPrice) * $taxPercent,
     ]);
-
 
     /**
      * The journal entries for a bill are recorded as follows:
@@ -344,7 +341,6 @@ it('attaches the correct journal entries to the bill', function () {
      * - Expense Account: Debited with the untaxed amount (200), representing the expense incurred.
      * - Tax Payable Account: Debited with the tax amount (30), representing the tax liability.
      */
-
 
     // Assert that three journal entries are created and attached to the bill
     expect($bill->journalEntries()->count())->toBe(3);
@@ -393,7 +389,7 @@ it('calculates taxes correctly for multiple bill items with the same product but
 
     $billItem->taxes()->attach([
         'tax_id' => $tax->id,
-        'tax_amount' => ($quantity * $costPrice) * $taxPercent
+        'tax_amount' => ($quantity * $costPrice) * $taxPercent,
     ]);
 
     $billItem2 = createBillItem($bill, $this->product, 3, 50, 125, 5);
@@ -402,7 +398,7 @@ it('calculates taxes correctly for multiple bill items with the same product but
 
     $billItem2->taxes()->attach([
         'tax_id' => $tax->id,
-        'tax_amount' => (3 * 50) * 5
+        'tax_amount' => (3 * 50) * 5,
     ]);
 
     // Refresh the bill to ensure the total_amount is updated
@@ -422,14 +418,14 @@ it('attaches the correct journal entries when a bill is paid without tax', funct
      * Stage 1: When the bill is received
      * | Date       | Account              | Debit  | Credit |
      * |------------|----------------------|--------|--------|
-     * | YYYY-MM-DD | Expense Account      | 200    |        | 
-     * | YYYY-MM-DD | Accounts Payable     |        | 200    | 
+     * | YYYY-MM-DD | Expense Account      | 200    |        |
+     * | YYYY-MM-DD | Accounts Payable     |        | 200    |
      *
      * Stage 2: When the bill is paid
      * | Date       | Account              | Debit  | Credit |
      * |------------|----------------------|--------|--------|
      * | YYYY-MM-DD | Accounts Payable     | 200    |        |
-     * | YYYY-MM-DD | Cash/Bank Account    |        | 200    | 
+     * | YYYY-MM-DD | Cash/Bank Account    |        | 200    |
      *
      * Explanation:
      * - Accounts Payable: Credited when the bill is received (liability), debited when paid.
@@ -437,7 +433,6 @@ it('attaches the correct journal entries when a bill is paid without tax', funct
      * - Tax Payable Account: Debited with the tax amount.
      * - Cash/Bank Account: Credited when the bill is paid, reducing the balance.
      */
-
     $quantity = 2;
     $costPrice = 100;
     $taxPercent = 0;
@@ -585,15 +580,15 @@ it('attaches the correct journal entries when a bill is paid with tax', function
      * Stage 1: When the bill is received
      * | Date       | Account              | Debit  | Credit |
      * |------------|----------------------|--------|--------|
-     * | YYYY-MM-DD | Expense Account      | Amount |        | 
+     * | YYYY-MM-DD | Expense Account      | Amount |        |
      * | YYYY-MM-DD | Tax Payable Account  | Amount |        |
-     * | YYYY-MM-DD | Accounts Payable     |        | Amount | 
+     * | YYYY-MM-DD | Accounts Payable     |        | Amount |
      *
      * Stage 2: When the bill is paid
      * | Date       | Account              | Debit  | Credit |
      * |------------|----------------------|--------|--------|
      * | YYYY-MM-DD | Accounts Payable     | Amount |        |
-     * | YYYY-MM-DD | Cash/Bank Account    |        | Amount | 
+     * | YYYY-MM-DD | Cash/Bank Account    |        | Amount |
      *
      * Explanation:
      * - Accounts Payable: Credited when the bill is received (liability), debited when paid.
@@ -601,7 +596,6 @@ it('attaches the correct journal entries when a bill is paid with tax', function
      * - Tax Payable Account: Debited with the tax amount.
      * - Cash/Bank Account: Credited when the bill is paid, reducing the balance.
      */
-
     $quantity = 2;
     $costPrice = 100;
     $taxPercent = 15;
@@ -614,7 +608,7 @@ it('attaches the correct journal entries when a bill is paid with tax', function
 
     $billItem->taxes()->attach([
         'tax_id' => $tax->id,
-        'tax_amount' => ($quantity * $costPrice) * $taxPercent
+        'tax_amount' => ($quantity * $costPrice) * $taxPercent,
     ]);
 
     // Assert that exactly three journal entries are created and attached to the bill
@@ -761,9 +755,8 @@ it('attaches the correct journal entries when a bill is partially paid with tax'
 
     $billItem->taxes()->attach([
         'tax_id' => $tax->id,
-        'tax_amount' => ($quantity * $costPrice) * $taxPercent
+        'tax_amount' => ($quantity * $costPrice) * $taxPercent,
     ]);
-
 
     // Assert that exactly three journal entries are created and attached to the bill
     expect($bill->journalEntries()->count())->toBe(3);
@@ -860,7 +853,7 @@ it('calculates bill amounts correctly when bill item is updated', function () {
         'quantity' => 3,
         'total_cost' => 345.0,
         'tax_amount' => 45.0,
-        'untaxed_amount' => 300.0
+        'untaxed_amount' => 300.0,
     ]);
 
     // Refresh the bill to get updated values
@@ -919,4 +912,4 @@ it('calculates amount_due correctly when bill is partially paid', function () {
     // Verify total payments equal total amount
     $totalPayments = $bill->payments()->sum('amount');
     expect($totalPayments)->toBe(230 * 100);
-})->only();
+});

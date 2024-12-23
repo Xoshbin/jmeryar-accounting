@@ -8,8 +8,8 @@ use Xoshbin\JmeryarAccounting\Services\InventoryBatchService;
 
 class BillItemObserver
 {
-
     protected $billService;
+
     protected $inventoryBatchService;
 
     public function __construct(BillService $billService, InventoryBatchService $inventoryBatchService)

@@ -6,7 +6,6 @@ use Xoshbin\JmeryarAccounting\Models\BillItem;
 
 class BillService
 {
-
     /**
      * Update the total amount of the associated bill.
      */
@@ -19,6 +18,7 @@ class BillService
             $carry['total'] += $item->total_cost;
             $carry['tax'] += $item->tax_amount;
             $carry['untaxed'] += $item->untaxed_amount;
+
             return $carry;
         }, ['total' => 0, 'tax' => 0, 'untaxed' => 0]);
 

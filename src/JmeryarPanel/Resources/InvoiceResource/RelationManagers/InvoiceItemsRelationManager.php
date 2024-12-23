@@ -2,8 +2,6 @@
 
 namespace Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\InvoiceResource\RelationManagers;
 
-use Xoshbin\JmeryarAccounting\Models\Account;
-use Xoshbin\JmeryarAccounting\Models\Product;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -11,6 +9,8 @@ use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Xoshbin\JmeryarAccounting\Models\Account;
+use Xoshbin\JmeryarAccounting\Models\Product;
 
 class InvoiceItemsRelationManager extends RelationManager
 {

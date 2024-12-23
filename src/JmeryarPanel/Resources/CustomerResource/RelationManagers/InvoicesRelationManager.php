@@ -33,7 +33,7 @@ class InvoicesRelationManager extends RelationManager
                         'Sent' => 'Sent',
                         'Partial' => 'Partial',
                         'Paid' => 'Paid',
-                    ])
+                    ]),
             ]);
     }
 
