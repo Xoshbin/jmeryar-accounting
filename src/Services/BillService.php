@@ -12,17 +12,36 @@ class BillService
      */
     public function updateBillTotal(BillItem $billItem): void
     {
-        $bill = $billItem->bill;
+        $bill = $billItem->bill->fresh();  // Get fresh instance
 
-        // Calculate the total amount including taxes
-        $totalAmount = $bill->billItems->sum('total_cost');
-        $taxAmount = $bill->billItems->sum('tax_amount');
-        $untaxedAmount = $bill->billItems->sum('untaxed_amount');
+        // Skip if already updating
+        if ($bill->updating_total) {
+            return;
+        }
 
-        // Update the attributes and save the model
-        $bill->untaxed_amount = $untaxedAmount;
-        $bill->tax_amount = $taxAmount;
-        $bill->total_amount = $totalAmount;
-        $bill->saveQuietly(); // This will trigger the observer's updated method
+        // Set the updating_total flag before saving
+        $bill->updating_total = true;
+
+        // Calculate new totals from fresh bill items
+        $totals = $bill->billItems()->get()->reduce(function ($carry, $item) {
+            $carry['total'] += $item->total_cost;
+            $carry['tax'] += $item->tax_amount;
+            $carry['untaxed'] += $item->untaxed_amount;
+            return $carry;
+        }, ['total' => 0, 'tax' => 0, 'untaxed' => 0]);
+
+        // Only save if values actually changed
+        if ($bill->total_amount != $totals['total'] || 
+            $bill->tax_amount != $totals['tax'] || 
+            $bill->untaxed_amount != $totals['untaxed']) {
+            
+            $bill->total_amount = $totals['total'];
+            $bill->tax_amount = $totals['tax'];
+            $bill->untaxed_amount = $totals['untaxed'];
+            $bill->save(); // Use regular save to trigger observer
+        }
+        
+        // Reset the flag
+        $bill->updating_total = false;
     }
 }

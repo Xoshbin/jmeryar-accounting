@@ -27,12 +27,22 @@ class BillObserver
      */
     public function updated(Bill $bill): void
     {
-        // Delete existing journal entries for the bill
-        $this->journalEntryService->deleteBillJournalEntries($bill);
+        // Skip if not updating totals
+        if (!$bill->updating_total) {
+            return;
+        }
 
-
-        // Recreate journal entries with updated amounts
-        $this->journalEntryService->createBillJournalEntries($bill);
+        $originalValues = $bill->getOriginal();
+        $newValues = $bill->getAttributes();
+        
+        // Check if amounts actually changed
+        if ($originalValues['total_amount'] != $newValues['total_amount'] ||
+            $originalValues['untaxed_amount'] != $newValues['untaxed_amount'] ||
+            $originalValues['tax_amount'] != $newValues['tax_amount']) {
+            
+            $this->journalEntryService->deleteBillJournalEntries($bill);
+            $this->journalEntryService->createBillJournalEntries($bill);
+        }
     }
 
     /**

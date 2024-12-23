@@ -11,6 +11,14 @@ class JournalEntriesService
 {
     public function createBillJournalEntries(Bill $bill): void
     {
+        // Only check total_amount as validation
+        if ($bill->total_amount <= 0) {
+            return;
+        }
+
+        // Delete any existing entries before creating new ones
+        $this->deleteBillJournalEntries($bill);
+
         // Debit the Expense Account for the untaxed portion
         $expenseEntry = JournalEntry::create([
             'account_id' => $bill->expense_account_id, // Expense account for the untaxed portion
@@ -57,10 +65,11 @@ class JournalEntriesService
      */
     public function deleteBillJournalEntries(Bill $bill): void
     {
-        // Assuming there is a relationship between Bill and JournalEntry
-        foreach ($bill->journalEntries as $entry) {
+        // Simplified deletion process
+        $bill->journalEntries()->each(function ($entry) {
             $entry->deleteQuietly();
-        }
+        });
+        $bill->journalEntries()->detach();
     }
 
     /**

@@ -505,7 +505,7 @@ it('attaches the correct journal entries when a bill is paid without tax', funct
     expect($bill->status)->toBe('Paid');
 
     // Ensure total debits equal total credits
-    $totalDebits = $bill->journalEntries()->sum('debit'); //TODO:: you may find the error if you go deeper in this line, why untaxed is not equal to total in bill, check dd($bill->journalEntries())
+    $totalDebits = $bill->journalEntries()->sum('debit');
     $totalCredits = $bill->journalEntries()->sum('credit');
 
     expect($totalDebits)->toBe($totalCredits);
@@ -526,18 +526,35 @@ it('updates inventory and journal entries when a bill item quantity is updated',
 
     expect($bill->journalEntries()->count())->toBe(2);
 
-    $billItem->quantity = 4; // Increase quantity
-    $billItem->total_cost = 400; // Increase total_cost 4 * 200
-    $billItem->untaxed_amount = 400; // Increase quantity
-    $billItem->save();
+    // Assert that the journal entries have the correct amounts and accounts
+    $accountsPayableEntry = $bill->journalEntries()->where('credit', 200 * 100)->first(); // * 100 CastMoney
+    $expenseEntry = $bill->journalEntries()->where('debit', 200 * 100)->first();
 
-    // Refresh the bill to ensure the total_amount is updated
-    $bill->refresh();
+    // Assert Accounts Payable entry
+    expect($accountsPayableEntry->account_id)->toBe(Account::where('type', Account::TYPE_LIABILITY)->first()->id);
+    expect($accountsPayableEntry->credit)->toBe(200.0);
+
+    // Assert Expense entry
+    expect($expenseEntry->account_id)->toBe(Account::where('type', Account::TYPE_EXPENSE)->first()->id);
+    expect($expenseEntry->debit)->toBe(200.0);
+
+    // Ensure total debits equal total credits
+    $totalDebits = $bill->journalEntries()->sum('debit');
+    $totalCredits = $bill->journalEntries()->sum('credit');
+    expect($totalDebits)->toBe($totalCredits);
+
+
+    // Update the bill item quantity
+
+    $billItem->quantity = 4;
+    $billItem->total_cost = 400;
+    $billItem->untaxed_amount = 400;
+    $billItem->save();
 
     expect($billItem->total_cost)->toBe(400.0);
     expect($billItem->untaxed_amount)->toBe(400.0);
 
-    sleep(1);
+    $bill->refresh();
 
     // Assert that the journal entries are updated (You'll need to add assertions for specific journal entry values)
     expect($bill->journalEntries()->count())->toBe(2);
@@ -562,11 +579,11 @@ it('updates inventory and journal entries when a bill item quantity is updated',
 
     // Assert Accounts Payable entry
     expect($accountsPayableEntry->account_id)->toBe(Account::where('type', Account::TYPE_LIABILITY)->first()->id);
-    expect($accountsPayableEntry->credit)->toBe(800.0);
+    expect($accountsPayableEntry->credit)->toBe(400.0);
 
     // Assert Expense entry
     expect($expenseEntry->account_id)->toBe(Account::where('type', Account::TYPE_EXPENSE)->first()->id);
-    expect($expenseEntry->debit)->toBe(800.0);
+    expect($expenseEntry->debit)->toBe(400.0);
 
     // Ensure total debits equal total credits
     $totalDebits = $bill->journalEntries()->sum('debit');
@@ -574,7 +591,7 @@ it('updates inventory and journal entries when a bill item quantity is updated',
     expect($totalDebits)->toBe($totalCredits);
 
     // Assert that the bill's untaxed_amount is correct
-    expect($bill->untaxed_amount)->toBe(800.0);
+    expect($bill->untaxed_amount)->toBe(400.0);
 });
 
 it('attaches the correct journal entries when a bill is paid with tax', function () {

@@ -18,6 +18,11 @@ class Bill extends Model
 {
     use HasFactory;
 
+    /**
+     * Runtime flag to prevent recursive updates - not stored in database
+     */
+    public $updating_total = false;
+
     protected $fillable = [
         'bill_number',
         'bill_date',
