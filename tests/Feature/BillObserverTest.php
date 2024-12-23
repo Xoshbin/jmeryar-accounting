@@ -45,7 +45,6 @@ beforeEach(function () {
 
 function createBill($supplier, $quantity, $costPrice, $taxPercent = 0): Bill
 {
-    // Create a bill
     $bill = Bill::factory()->create([
         'supplier_id' => $supplier->id,
         'total_amount' => ($quantity * $costPrice) + (($quantity * $costPrice) * ($taxPercent / 100)),
@@ -58,7 +57,6 @@ function createBill($supplier, $quantity, $costPrice, $taxPercent = 0): Bill
 
 function createBillItem($bill, $product, $quantity, $costPrice, $taxPercent = 0): BillItem
 {
-    // Create bill items
     $billItem = BillItem::factory()->create([
         'bill_id' => $bill->id,
         'product_id' => $product->id,
@@ -92,7 +90,6 @@ it('creates a bill with correct attributes', function () {
     $costPrice = 100;
     $taxPercent = 15;
 
-    // Create a bill
     $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
     // Assert that the bill has the correct attributes
@@ -107,7 +104,6 @@ it('creates a bill without tax correctly', function () {
     $costPrice = 100;
     $taxPercent = 0;
 
-    // Create a bill
     $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
     // Assert that the bill has the correct attributes
@@ -126,10 +122,8 @@ it('creates a bill with multiple items correctly', function () {
     $costPrice2 = 50;
     $taxPercent2 = 5;
 
-    // Create a bill
     $bill = createBill($this->supplier, $quantity1, $costPrice1, $taxPercent1);
 
-    // Create bill items
     $billItem1 = createBillItem($bill, $this->product, $quantity1, $costPrice1, 150, $taxPercent1);
     $billItem2 = createBillItem($bill, $this->product, $quantity2, $costPrice2, 125, $taxPercent2);
 
@@ -153,7 +147,7 @@ it('attaches journal entries to the bill', function () {
     $quantity = 2;
     $costPrice = 100;
     $taxPercent = 0;
-    // Create a bill
+
     $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
     $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
@@ -167,11 +161,10 @@ it('attaches journal entries to the bill', function () {
 });
 
 it('restores inventory to the correct batches when a (bill item) is deleted', function () {
-
     $quantity = 2;
     $costPrice = 100;
     $taxPercent = 0;
-    // Create a bill
+
     $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
     $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
@@ -191,11 +184,10 @@ it('restores inventory to the correct batches when a (bill item) is deleted', fu
 });
 
 it('restores inventory to the correct batches when an (bill) is deleted', function () {
-
     $quantity = 2;
     $costPrice = 100;
     $taxPercent = 0;
-    // Create a bill
+
     $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
     $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
@@ -215,11 +207,10 @@ it('restores inventory to the correct batches when an (bill) is deleted', functi
 });
 
 it('attaches two journal entries to the bill when there is no tax', function () {
-    // Create a bill with no tax
     $quantity = 2;
     $costPrice = 100;
     $taxPercent = 0;
-    // Create a bill
+
     $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
     $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
@@ -232,11 +223,10 @@ it('attaches two journal entries to the bill when there is no tax', function () 
 });
 
 it('attaches three journal entries to the bill when there is tax', function () {
-    // Create a bill with tax
     $quantity = 2;
     $costPrice = 100;
     $taxPercent = 15;
-    // Create a bill
+
     $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
     $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
@@ -249,11 +239,10 @@ it('attaches three journal entries to the bill when there is tax', function () {
 });
 
 it('deletes taxes when an bill item is deleted', function () {
-
     $quantity = 2;
     $costPrice = 100;
     $taxPercent = 15;
-    // Create a bill
+
     $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
     $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
@@ -274,7 +263,7 @@ it('deletes taxes when an bill is deleted', function () {
     $quantity = 2;
     $costPrice = 100;
     $taxPercent = 15;
-    // Create a bill
+
     $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
     $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
@@ -292,11 +281,10 @@ it('deletes taxes when an bill is deleted', function () {
 });
 
 it('calculates the untaxed amount of the bill correctly', function () {
-    // Create a bill
     $quantity = 2;
     $costPrice = 100;
     $taxPercent = 15;
-    // Create a bill
+
     $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
     $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
@@ -328,7 +316,7 @@ it('attaches the correct journal entries to the bill', function () {
     $quantity = 2;
     $costPrice = 100;
     $taxPercent = 15;
-    // Create a bill
+
     $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
     $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
@@ -392,11 +380,10 @@ it('attaches the correct journal entries to the bill', function () {
 });
 
 it('calculates taxes correctly for multiple bill items with the same product but different prices and taxes', function () {
-    // Create a bill
     $quantity = 2;
     $costPrice = 100;
     $taxPercent = 0;
-    // Create a bill
+
     $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
     $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
@@ -428,7 +415,6 @@ it('calculates taxes correctly for multiple bill items with the same product but
 });
 
 it('attaches the correct journal entries when a bill is paid without tax', function () {
-
     /**
      * The journal entries for a bill are recorded in two stages:
      *
@@ -454,7 +440,7 @@ it('attaches the correct journal entries when a bill is paid without tax', funct
     $quantity = 2;
     $costPrice = 100;
     $taxPercent = 0;
-    // Create a bill
+
     $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
     $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
@@ -515,11 +501,10 @@ it('attaches the correct journal entries when a bill is paid without tax', funct
 });
 
 it('updates inventory and journal entries when a bill item quantity is updated', function () {
-
     $quantity = 2;
     $costPrice = 100;
     $taxPercent = 0;
-    // Create a bill
+
     $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
     $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
@@ -543,9 +528,7 @@ it('updates inventory and journal entries when a bill item quantity is updated',
     $totalCredits = $bill->journalEntries()->sum('credit');
     expect($totalDebits)->toBe($totalCredits);
 
-
     // Update the bill item quantity
-
     $billItem->quantity = 4;
     $billItem->total_cost = 400;
     $billItem->untaxed_amount = 400;
@@ -595,7 +578,6 @@ it('updates inventory and journal entries when a bill item quantity is updated',
 });
 
 it('attaches the correct journal entries when a bill is paid with tax', function () {
-
     /**
      * The journal entries for a bill are recorded in two stages:
      *
@@ -619,12 +601,10 @@ it('attaches the correct journal entries when a bill is paid with tax', function
      * - Cash/Bank Account: Credited when the bill is paid, reducing the balance.
      */
 
-
-    // Create a bill with tax
     $quantity = 2;
     $costPrice = 100;
     $taxPercent = 15;
-    // Create a bill
+
     $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
     $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
@@ -655,7 +635,6 @@ it('attaches the correct journal entries when a bill is paid with tax', function
     // Assert Tax Payable entry
     expect($taxPayableEntry->account_id)->toBe(Account::where('name', 'Tax Payable')->first()->id);
     expect($taxPayableEntry->debit)->toBe(30.0);
-
 
     // stage 2: Pay the bill
     $currency_id = Currency::where('code', 'USD')->first()->id;
@@ -704,11 +683,10 @@ it('attaches the correct journal entries when a bill is paid with tax', function
 });
 
 it('attaches the correct journal entries when a bill is partially paid without tax', function () {
-
     $quantity = 2;
     $costPrice = 100;
     $taxPercent = 0;
-    // Create a bill
+
     $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
     $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
@@ -770,11 +748,10 @@ it('attaches the correct journal entries when a bill is partially paid without t
 });
 
 it('attaches the correct journal entries when a bill is partially paid with tax', function () {
-    // Create a bill with tax
     $quantity = 2;
     $costPrice = 100;
     $taxPercent = 15;
-    // Create a bill
+
     $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
     $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
@@ -845,4 +822,54 @@ it('attaches the correct journal entries when a bill is partially paid with tax'
 
     // Assert that the bill's untaxed_amount is correct
     expect($bill->untaxed_amount)->toBe(200.0);
+});
+
+it('calculates bill amounts correctly', function () {
+    $quantity = 2;
+    $costPrice = 100;
+    $taxPercent = 15;
+
+    $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
+    $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
+
+    // Assert the amounts are calculated correctly
+    expect($bill->untaxed_amount)->toBe(200.0);
+    expect($bill->tax_amount)->toBe(30.0);
+    expect($bill->total_amount)->toBe(230.0);
+
+    // Verify that total_amount equals untaxed_amount plus tax_amount
+    expect($bill->total_amount)->toBe($bill->untaxed_amount + $bill->tax_amount);
+});
+
+it('calculates bill amounts correctly when bill item is updated', function () {
+    $quantity = 2;
+    $costPrice = 100;
+    $taxPercent = 15;
+
+    $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
+    $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
+
+    // Initial assertions
+    expect($bill->untaxed_amount)->toBe(200.0);
+    expect($bill->tax_amount)->toBe(30.0);
+    expect($bill->total_amount)->toBe(230.0);
+
+    // Update bill item
+    $billItem->update([
+        'quantity' => 3,
+        'total_cost' => 345.0,
+        'tax_amount' => 45.0,
+        'untaxed_amount' => 300.0
+    ]);
+
+    // Refresh the bill to get updated values
+    $bill->refresh();
+
+    // Assert the amounts are updated correctly
+    expect($bill->untaxed_amount)->toBe(300.0);
+    expect($bill->tax_amount)->toBe(45.0);
+    expect($bill->total_amount)->toBe(345.0);
+
+    // Verify that total_amount equals untaxed_amount plus tax_amount
+    expect($bill->total_amount)->toBe($bill->untaxed_amount + $bill->tax_amount);
 });
