@@ -263,41 +263,6 @@ it('attaches three journal entries to the invoice when there is tax', function (
     expect($invoice->journalEntries()->count())->toBe(3);
 });
 
-// it('updates inventory and journal entries when an invoice item quantity is updated', function () {
-//     $quantity = 1;
-//     $unitPrice = 200;
-//     $taxPercent = 0;
-
-//     // Create an invoice
-
-//     $invoice = TestServices::createInvoice($this->customer, $quantity, $unitPrice, $taxPercent);
-
-//     $batch = $this->product->inventoryBatches()->oldest()->first();
-
-//     $originalBatchQuantity = $batch->quantity;
-
-//     $invoiceItem = TestServices::createInvoiceItem($invoice, $this->product, $quantity, $unitPrice, $taxPercent);
-
-//     $invoiceItem->quantity = 2; // Increase quantity
-//     $invoiceItem->total_price = 400; // Increase total_price 2 * 200
-//     $invoiceItem->save();
-
-//     $batch->refresh();
-
-//     // Assert that the batch quantity is updated correctly
-//     expect($batch->quantity)->toBe($originalBatchQuantity - $invoiceItem->quantity);
-
-//     // Assert that the journal entries are updated (You'll need to add assertions for specific journal entry values)
-//     expect($invoice->journalEntries()->count())->toBe(2);
-
-//     // Assert that the journal entries have the correct amounts and accounts
-//     $debitEntry = $invoice->journalEntries()->where('debit', 200 * 100)->first();
-//     $creditEntry = $invoice->journalEntries()->where('credit', 200 * 100)->first();
-
-//     expect($debitEntry->debit)->toBe(200.0);
-//     expect($creditEntry->credit)->toBe(200.0);
-// });
-
 it('deletes taxes when an invoice item is deleted', function () {
     $quantity = 1;
     $unitPrice = 200;
