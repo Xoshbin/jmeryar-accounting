@@ -3,7 +3,6 @@
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Xoshbin\JmeryarAccounting\Database\Seeders\DatabaseSeeder;
 use Xoshbin\JmeryarAccounting\Models\Account;
-use Xoshbin\JmeryarAccounting\Models\Bill;
 use Xoshbin\JmeryarAccounting\Models\BillItem;
 use Xoshbin\JmeryarAccounting\Models\Currency;
 use Xoshbin\JmeryarAccounting\Models\JournalEntry;
@@ -11,6 +10,7 @@ use Xoshbin\JmeryarAccounting\Models\Payment;
 use Xoshbin\JmeryarAccounting\Models\Product;
 use Xoshbin\JmeryarAccounting\Models\Supplier;
 use Xoshbin\JmeryarAccounting\Models\Tax;
+use Tests\Services\TestServices;
 
 /**
  * The journal entries for a bill are recorded in two stages:
@@ -42,55 +42,12 @@ beforeEach(function () {
     $this->product = Product::factory()->create();
 });
 
-function createBill($supplier, $quantity, $costPrice, $taxPercent = 0): Bill
-{
-    $bill = Bill::factory()->create([
-        'supplier_id' => $supplier->id,
-        'total_amount' => ($quantity * $costPrice) + (($quantity * $costPrice) * ($taxPercent / 100)),
-        'tax_amount' => ($quantity * $costPrice) * ($taxPercent / 100),
-        'untaxed_amount' => $quantity * $costPrice,
-        'amount_due' => ($quantity * $costPrice) + (($quantity * $costPrice) * ($taxPercent / 100)),
-    ]);
-
-    return $bill;
-}
-
-function createBillItem($bill, $product, $quantity, $costPrice, $taxPercent = 0): BillItem
-{
-    $billItem = BillItem::factory()->create([
-        'bill_id' => $bill->id,
-        'product_id' => $product->id,
-        'quantity' => $quantity,
-        'cost_price' => $costPrice,
-        'total_cost' => ($quantity * $costPrice) + (($quantity * $costPrice) * ($taxPercent / 100)),
-        'tax_amount' => ($quantity * $costPrice) * ($taxPercent / 100),
-        'untaxed_amount' => $quantity * $costPrice,
-    ]);
-
-    return $billItem;
-}
-
-function createPayment($bill, $amount, $paymentMethod, $paymentType, $currencyId, $exchangeRate, $amountInInvoiceCurrency): Payment
-{
-    $payment = $bill->payments()->create([
-        'amount' => $amount,
-        'payment_date' => now(),
-        'payment_method' => $paymentMethod,
-        'payment_type' => $paymentType,
-        'currency_id' => $currencyId,
-        'exchange_rate' => $exchangeRate,
-        'amount_in_invoice_currency' => $amountInInvoiceCurrency,
-    ]);
-
-    return $payment;
-}
-
 it('creates a bill with correct attributes', function () {
     $quantity = 2;
     $costPrice = 100;
     $taxPercent = 15;
 
-    $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
+    $bill = TestServices::createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
     // Assert that the bill has the correct attributes
     expect($bill->supplier_id)->toBe($this->supplier->id);
@@ -104,7 +61,7 @@ it('creates a bill without tax correctly', function () {
     $costPrice = 100;
     $taxPercent = 0;
 
-    $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
+    $bill = TestServices::createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
     // Assert that the bill has the correct attributes
     expect($bill->supplier_id)->toBe($this->supplier->id);
@@ -122,10 +79,10 @@ it('creates a bill with multiple items correctly', function () {
     $costPrice2 = 50;
     $taxPercent2 = 5;
 
-    $bill = createBill($this->supplier, $quantity1, $costPrice1, $taxPercent1);
+    $bill = TestServices::createBill($this->supplier, $quantity1, $costPrice1, $taxPercent1);
 
-    $billItem1 = createBillItem($bill, $this->product, $quantity1, $costPrice1, 150, $taxPercent1);
-    $billItem2 = createBillItem($bill, $this->product, $quantity2, $costPrice2, 125, $taxPercent2);
+    $billItem1 = TestServices::createBillItem($bill, $this->product, $quantity1, $costPrice1, 150, $taxPercent1);
+    $billItem2 = TestServices::createBillItem($bill, $this->product, $quantity2, $costPrice2, 125, $taxPercent2);
 
     // Refresh the bill to ensure the total_amount is updated
     $bill->refresh();
@@ -147,9 +104,9 @@ it('attaches journal entries to the bill', function () {
     $costPrice = 100;
     $taxPercent = 0;
 
-    $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
+    $bill = TestServices::createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
-    $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
+    $billItem = TestServices::createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
 
     // Assert that journal entries are created and attached to the bill
     expect($bill->journalEntries()->count())->toBe(2);
@@ -164,9 +121,9 @@ it('restores inventory to the correct batches when a (bill item) is deleted', fu
     $costPrice = 100;
     $taxPercent = 0;
 
-    $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
+    $bill = TestServices::createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
-    $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
+    $billItem = TestServices::createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
 
     $batch = $this->product->inventoryBatches()->oldest()->first();
 
@@ -187,9 +144,9 @@ it('restores inventory to the correct batches when an (bill) is deleted', functi
     $costPrice = 100;
     $taxPercent = 0;
 
-    $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
+    $bill = TestServices::createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
-    $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
+    $billItem = TestServices::createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
 
     $batch = $this->product->inventoryBatches()->oldest()->first();
 
@@ -210,9 +167,9 @@ it('attaches two journal entries to the bill when there is no tax', function () 
     $costPrice = 100;
     $taxPercent = 0;
 
-    $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
+    $bill = TestServices::createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
-    $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
+    $billItem = TestServices::createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
 
     // Assert that exactly two journal entries are created and attached to the bill
     expect($bill->journalEntries()->count())->toBe(2);
@@ -226,9 +183,9 @@ it('attaches three journal entries to the bill when there is tax', function () {
     $costPrice = 100;
     $taxPercent = 15;
 
-    $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
+    $bill = TestServices::createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
-    $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
+    $billItem = TestServices::createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
 
     // Assert that exactly three journal entries are created and attached to the bill
     expect($bill->journalEntries()->count())->toBe(3);
@@ -242,9 +199,9 @@ it('deletes taxes when an bill item is deleted', function () {
     $costPrice = 100;
     $taxPercent = 15;
 
-    $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
+    $bill = TestServices::createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
-    $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
+    $billItem = TestServices::createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
 
     $tax = Tax::where('name', '15% Sales')->first();
 
@@ -263,9 +220,9 @@ it('deletes taxes when an bill is deleted', function () {
     $costPrice = 100;
     $taxPercent = 15;
 
-    $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
+    $bill = TestServices::createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
-    $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
+    $billItem = TestServices::createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
 
     $tax = Tax::where('name', '15% Sales')->first();
 
@@ -284,9 +241,9 @@ it('calculates the untaxed amount of the bill correctly', function () {
     $costPrice = 100;
     $taxPercent = 15;
 
-    $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
+    $bill = TestServices::createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
-    $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
+    $billItem = TestServices::createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
 
     $tax = Tax::where('name', '15% Sales')->first();
 
@@ -295,7 +252,7 @@ it('calculates the untaxed amount of the bill correctly', function () {
         'tax_amount' => ($quantity * $costPrice) * $taxPercent,
     ]);
 
-    $billItem2 = createBillItem($bill, $this->product, 3, 50, $taxPercent);
+    $billItem2 = TestServices::createBillItem($bill, $this->product, 3, 50, $taxPercent);
 
     $tax = Tax::where('name', '5% Sales')->first();
 
@@ -316,9 +273,9 @@ it('attaches the correct journal entries to the bill', function () {
     $costPrice = 100;
     $taxPercent = 15;
 
-    $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
+    $bill = TestServices::createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
-    $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
+    $billItem = TestServices::createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
 
     $tax = Tax::where('name', '15% Sales')->first();
 
@@ -381,9 +338,9 @@ it('calculates taxes correctly for multiple bill items with the same product but
     $costPrice = 100;
     $taxPercent = 0;
 
-    $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
+    $bill = TestServices::createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
-    $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
+    $billItem = TestServices::createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
 
     $tax = Tax::where('name', '15% Sales')->first();
 
@@ -392,7 +349,7 @@ it('calculates taxes correctly for multiple bill items with the same product but
         'tax_amount' => ($quantity * $costPrice) * $taxPercent,
     ]);
 
-    $billItem2 = createBillItem($bill, $this->product, 3, 50, 125, 5);
+    $billItem2 = TestServices::createBillItem($bill, $this->product, 3, 50, 125, 5);
 
     $tax = Tax::where('name', '5% Sales')->first();
 
@@ -437,9 +394,9 @@ it('attaches the correct journal entries when a bill is paid without tax', funct
     $costPrice = 100;
     $taxPercent = 0;
 
-    $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
+    $bill = TestServices::createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
-    $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
+    $billItem = TestServices::createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
 
     // Assert that exactly two journal entries are created and attached to the bill
     expect($bill->journalEntries()->count())->toBe(2);
@@ -459,7 +416,7 @@ it('attaches the correct journal entries when a bill is paid without tax', funct
     $currency_id = Currency::where('code', 'USD')->first()->id;
 
     // Stage 2: Pay the bill
-    $payment = createPayment($bill, 200, 'Cash', 'Expense', $currency_id, 1, 200);
+    $payment = TestServices::createPayment($bill, 200, 'Cash', 'Expense', $currency_id, 1, 200);
 
     // Assert that the transaction has two journal entries
     expect($payment->journalEntries()->count())->toBe(2);
@@ -501,9 +458,9 @@ it('updates inventory and journal entries when a bill item quantity is updated',
     $costPrice = 100;
     $taxPercent = 0;
 
-    $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
+    $bill = TestServices::createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
-    $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
+    $billItem = TestServices::createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
 
     expect($bill->journalEntries()->count())->toBe(2);
 
@@ -600,9 +557,9 @@ it('attaches the correct journal entries when a bill is paid with tax', function
     $costPrice = 100;
     $taxPercent = 15;
 
-    $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
+    $bill = TestServices::createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
-    $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
+    $billItem = TestServices::createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
 
     $tax = Tax::where('name', '15% Sales')->first();
 
@@ -635,7 +592,7 @@ it('attaches the correct journal entries when a bill is paid with tax', function
     $currency_id = Currency::where('code', 'USD')->first()->id;
 
     // Stage 2: Pay the bill
-    $payment = createPayment($bill, 230, 'Cash', 'Expense', $currency_id, 1, 230);
+    $payment = TestServices::createPayment($bill, 230, 'Cash', 'Expense', $currency_id, 1, 230);
     expect($payment->amount)->toBe(230.0);
 
     // Assert that the transaction has two journal entries
@@ -682,9 +639,9 @@ it('attaches the correct journal entries when a bill is partially paid without t
     $costPrice = 100;
     $taxPercent = 0;
 
-    $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
+    $bill = TestServices::createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
-    $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
+    $billItem = TestServices::createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
 
     // Assert that exactly two journal entries are created and attached to the bill
     expect($bill->journalEntries()->count())->toBe(2);
@@ -704,7 +661,7 @@ it('attaches the correct journal entries when a bill is partially paid without t
     $currency_id = Currency::where('code', 'USD')->first()->id;
 
     // Stage 2: Pay the bill
-    $payment = createPayment($bill, 100, 'Cash', 'Expense', $currency_id, 1, 200);
+    $payment = TestServices::createPayment($bill, 100, 'Cash', 'Expense', $currency_id, 1, 200);
 
     expect($payment->amount)->toBe(100.0);
 
@@ -747,9 +704,9 @@ it('attaches the correct journal entries when a bill is partially paid with tax'
     $costPrice = 100;
     $taxPercent = 15;
 
-    $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
+    $bill = TestServices::createBill($this->supplier, $quantity, $costPrice, $taxPercent);
 
-    $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
+    $billItem = TestServices::createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
 
     $tax = Tax::where('name', '15% Sales')->first();
 
@@ -782,7 +739,7 @@ it('attaches the correct journal entries when a bill is partially paid with tax'
     $currency_id = Currency::where('code', 'USD')->first()->id;
 
     // Stage 2: Pay the bill
-    $payment = createPayment($bill, 110, 'Cash', 'Expense', $currency_id, 1, 230);
+    $payment = TestServices::createPayment($bill, 110, 'Cash', 'Expense', $currency_id, 1, 230);
 
     expect($payment->journalEntries()->count())->toBe(2);
     expect($payment->amount)->toBe(110.0);
@@ -823,8 +780,8 @@ it('calculates bill amounts correctly', function () {
     $costPrice = 100;
     $taxPercent = 15;
 
-    $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
-    $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
+    $bill = TestServices::createBill($this->supplier, $quantity, $costPrice, $taxPercent);
+    $billItem = TestServices::createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
 
     // Assert the amounts are calculated correctly
     expect($bill->untaxed_amount)->toBe(200.0);
@@ -840,8 +797,8 @@ it('calculates bill amounts correctly when bill item is updated', function () {
     $costPrice = 100;
     $taxPercent = 15;
 
-    $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
-    $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
+    $bill = TestServices::createBill($this->supplier, $quantity, $costPrice, $taxPercent);
+    $billItem = TestServices::createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
 
     // Initial assertions
     expect($bill->untaxed_amount)->toBe(200.0);
@@ -873,8 +830,8 @@ it('calculates amount_due correctly when bill is partially paid', function () {
     $costPrice = 100;
     $taxPercent = 15;
 
-    $bill = createBill($this->supplier, $quantity, $costPrice, $taxPercent);
-    $billItem = createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
+    $bill = TestServices::createBill($this->supplier, $quantity, $costPrice, $taxPercent);
+    $billItem = TestServices::createBillItem($bill, $this->product, $quantity, $costPrice, $taxPercent);
 
     // Initial amount due should equal total amount
     expect($bill->amount_due)->toBe(230.0);
@@ -883,7 +840,7 @@ it('calculates amount_due correctly when bill is partially paid', function () {
 
     // Make first partial payment
     $currency_id = Currency::where('code', 'USD')->first()->id;
-    $payment1 = createPayment($bill, 100, 'Cash', 'Expense', $currency_id, 1, 230);
+    $payment1 = TestServices::createPayment($bill, 100, 'Cash', 'Expense', $currency_id, 1, 230);
 
     $bill->refresh();
 
@@ -892,7 +849,7 @@ it('calculates amount_due correctly when bill is partially paid', function () {
     expect($bill->status)->toBe('Partial');
 
     // Make second partial payment
-    $payment2 = createPayment($bill, 80, 'Cash', 'Expense', $currency_id, 1, 230);
+    $payment2 = TestServices::createPayment($bill, 80, 'Cash', 'Expense', $currency_id, 1, 230);
 
     $bill->refresh();
 
@@ -901,7 +858,7 @@ it('calculates amount_due correctly when bill is partially paid', function () {
     expect($bill->status)->toBe('Partial');
 
     // Make final payment
-    $payment3 = createPayment($bill, 50, 'Cash', 'Expense', $currency_id, 1, 230);
+    $payment3 = TestServices::createPayment($bill, 50, 'Cash', 'Expense', $currency_id, 1, 230);
 
     $bill->refresh();
 

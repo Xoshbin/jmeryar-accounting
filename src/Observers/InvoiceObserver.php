@@ -27,11 +27,19 @@ class InvoiceObserver
      */
     public function updated(Invoice $invoice): void
     {
-        // Delete existing journal entries for the invoice
-        $this->journalEntryService->deleteJournalEntries($invoice);
+        $originalValues = $invoice->getOriginal();
+        $newValues = $invoice->getAttributes();
 
-        // Recreate journal entries with updated amounts
-        $this->journalEntryService->createInvoiceJournalEntries($invoice);
+        // Check if amounts actually changed
+        if (
+            $originalValues['total_amount'] != $newValues['total_amount'] ||
+            $originalValues['untaxed_amount'] != $newValues['untaxed_amount'] ||
+            $originalValues['tax_amount'] != $newValues['tax_amount']
+        ) {
+
+            $this->journalEntryService->deleteJournalEntries($invoice);
+            $this->journalEntryService->createInvoiceJournalEntries($invoice);
+        }
     }
 
     /**

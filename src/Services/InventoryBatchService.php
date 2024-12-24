@@ -42,14 +42,28 @@ class InventoryBatchService
      */
     public function updateInvoiceInventoryBatch(InvoiceItem $invoiceItem): void
     {
-        $originalQuantity = $invoiceItem->getOriginal('quantity');
-        $newQuantity = $invoiceItem->quantity;
-        $quantityDifference = $newQuantity - $originalQuantity;
+        $product = $invoiceItem->product;
 
-        if ($quantityDifference > 0) {
-            $this->deductInventoryFromBatches($invoiceItem, $quantityDifference);
-        } elseif ($quantityDifference < 0) {
-            $this->restoreInventoryToBatches($invoiceItem, abs($quantityDifference));
+        // Find or create an inventory batch linked to this bill item
+        $inventoryBatch = $product->inventoryBatches()
+            ->where('bill_item_id', $invoiceItem->id)
+            ->first();
+
+        if ($inventoryBatch) {
+            // Update the existing batch with new values
+            $inventoryBatch->update([
+                'quantity' => $invoiceItem->quantity,
+                'cost_price' => $invoiceItem->cost_price,
+                'unit_price' => $invoiceItem->unit_price,
+            ]);
+        } else {
+            // Create a new batch if none exists
+            $product->inventoryBatches()->create([
+                'invoice_item_id' => $invoiceItem->id,
+                'quantity' => $invoiceItem->quantity,
+                'cost_price' => $invoiceItem->cost_price,
+                'unit_price' => $invoiceItem->unit_price,
+            ]);
         }
     }
 
