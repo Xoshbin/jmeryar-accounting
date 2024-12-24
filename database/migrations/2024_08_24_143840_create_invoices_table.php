@@ -24,7 +24,7 @@ return new class extends Migration
             $table->enum('status', ['Draft', 'Sent', 'Partial', 'Paid'])->default('draft');
             $table->text('note')->nullable();
             $table->foreignId('revenue_account_id')->constrained('accounts')->onDelete('cascade');
-            $table->foreignId('inventory_account_id')->constrained('accounts')->onDelete('cascade');
+            $table->foreignId('asset_account_id')->constrained('accounts')->onDelete('cascade');
             $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade');
             $table->foreignId('currency_id')->constrained('currencies')->onDelete('cascade');
             $table->timestamps();

@@ -53,11 +53,11 @@ class InvoiceItemsRelationManager extends RelationManager
                     ->numeric(),
                 Forms\Components\Select::make('revenue_account_id')
                     ->relationship('revenueAccount', 'name')
-                    ->default(fn () => Account::where('type', Account::TYPE_REVENUE)->first()->id)
+                    ->default(fn() => Account::where('type', Account::TYPE_REVENUE)->first()->id)
                     ->required(),
-                Forms\Components\Select::make('inventory_account_id')
+                Forms\Components\Select::make('asset_account_id')
                     ->relationship('inventoryAccount', 'name')
-                    ->default(fn () => Account::where('type', Account::TYPE_ASSET)->first()->id)
+                    ->default(fn() => Account::where('type', Account::TYPE_ASSET)->first()->id)
                     ->required(),
             ]);
     }

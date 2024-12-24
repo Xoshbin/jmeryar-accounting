@@ -28,7 +28,7 @@ class Invoice extends Model
         'status',
         'note',
         'revenue_account_id',
-        'inventory_account_id',
+        'asset_account_id',
         'currency_id',
         'untaxed_amount',
         'tax_amount',
@@ -94,6 +94,6 @@ class Invoice extends Model
     // Relationship to the inventory/COGS account
     public function inventoryAccount()
     {
-        return $this->belongsTo(Account::class, 'inventory_account_id');
+        return $this->belongsTo(Account::class, 'asset_account_id');
     }
 }
