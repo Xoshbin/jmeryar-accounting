@@ -763,3 +763,79 @@ it('attaches the correct journal entries when an invoice is partially paid with 
     // Assert that the invoice's untaxed_amount is correct
     expect($invoice->untaxed_amount)->toBe(400.0);
 });
+
+it('creates an invoice with multiple items and mixed taxes correctly', function () {
+    $quantity1 = 2;
+    $unitPrice1 = 200;
+    $taxPercent1 = 15;
+
+    $quantity2 = 3;
+    $unitPrice2 = 100;
+    $taxPercent2 = 5;
+
+    $quantity3 = 1;
+    $unitPrice3 = 300;
+    $taxPercent3 = 0;
+
+    $invoice = TestServices::createInvoice($this->customer, $quantity1, $unitPrice1, $taxPercent1);
+
+    $invoiceItem1 = TestServices::createInvoiceItem($invoice, $this->product, $quantity1, $unitPrice1, $taxPercent1);
+    $invoiceItem2 = TestServices::createInvoiceItem($invoice, $this->product, $quantity2, $unitPrice2, $taxPercent2);
+    $invoiceItem3 = TestServices::createInvoiceItem($invoice, $this->product, $quantity3, $unitPrice3, $taxPercent3);
+
+    // Refresh the invoice to ensure the total_amount is updated
+    $invoice->refresh();
+
+    // Calculate the expected amounts
+    $expectedUntaxedAmount = $invoiceItem1->untaxed_amount + $invoiceItem2->untaxed_amount + $invoiceItem3->untaxed_amount;
+    $expectedTaxAmount = $invoiceItem1->tax_amount + $invoiceItem2->tax_amount;
+    $expectedTotalAmount = $expectedUntaxedAmount + $expectedTaxAmount;
+
+    // Assert that the invoice's amounts are correct
+    expect($invoice->untaxed_amount)->toBe($expectedUntaxedAmount);
+    expect($invoice->tax_amount)->toBe($expectedTaxAmount);
+    expect($invoice->total_amount)->toBe($expectedTotalAmount);
+});
+
+it('creates an invoice with five items and mixed taxes correctly', function () {
+    $quantity1 = 2;
+    $unitPrice1 = 200;
+    $taxPercent1 = 15;
+
+    $quantity2 = 3;
+    $unitPrice2 = 100;
+    $taxPercent2 = 5;
+
+    $quantity3 = 1;
+    $unitPrice3 = 300;
+    $taxPercent3 = 0;
+
+    $quantity4 = 4;
+    $unitPrice4 = 150;
+    $taxPercent4 = 10;
+
+    $quantity5 = 5;
+    $unitPrice5 = 50;
+    $taxPercent5 = 8;
+
+    $invoice = TestServices::createInvoice($this->customer, $quantity1, $unitPrice1, $taxPercent1);
+
+    $invoiceItem1 = TestServices::createInvoiceItem($invoice, $this->product, $quantity1, $unitPrice1, $taxPercent1);
+    $invoiceItem2 = TestServices::createInvoiceItem($invoice, $this->product, $quantity2, $unitPrice2, $taxPercent2);
+    $invoiceItem3 = TestServices::createInvoiceItem($invoice, $this->product, $quantity3, $unitPrice3, $taxPercent3);
+    $invoiceItem4 = TestServices::createInvoiceItem($invoice, $this->product, $quantity4, $unitPrice4, $taxPercent4);
+    $invoiceItem5 = TestServices::createInvoiceItem($invoice, $this->product, $quantity5, $unitPrice5, $taxPercent5);
+
+    // Refresh the invoice to ensure the total_amount is updated
+    $invoice->refresh();
+
+    // Calculate the expected amounts
+    $expectedUntaxedAmount = $invoiceItem1->untaxed_amount + $invoiceItem2->untaxed_amount + $invoiceItem3->untaxed_amount + $invoiceItem4->untaxed_amount + $invoiceItem5->untaxed_amount;
+    $expectedTaxAmount = $invoiceItem1->tax_amount + $invoiceItem2->tax_amount + $invoiceItem4->tax_amount + $invoiceItem5->tax_amount;
+    $expectedTotalAmount = $expectedUntaxedAmount + $expectedTaxAmount;
+
+    // Assert that the invoice's amounts are correct
+    expect($invoice->untaxed_amount)->toBe($expectedUntaxedAmount);
+    expect($invoice->tax_amount)->toBe($expectedTaxAmount);
+    expect($invoice->total_amount)->toBe($expectedTotalAmount);
+});
