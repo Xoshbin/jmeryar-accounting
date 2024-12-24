@@ -17,7 +17,7 @@ class JournalEntriesService
         }
 
         // Delete any existing entries before creating new ones
-        $this->deleteBillJournalEntries($bill);
+        $this->deleteJournalEntries($bill);
 
         // Debit the Expense Account for the untaxed portion
         $expenseEntry = JournalEntry::create([
@@ -61,15 +61,15 @@ class JournalEntriesService
     }
 
     /**
-     * Delete all journal entries related to the bill.
+     * Delete all journal entries related to the bill/invoice.
      */
-    public function deleteBillJournalEntries(Bill $bill): void
+    public function deleteJournalEntries($parent): void
     {
         // Simplified deletion process
-        $bill->journalEntries()->each(function ($entry) {
+        $parent->journalEntries()->each(function ($entry) {
             $entry->deleteQuietly();
         });
-        $bill->journalEntries()->detach();
+        $parent->journalEntries()->detach();
     }
 
     /**
@@ -77,6 +77,14 @@ class JournalEntriesService
      */
     public function createInvoiceJournalEntries(Invoice $invoice): void
     {
+        // Only check total_amount as validation
+        if ($invoice->total_amount <= 0) {
+            return;
+        }
+
+        // Delete any existing entries before creating new ones
+        $this->deleteJournalEntries($invoice);
+
         // Revenue entry (credit)
         $revenueEntry = JournalEntry::create([
             'account_id' => $invoice->revenue_account_id,
@@ -84,9 +92,22 @@ class JournalEntriesService
             'credit' => $invoice->untaxed_amount,
         ]);
 
+        // Accounts receivable entry (debit)
+        $accountsReceivableEntry = JournalEntry::create([
+            'account_id' => $invoice->asset_account_id,
+            'debit' => $invoice->total_amount,
+            'credit' => 0,
+        ]);
+
+        // Attach journal entries to the invoice
+        $invoice->journalEntries()->attach([
+            $revenueEntry->id,
+            $accountsReceivableEntry->id,
+        ]);
+
         // Create tax entry only if tax amount is not null and greater than zero
         if (! is_null($invoice->tax_amount) && $invoice->tax_amount > 0) {
-            $taxReceivableAccount = Account::where('name', 'Tax Received')->first();
+            $taxReceivableAccount = Account::where('name', 'Tax Payable')->first();
 
             if ($taxReceivableAccount) {
                 $taxReceivableEntry = JournalEntry::create([
@@ -98,29 +119,6 @@ class JournalEntriesService
                 // Attach tax journal entry to the invoice
                 $invoice->journalEntries()->attach($taxReceivableEntry->id);
             }
-        }
-
-        // Accounts receivable entry (debit)
-        $accountsReceivableEntry = JournalEntry::create([
-            'account_id' => $invoice->inventory_account_id,
-            'debit' => $invoice->total_amount,
-            'credit' => 0,
-        ]);
-
-        // Attach journal entries to the invoice
-        $invoice->journalEntries()->attach([
-            $revenueEntry->id,
-            $accountsReceivableEntry->id,
-        ]);
-    }
-
-    /**
-     * Delete all journal entries related to the invoice.
-     */
-    public function deleteInvoiceJournalEntries(Invoice $invoice): void
-    {
-        foreach ($invoice->journalEntries as $entry) {
-            $entry->delete();
         }
     }
 }

@@ -28,7 +28,7 @@ class InvoiceObserver
     public function updated(Invoice $invoice): void
     {
         // Delete existing journal entries for the invoice
-        $this->journalEntryService->deleteInvoiceJournalEntries($invoice);
+        $this->journalEntryService->deleteJournalEntries($invoice);
 
         // Recreate journal entries with updated amounts
         $this->journalEntryService->createInvoiceJournalEntries($invoice);
@@ -58,6 +58,6 @@ class InvoiceObserver
         }
 
         // Delete invoice journal entries
-        $this->journalEntryService->deleteInvoiceJournalEntries($invoice);
+        $this->journalEntryService->deleteJournalEntries($invoice);
     }
 }

@@ -37,7 +37,7 @@ class BillObserver
             $originalValues['tax_amount'] != $newValues['tax_amount']
         ) {
 
-            $this->journalEntryService->deleteBillJournalEntries($bill);
+            $this->journalEntryService->deleteJournalEntries($bill);
             $this->journalEntryService->createBillJournalEntries($bill);
         }
     }
@@ -70,6 +70,6 @@ class BillObserver
         }
 
         // Delete bill journal entries
-        $this->journalEntryService->deleteBillJournalEntries($bill);
+        $this->journalEntryService->deleteJournalEntries($bill);
     }
 }
