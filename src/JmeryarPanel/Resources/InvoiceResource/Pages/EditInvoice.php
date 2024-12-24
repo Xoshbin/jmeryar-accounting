@@ -47,7 +47,7 @@ class EditInvoice extends EditRecord
                         echo Pdf::loadHtml(
                             Blade::render('jmeryar-accounting::invoices.invoice', ['record' => $record, 'setting' => $setting]),
                         )->stream();
-                    }, $record->invoice_number . '.pdf');
+                    }, $record->invoice_number.'.pdf');
                 }),
 
             Actions\Action::make('Register payment')
@@ -85,7 +85,7 @@ class EditInvoice extends EditRecord
                     // Create the associated transaction
                     $transaction = $payment->transactions()->create([
                         'date' => now(),
-                        'note' => 'Transaction for payment ID ' . $record->id,
+                        'note' => 'Transaction for payment ID '.$record->id,
                         'amount' => $data['amount'],
                         'transaction_type' => 'credit', // For an invoice, this should be a credit transaction.
                     ]);

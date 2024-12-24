@@ -3,14 +3,14 @@
 namespace Tests\Services;
 
 use Xoshbin\JmeryarAccounting\Models\Bill;
-use Xoshbin\JmeryarAccounting\Models\Invoice;
 use Xoshbin\JmeryarAccounting\Models\BillItem;
+use Xoshbin\JmeryarAccounting\Models\Invoice;
 use Xoshbin\JmeryarAccounting\Models\InvoiceItem;
 use Xoshbin\JmeryarAccounting\Models\Payment;
 
 class TestServices
 {
-    static function createBill($supplier, $quantity, $costPrice, $taxPercent = 0): Bill
+    public static function createBill($supplier, $quantity, $costPrice, $taxPercent = 0): Bill
     {
         $bill = Bill::factory()->create([
             'supplier_id' => $supplier->id,
@@ -23,7 +23,7 @@ class TestServices
         return $bill;
     }
 
-    static function createBillItem($bill, $product, $quantity, $costPrice, $taxPercent = 0): BillItem
+    public static function createBillItem($bill, $product, $quantity, $costPrice, $taxPercent = 0): BillItem
     {
         $billItem = BillItem::factory()->create([
             'bill_id' => $bill->id,
@@ -38,7 +38,7 @@ class TestServices
         return $billItem;
     }
 
-    static function createPayment($parent, $amount, $paymentMethod, $paymentType, $currencyId, $exchangeRate, $amountInInvoiceCurrency): Payment
+    public static function createPayment($parent, $amount, $paymentMethod, $paymentType, $currencyId, $exchangeRate, $amountInInvoiceCurrency): Payment
     {
         $payment = $parent->payments()->create([
             'amount' => $amount,
@@ -53,7 +53,7 @@ class TestServices
         return $payment;
     }
 
-    static function createInvoice($customer, $quantity, $unit_price, $taxPercent = 0): Invoice
+    public static function createInvoice($customer, $quantity, $unit_price, $taxPercent = 0): Invoice
     {
         $invoice = Invoice::factory()->create([
             'customer_id' => $customer->id,
@@ -66,7 +66,7 @@ class TestServices
         return $invoice;
     }
 
-    static function createInvoiceItem($invoice, $product, $quantity, $unitPrice, $taxPercent = 0): InvoiceItem
+    public static function createInvoiceItem($invoice, $product, $quantity, $unitPrice, $taxPercent = 0): InvoiceItem
     {
         $invoiceItem = InvoiceItem::factory()->create([
             'invoice_id' => $invoice->id,

@@ -1,15 +1,15 @@
 <?php
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Services\TestServices;
 use Xoshbin\JmeryarAccounting\Database\Seeders\DatabaseSeeder;
+use Xoshbin\JmeryarAccounting\Models\Account;
+use Xoshbin\JmeryarAccounting\Models\Currency;
 use Xoshbin\JmeryarAccounting\Models\Customer;
+use Xoshbin\JmeryarAccounting\Models\JournalEntry;
 use Xoshbin\JmeryarAccounting\Models\Product;
 use Xoshbin\JmeryarAccounting\Models\Supplier;
 use Xoshbin\JmeryarAccounting\Models\Tax;
-use Xoshbin\JmeryarAccounting\Models\Account;
-use Xoshbin\JmeryarAccounting\Models\Currency;
-use Xoshbin\JmeryarAccounting\Models\JournalEntry;
-use Tests\Services\TestServices;
 
 /**
  * The journal entries for an invoice are recorded in two stages:
@@ -19,13 +19,13 @@ use Tests\Services\TestServices;
  * |------------|----------------------|--------|--------|
  * | YYYY-MM-DD | Accounts Receivable  | Amount |        |
  * | YYYY-MM-DD | Sales Revenue        |        | Amount |
- * | YYYY-MM-DD | Tax Payable Account  |        | Amount | 
+ * | YYYY-MM-DD | Tax Payable Account  |        | Amount |
  *
  * Stage 2: When the invoice is paid
  * | Date       | Account              | Debit  | Credit |
  * |------------|----------------------|--------|--------|
  * | YYYY-MM-DD | Cash/Bank Account    | Amount |        |
- * | YYYY-MM-DD | Accounts Receivable  |        | Amount | 
+ * | YYYY-MM-DD | Accounts Receivable  |        | Amount |
  *
  * Explanation:
  * - Accounts Receivable: Debited when the invoice is issued (asset), credited when paid.
@@ -33,7 +33,6 @@ use Tests\Services\TestServices;
  * - Tax Payable Account: Credited with the tax amount collected from the customer.
  * - Cash/Bank Account: Debited when the invoice is paid, increasing the balance.
  */
-
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
@@ -110,7 +109,6 @@ it('restores inventory to the correct batches when an (invoice item) is deleted'
     $batch->refresh(); // update batch after each event
     expect($batch->quantity)->not()->toBe($originalBatchQuantity);
 
-
     // Delete the invoice items
     $invoiceItem->delete();
 
@@ -156,14 +154,14 @@ it('attaches the correct journal entries to the invoice', function () {
      * |------------|----------------------|--------|--------|
      * | YYYY-MM-DD | Accounts Receivable  | 230    |        |
      * | YYYY-MM-DD | Sales Revenue        |        | 200    |
-     * | YYYY-MM-DD | Tax Payable Account  |        | 30     | 
+     * | YYYY-MM-DD | Tax Payable Account  |        | 30     |
 
      *
      * Stage 2: When the invoice is paid
      * | Date       | Account              | Debit  | Credit |
      * |------------|----------------------|--------|--------|
      * | YYYY-MM-DD | Cash/Bank Account    | 230    |        |
-     * | YYYY-MM-DD | Accounts Receivable  |        | 230    | 
+     * | YYYY-MM-DD | Accounts Receivable  |        | 230    |
      *
      * Explanation:
      * - Accounts Receivable: Debited when the invoice is issued (asset), credited when paid.
@@ -297,7 +295,6 @@ it('deletes taxes when an invoice is deleted', function () {
 
     $batch = $this->product->inventoryBatches()->oldest()->first();
 
-
     $invoiceItem = TestServices::createInvoiceItem($invoice, $this->product, $quantity, $unitPrice, $taxPercent);
 
     $invoice->delete();
@@ -369,13 +366,13 @@ it('attaches the correct journal entries when an invoice is paid without tax', f
      * | Date       | Account              | Debit  | Credit |
      * |------------|----------------------|--------|--------|
      * | YYYY-MM-DD | Accounts Receivable  | 400    |        |
-     * | YYYY-MM-DD | Sales Revenue        |        | 400    | 
+     * | YYYY-MM-DD | Sales Revenue        |        | 400    |
      *
      * Stage 2: When the invoice is paid
      * | Date       | Account              | Debit  | Credit |
      * |------------|----------------------|--------|--------|
      * | YYYY-MM-DD | Cash/Bank Account    | 400    |        |
-     * | YYYY-MM-DD | Accounts Receivable  |        | 400    | 
+     * | YYYY-MM-DD | Accounts Receivable  |        | 400    |
      *
      * Explanation:
      * - Accounts Receivable: Debited when the invoice is issued (asset), credited when paid.
@@ -383,7 +380,6 @@ it('attaches the correct journal entries when an invoice is paid without tax', f
      * - Tax Payable Account: Credited with the tax amount collected from the customer.
      * - Cash/Bank Account: Debited when the invoice is paid, increasing the balance.
      */
-
     $quantity = 2;
     $unitPrice = 200;
     $taxPercent = 0;
@@ -670,13 +666,13 @@ it('attaches the correct journal entries when an invoice is partially paid with 
      * |------------|----------------------|--------|--------|
      * | YYYY-MM-DD | Accounts Receivable  | Amount |        |
      * | YYYY-MM-DD | Sales Revenue        |        | Amount |
-     * | YYYY-MM-DD | Tax Payable Account  |        | Amount | 
+     * | YYYY-MM-DD | Tax Payable Account  |        | Amount |
      *
      * Stage 2: When the invoice is paid
      * | Date       | Account              | Debit  | Credit |
      * |------------|----------------------|--------|--------|
      * | YYYY-MM-DD | Cash/Bank Account    | Amount |        |
-     * | YYYY-MM-DD | Accounts Receivable  |        | Amount | 
+     * | YYYY-MM-DD | Accounts Receivable  |        | Amount |
      *
      * Explanation:
      * - Accounts Receivable: Debited when the invoice is issued (asset), credited when paid.
@@ -684,7 +680,6 @@ it('attaches the correct journal entries when an invoice is partially paid with 
      * - Tax Payable Account: Credited with the tax amount collected from the customer.
      * - Cash/Bank Account: Debited when the invoice is paid, increasing the balance.
      */
-
     $quantity = 2;
     $unitPrice = 200;
     $taxPercent = 15;
