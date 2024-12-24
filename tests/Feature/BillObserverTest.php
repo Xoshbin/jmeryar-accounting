@@ -870,3 +870,79 @@ it('calculates amount_due correctly when bill is partially paid', function () {
     $totalPayments = $bill->payments()->sum('amount');
     expect($totalPayments)->toBe(230 * 100);
 });
+
+it('calculates bill amounts correctly with multiple items and mixed taxes', function () {
+    $quantity1 = 2;
+    $costPrice1 = 100;
+    $taxPercent1 = 15;
+
+    $quantity2 = 3;
+    $costPrice2 = 50;
+    $taxPercent2 = 5;
+
+    $quantity3 = 1;
+    $costPrice3 = 200;
+    $taxPercent3 = 0;
+
+    $bill = TestServices::createBill($this->supplier, $quantity1, $costPrice1, $taxPercent1);
+
+    $billItem1 = TestServices::createBillItem($bill, $this->product, $quantity1, $costPrice1, $taxPercent1);
+    $billItem2 = TestServices::createBillItem($bill, $this->product, $quantity2, $costPrice2, $taxPercent2);
+    $billItem3 = TestServices::createBillItem($bill, $this->product, $quantity3, $costPrice3, $taxPercent3);
+
+    // Refresh the bill to ensure the total_amount is updated
+    $bill->refresh();
+
+    // Calculate the expected amounts
+    $expectedUntaxedAmount = $billItem1->untaxed_amount + $billItem2->untaxed_amount + $billItem3->untaxed_amount;
+    $expectedTaxAmount = $billItem1->tax_amount + $billItem2->tax_amount;
+    $expectedTotalAmount = $expectedUntaxedAmount + $expectedTaxAmount;
+
+    // Assert that the bill's amounts are correct
+    expect($bill->untaxed_amount)->toBe($expectedUntaxedAmount);
+    expect($bill->tax_amount)->toBe($expectedTaxAmount);
+    expect($bill->total_amount)->toBe($expectedTotalAmount);
+});
+
+it('calculates bill amounts correctly with five items and mixed taxes', function () {
+    $quantity1 = 2;
+    $costPrice1 = 100;
+    $taxPercent1 = 15;
+
+    $quantity2 = 3;
+    $costPrice2 = 50;
+    $taxPercent2 = 5;
+
+    $quantity3 = 1;
+    $costPrice3 = 200;
+    $taxPercent3 = 0;
+
+    $quantity4 = 4;
+    $costPrice4 = 75;
+    $taxPercent4 = 10;
+
+    $quantity5 = 5;
+    $costPrice5 = 30;
+    $taxPercent5 = 8;
+
+    $bill = TestServices::createBill($this->supplier, $quantity1, $costPrice1, $taxPercent1);
+
+    $billItem1 = TestServices::createBillItem($bill, $this->product, $quantity1, $costPrice1, $taxPercent1);
+    $billItem2 = TestServices::createBillItem($bill, $this->product, $quantity2, $costPrice2, $taxPercent2);
+    $billItem3 = TestServices::createBillItem($bill, $this->product, $quantity3, $costPrice3, $taxPercent3);
+    $billItem4 = TestServices::createBillItem($bill, $this->product, $quantity4, $costPrice4, $taxPercent4);
+    $billItem5 = TestServices::createBillItem($bill, $this->product, $quantity5, $costPrice5, $taxPercent5);
+
+    // Refresh the bill to ensure the total_amount is updated
+    $bill->refresh();
+
+    // Calculate the expected amounts
+    $expectedUntaxedAmount = $billItem1->untaxed_amount + $billItem2->untaxed_amount + $billItem3->untaxed_amount + $billItem4->untaxed_amount + $billItem5->untaxed_amount;
+    $expectedTaxAmount = $billItem1->tax_amount + $billItem2->tax_amount + $billItem4->tax_amount + $billItem5->tax_amount;
+    $expectedTotalAmount = $expectedUntaxedAmount + $expectedTaxAmount;
+
+    // Assert that the bill's amounts are correct
+    expect($bill->untaxed_amount)->toBe($expectedUntaxedAmount);
+    expect($bill->tax_amount)->toBe($expectedTaxAmount);
+    expect($bill->total_amount)->toBe($expectedTotalAmount);
+});
