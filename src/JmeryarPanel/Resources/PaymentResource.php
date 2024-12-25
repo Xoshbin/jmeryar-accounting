@@ -22,16 +22,21 @@ class PaymentResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('amount')
+                    ->label(__('jmeryar-accounting::payments.form.amount'))
                     ->required()
                     ->numeric(),
                 Forms\Components\DatePicker::make('payment_date')
+                    ->label(__('jmeryar-accounting::payments.form.payment_date'))
                     ->required(),
                 Forms\Components\TextInput::make('payment_type')
+                    ->label(__('jmeryar-accounting::payments.form.payment_type'))
                     ->required(),
                 Forms\Components\TextInput::make('payment_method')
+                    ->label(__('jmeryar-accounting::payments.form.payment_method'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Textarea::make('note')
+                    ->label(__('jmeryar-accounting::payments.form.note'))
                     ->columnSpanFull(),
             ]);
     }
@@ -41,19 +46,25 @@ class PaymentResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('amount')
+                    ->label(__('jmeryar-accounting::payments.table.amount'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('payment_date')
+                    ->label(__('jmeryar-accounting::payments.table.payment_date'))
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('payment_type'),
+                Tables\Columns\TextColumn::make('payment_type')
+                    ->label(__('jmeryar-accounting::payments.table.payment_type')),
                 Tables\Columns\TextColumn::make('payment_method')
+                    ->label(__('jmeryar-accounting::payments.table.payment_method'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('jmeryar-accounting::payments.table.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('jmeryar-accounting::payments.table.updated_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
