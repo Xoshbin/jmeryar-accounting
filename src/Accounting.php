@@ -18,38 +18,39 @@ class Accounting implements Plugin
     {
         $panel
             ->discoverResources(
-                in: __DIR__.'/JmeryarPanel/Resources',
+                in: __DIR__ . '/JmeryarPanel/Resources',
                 for: 'Xoshbin\\JmeryarAccounting\\JmeryarPanel\\Resources'
             )
             ->discoverPages(
-                in: __DIR__.'/JmeryarPanel/Pages',
+                in: __DIR__ . '/JmeryarPanel/Pages',
                 for: 'Xoshbin\\JmeryarAccounting\\JmeryarPanel\\Pages'
             )
             ->discoverWidgets(
-                in: __DIR__.'/JmeryarPanel/Widgets',
+                in: __DIR__ . '/JmeryarPanel/Widgets',
                 for: 'Xoshbin\\JmeryarAccounting\\JmeryarPanel\\Widgets'
             )
             ->pages([
                 FinanceDashboard::class,
             ])
             ->navigationGroups([
-                NavigationGroup::make()
-                    ->label('Inventory')
+                // TODO: FIX: the navigation sort is broken after adding the locales
+                NavigationGroup::make('inventory')
+                    ->label(__('jmeryar-accounting::menu.inventory'))
                     ->icon('heroicon-o-table-cells'),
-                NavigationGroup::make()
-                    ->label('Customers')
+                NavigationGroup::make('customers')
+                    ->label(__('jmeryar-accounting::menu.customers'))
                     ->icon('heroicon-o-document-arrow-down'),
-                NavigationGroup::make()
-                    ->label('Vendors')
+                NavigationGroup::make('vendors')
+                    ->label(__('jmeryar-accounting::menu.vendors'))
                     ->icon('heroicon-o-document-arrow-up'),
-                NavigationGroup::make()
-                    ->label('Accounting')
+                NavigationGroup::make('accounting')
+                    ->label(__('jmeryar-accounting::menu.accounting'))
                     ->icon('heroicon-o-book-open'),
-                NavigationGroup::make()
-                    ->label('Reports')
+                NavigationGroup::make('reports')
+                    ->label(__('jmeryar-accounting::menu.reports'))
                     ->icon('heroicon-o-chart-bar'),
-                NavigationGroup::make()
-                    ->label('Configuration')
+                NavigationGroup::make('configuration')
+                    ->label(__('jmeryar-accounting::menu.configuration'))
                     ->icon('heroicon-o-cog-8-tooth'),
             ]);
     }

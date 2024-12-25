@@ -17,24 +17,33 @@ class AccountResource extends Resource
 
     protected static ?string $navigationGroup = 'Accounting';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('jmeryar-accounting::accounts.title');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label(__('jmeryar-accounting::accounts.form.name'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Select::make('type')
+                    ->label(__('jmeryar-accounting::accounts.form.type'))
                     ->options([
-                        'Asset' => 'Asset',
-                        'Liability' => 'Liability',
-                        'Equity' => 'Equity',
-                        'Revenue' => 'Revenue',
-                        'Expense' => 'Expense',
+                        'Asset' => __('jmeryar-accounting::accounts.form.asset'),
+                        'Liability' => __('jmeryar-accounting::accounts.form.liability'),
+                        'Equity' => __('jmeryar-accounting::accounts.form.equity'),
+                        'Revenue' => __('jmeryar-accounting::accounts.form.revenue'),
+                        'Expense' => __('jmeryar-accounting::accounts.form.expense'),
                     ]),
                 Forms\Components\TextInput::make('code')
+                    ->label(__('jmeryar-accounting::accounts.form.code'))
                     ->maxLength(5),
                 Forms\Components\Select::make('parent_id')
+                    ->label(__('jmeryar-accounting::accounts.form.parent_id'))
                     ->relationship('parent', 'name'),
             ]);
     }
@@ -44,18 +53,24 @@ class AccountResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('jmeryar-accounting::accounts.table.name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('parent.name')
+                    ->label(__('jmeryar-accounting::accounts.table.parent_name'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('code')
+                    ->label(__('jmeryar-accounting::accounts.table.code'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('type'),
+                Tables\Columns\TextColumn::make('type')
+                    ->label(__('jmeryar-accounting::accounts.table.type')),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('jmeryar-accounting::accounts.table.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('jmeryar-accounting::accounts.table.updated_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

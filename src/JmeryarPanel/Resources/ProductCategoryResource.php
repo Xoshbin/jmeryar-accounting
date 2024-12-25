@@ -17,16 +17,24 @@ class ProductCategoryResource extends Resource
 
     protected static ?string $navigationGroup = 'Inventory';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('jmeryar-accounting::product_categories.title');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label(__('jmeryar-accounting::product_categories.form.name'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Textarea::make('description')
+                    ->label(__('jmeryar-accounting::product_categories.form.description'))
                     ->columnSpanFull(),
                 Forms\Components\Select::make('parent_id')
+                    ->label(__('jmeryar-accounting::product_categories.form.parent_id'))
                     ->relationship('parent', 'name'),
             ]);
     }
@@ -36,15 +44,19 @@ class ProductCategoryResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('jmeryar-accounting::product_categories.table.name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('parent.name')
+                    ->label(__('jmeryar-accounting::product_categories.table.parent_name'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('jmeryar-accounting::product_categories.table.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('jmeryar-accounting::product_categories.table.updated_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

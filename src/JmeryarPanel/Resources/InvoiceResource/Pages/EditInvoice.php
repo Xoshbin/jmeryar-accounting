@@ -37,7 +37,7 @@ class EditInvoice extends EditRecord
             Actions\DeleteAction::make(),
 
             Actions\Action::make('pdf')
-                ->label('PDF/Print')
+                ->label(__('jmeryar-accounting::invoices.form.PDF/Print'))
                 ->color('success')
                 ->action(function (Model $record) {
                     Pdf::setOptions(['debugCss' => false]);
@@ -47,25 +47,30 @@ class EditInvoice extends EditRecord
                         echo Pdf::loadHtml(
                             Blade::render('jmeryar-accounting::invoices.invoice', ['record' => $record, 'setting' => $setting]),
                         )->stream();
-                    }, $record->invoice_number.'.pdf');
+                    }, $record->invoice_number . '.pdf');
                 }),
 
             Actions\Action::make('Register payment')
+                ->label(__('jmeryar-accounting::invoices.form.Register payment'))
                 ->form([
                     Forms\Components\TextInput::make('amount')
+                        ->label(__('jmeryar-accounting::invoices.form.amount'))
                         ->default($this->record->total_amount - $this->record->total_paid_amount)
                         ->required()
                         ->numeric(),
                     Forms\Components\DatePicker::make('payment_date')
+                        ->label(__('jmeryar-accounting::invoices.form.payment_date'))
                         ->default(now())
                         ->nullable(),
                     Forms\Components\Select::make('payment_method')
+                        ->label(__('jmeryar-accounting::invoices.form.payment_method'))
                         ->default('cash')
                         ->options([
                             'Cash' => 'Cash',
                             'Bank' => 'Bank',
                         ]),
                     Forms\Components\Textarea::make('note')
+                        ->label(__('jmeryar-accounting::invoices.form.note'))
                         ->default('')
                         ->required()
                         ->columnSpanFull(),
@@ -85,7 +90,7 @@ class EditInvoice extends EditRecord
                     // Create the associated transaction
                     $transaction = $payment->transactions()->create([
                         'date' => now(),
-                        'note' => 'Transaction for payment ID '.$record->id,
+                        'note' => 'Transaction for payment ID ' . $record->id,
                         'amount' => $data['amount'],
                         'transaction_type' => 'credit', // For an invoice, this should be a credit transaction.
                     ]);

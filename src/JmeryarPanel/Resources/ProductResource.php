@@ -17,20 +17,28 @@ class ProductResource extends Resource
 
     protected static ?string $navigationGroup = 'Inventory';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('jmeryar-accounting::products.title');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label(__('jmeryar-accounting::products.form.name'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('sku')
-                    ->label('SKU')
+                    ->label(__('jmeryar-accounting::products.form.sku'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\Textarea::make('description')
+                    ->label(__('jmeryar-accounting::products.form.description'))
                     ->columnSpanFull(),
                 Forms\Components\Select::make('category_id')
+                    ->label(__('jmeryar-accounting::products.form.category'))
                     ->relationship('category', 'name')
                     ->required(),
             ]);
@@ -41,18 +49,22 @@ class ProductResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('jmeryar-accounting::products.table.name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('sku')
-                    ->label('SKU')
+                    ->label(__('jmeryar-accounting::products.table.sku'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('category.name')
+                    ->label(__('jmeryar-accounting::products.table.category'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('jmeryar-accounting::products.table.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('jmeryar-accounting::products.table.updated_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

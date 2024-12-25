@@ -17,20 +17,30 @@ class CustomerResource extends Resource
 
     protected static ?string $navigationGroup = 'Customers';
 
+
+    public static function getNavigationLabel(): string
+    {
+        return __('jmeryar-accounting::customers.title');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label(__('jmeryar-accounting::customers.form.name'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
+                    ->label(__('jmeryar-accounting::customers.form.email'))
                     ->email()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('phone')
+                    ->label(__('jmeryar-accounting::customers.form.phone'))
                     ->tel()
                     ->maxLength(255),
                 Forms\Components\Textarea::make('address')
+                    ->label(__('jmeryar-accounting::customers.form.address'))
                     ->columnSpanFull(),
             ]);
     }
@@ -40,16 +50,21 @@ class CustomerResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('jmeryar-accounting::customers.table.name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->label(__('jmeryar-accounting::customers.table.email'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('phone')
+                    ->label(__('jmeryar-accounting::customers.table.phone'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('jmeryar-accounting::customers.table.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('jmeryar-accounting::customers.table.updated_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

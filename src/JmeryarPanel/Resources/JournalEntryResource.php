@@ -17,6 +17,11 @@ class JournalEntryResource extends Resource
 
     protected static ?string $navigationGroup = 'Accounting';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('jmeryar-accounting::journal_entries.title');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -30,27 +35,35 @@ class JournalEntryResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('jmeryar-accounting::journal_entries.table.created_at'))
                     ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('journal_entry')
+                    ->label(__('jmeryar-accounting::journal_entries.table.journal_entry'))
                     ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('account.name')
+                    ->label(__('jmeryar-accounting::journal_entries.table.account_name'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('partner')
+                    ->label(__('jmeryar-accounting::journal_entries.table.partner'))
                     ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('description')
+                    ->label(__('jmeryar-accounting::journal_entries.table.description'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('debit')
+                    ->label(__('jmeryar-accounting::journal_entries.table.debit'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('credit')
+                    ->label(__('jmeryar-accounting::journal_entries.table.credit'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('jmeryar-accounting::journal_entries.table.updated_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

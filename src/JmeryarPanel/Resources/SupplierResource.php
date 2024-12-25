@@ -17,22 +17,32 @@ class SupplierResource extends Resource
 
     protected static ?string $navigationGroup = 'Vendors';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('jmeryar-accounting::suppliers.title');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label(__('jmeryar-accounting::suppliers.form.name'))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('contact_person')
+                    ->label(__('jmeryar-accounting::suppliers.form.contact_person'))
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
+                    ->label(__('jmeryar-accounting::suppliers.form.email'))
                     ->email()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('phone')
+                    ->label(__('jmeryar-accounting::suppliers.form.phone'))
                     ->tel()
                     ->maxLength(255),
                 Forms\Components\Textarea::make('address')
+                    ->label(__('jmeryar-accounting::suppliers.form.address'))
                     ->columnSpanFull(),
             ]);
     }
@@ -42,18 +52,24 @@ class SupplierResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('jmeryar-accounting::suppliers.table.name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('contact_person')
+                    ->label(__('jmeryar-accounting::suppliers.table.contact_person'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->label(__('jmeryar-accounting::suppliers.table.email'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('phone')
+                    ->label(__('jmeryar-accounting::suppliers.table.phone'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('jmeryar-accounting::suppliers.table.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('jmeryar-accounting::suppliers.table.updated_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

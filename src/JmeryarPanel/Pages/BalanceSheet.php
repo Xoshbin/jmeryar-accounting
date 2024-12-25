@@ -11,9 +11,12 @@ class BalanceSheet extends Page
 
     protected static string $view = 'jmeryar-accounting::pages.balance-sheet';
 
-    protected static ?string $navigationLabel = 'Balance Sheet';
-
     protected static ?string $navigationGroup = 'Reports';
+
+    public static function getNavigationLabel(): string
+    {
+        return __('jmeryar-accounting::balance_sheet.balance_sheet');
+    }
 
     public function getBalanceData(): array
     {
@@ -25,8 +28,8 @@ class BalanceSheet extends Page
 
         // Calculate totals
         $totals = [
-            'assets' => $data['assets']->sum(fn ($account) => $account->journalEntries->sum('debit') - $account->journalEntries->sum('credit')),
-            'liabilities' => $data['liabilities']->sum(fn ($account) => $account->journalEntries->sum('credit') - $account->journalEntries->sum('debit')),
+            'assets' => $data['assets']->sum(fn($account) => $account->journalEntries->sum('debit') - $account->journalEntries->sum('credit')),
+            'liabilities' => $data['liabilities']->sum(fn($account) => $account->journalEntries->sum('credit') - $account->journalEntries->sum('debit')),
         ];
 
         // Derive equity using the accounting equation
