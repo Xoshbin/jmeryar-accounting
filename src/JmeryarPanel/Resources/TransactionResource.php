@@ -22,13 +22,17 @@ class TransactionResource extends Resource
         return $form
             ->schema([
                 Forms\Components\DatePicker::make('date')
+                    ->label(__('jmeryar-accounting::transactions.form.date'))
                     ->required(),
                 Forms\Components\Textarea::make('note')
+                    ->label(__('jmeryar-accounting::transactions.form.note'))
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('amount')
+                    ->label(__('jmeryar-accounting::transactions.form.amount'))
                     ->required()
                     ->numeric(),
                 Forms\Components\Select::make('transaction_type')
+                    ->label(__('jmeryar-accounting::transactions.form.transaction_type'))
                     ->options([
                         'Debit' => 'Debit',
                         'Credit' => 'Credit',
@@ -41,20 +45,26 @@ class TransactionResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('date')
+                    ->label(__('jmeryar-accounting::transactions.table.date'))
                     ->dateTime()
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('note')
+                    ->label(__('jmeryar-accounting::transactions.table.note'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('amount')
+                    ->label(__('jmeryar-accounting::transactions.table.amount'))
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('transaction_type'),
+                Tables\Columns\TextColumn::make('transaction_type')
+                    ->label(__('jmeryar-accounting::transactions.table.transaction_type')),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('jmeryar-accounting::transactions.table.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('jmeryar-accounting::transactions.table.updated_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
