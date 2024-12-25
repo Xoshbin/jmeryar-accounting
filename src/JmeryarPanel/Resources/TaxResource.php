@@ -29,29 +29,32 @@ class TaxResource extends Resource
                             ->columns(2)
                             ->schema([
                                 Forms\Components\TextInput::make('name')
+                                    ->label(__('jmeryar-accounting::taxes.form.name'))
                                     ->required()
                                     ->maxLength(255),
                                 Forms\Components\Select::make('tax_computation')
+                                    ->label(__('jmeryar-accounting::taxes.form.tax_computation'))
                                     ->options([
-                                        'Fixed' => 'Fixed',
-                                        'Percentage' => 'Percentage',
-                                        //                                        'Group' => 'Group',
-                                        'Percentage_inclusive' => 'Percentage_inclusive',
+                                        'Fixed' => __('jmeryar-accounting::taxes.form.fixed'),
+                                        'Percentage' => __('jmeryar-accounting::taxes.form.percentage'),
+                                        'Percentage_inclusive' => __('jmeryar-accounting::taxes.form.percentage_inclusive'),
                                     ])
                                     ->default('Percentage')
                                     ->live()
                                     ->required(),
                                 Forms\Components\Select::make('type')
+                                    ->label(__('jmeryar-accounting::taxes.form.type'))
                                     ->options([
-                                        'Sales' => 'Sales',
-                                        'Purchases' => 'Purchases',
-                                        'None' => 'None',
+                                        'Sales' => __('jmeryar-accounting::taxes.form.sales'),
+                                        'Purchases' => __('jmeryar-accounting::taxes.form.purchases'),
+                                        'None' => __('jmeryar-accounting::taxes.form.none'),
                                     ])
                                     ->required(),
                                 Forms\Components\Select::make('tax_scope')
+                                    ->label(__('jmeryar-accounting::taxes.form.tax_scope'))
                                     ->options([
-                                        'Goods' => 'Goods',
-                                        'Services' => 'Services',
+                                        'Goods' => __('jmeryar-accounting::taxes.form.goods'),
+                                        'Services' => __('jmeryar-accounting::taxes.form.services'),
                                     ])
                                     ->required(),
                             ])
@@ -60,18 +63,20 @@ class TaxResource extends Resource
                             ->schema([
                                 Forms\Components\Section::make()->schema([
                                     Forms\Components\TextInput::make('amount')
+                                        ->label(__('jmeryar-accounting::taxes.form.amount'))
                                         ->postfix(function (callable $get) {
                                             if ($get('tax_computation') !== 'Fixed') {
                                                 return '%';
                                             }
                                         })
-                                        ->required(fn ($get) => $get('tax_computation') !== 'Group')
+                                        ->required(fn($get) => $get('tax_computation') !== 'Group')
                                         ->numeric(),
                                 ])
-                                    ->visible(fn ($get) => $get('tax_computation') !== 'Group'),
+                                    ->visible(fn($get) => $get('tax_computation') !== 'Group'),
 
                                 Forms\Components\Section::make()->schema([
                                     Forms\Components\Select::make('status')
+                                        ->label(__('jmeryar-accounting::taxes.form.status'))
                                         ->options([
                                             'Active' => 'Active',
                                             'Inactive' => 'Inactive',
@@ -169,27 +174,30 @@ class TaxResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('jmeryar-accounting::taxes.table.name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('tax_computation')
-                    ->numeric()
+                    ->label(__('jmeryar-accounting::taxes.table.tax_computation'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('amount')
-                    ->numeric()
+                    ->label(__('jmeryar-accounting::taxes.table.amount'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('type')
-                    ->numeric()
+                    ->label(__('jmeryar-accounting::taxes.table.type'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('tax_scope')
-                    ->numeric()
+                    ->label(__('jmeryar-accounting::taxes.table.tax_scope'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
-                    ->numeric()
+                    ->label(__('jmeryar-accounting::taxes.table.status'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('jmeryar-accounting::taxes.table.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('jmeryar-accounting::taxes.table.updated_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
