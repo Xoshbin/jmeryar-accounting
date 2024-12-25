@@ -2,36 +2,37 @@ name: Run Tests
 
 on:
   push:
-    branches:
-      - main
+    branches: ["main"]
   pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        php: ['8.2']
-        laravel: ['9.*', '10.*']
-        os: [ubuntu-latest]
-
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
         with:
-          php-version: ${{ matrix.php }}
-          extensions: mbstring, dom, tokenizer
-          coverage: none
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
 
-      - name: Install Dependencies
-        run: |
-            composer require --no-update illuminate/support:${{ matrix.laravel }}
-            composer update --prefer-dist --no-progress --no-suggest
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
 
-      - name: Run Tests
-        run: |
-          vendor/bin/pest
+      # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
+      # Docs: https://getcomposer.org/doc/articles/scripts.md
+
+      - name: Run test suite
+        run: composer test
