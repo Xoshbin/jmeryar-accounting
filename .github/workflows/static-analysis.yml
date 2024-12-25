@@ -21,7 +21,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.1" # Adjust this if necessary
+          php-version: "8.2" # Adjust this if necessary
           tools: composer
 
       # Step 3: Validate composer.json and composer.lock
