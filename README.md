@@ -6,10 +6,12 @@ Jmeryar is a robust accounting application built with a focus on flexibility, tr
 
 - [Features](#features)
 - [Installation](#installation)
+- [Usage](#usage)
 - [Core Modules](#core-modules)
 - [Roadmap](#Roadmap)
 - [Contributing](#contributing)
 - [License](#license)
+- [Tests](#tests)
 
 ## Features
 
@@ -68,9 +70,43 @@ Jmeryar is a robust accounting application built with a focus on flexibility, tr
 6. **Optional: Publish and run seeders**:
 
    ```bash
-   php artisan vendor:publish --tag=jmeryar-accounting-seeders
+   php artisan vendor:publish --tag=jmeryar-accounting-seeds
    php artisan db:seed --class=JmeryarSeeder
    ```
+
+## Usage
+
+Once you have completed the installation steps, you can start using Jmeryar Accounting in your application. Here are the basic steps to get started:
+
+1. **Create Products**:
+
+   - Navigate to the Products section in your application.
+   - Add new products with details such as name, price, and inventory quantity.
+
+2. **Create a Bill**:
+
+   - Go to the Bills section.
+   - Create a new bill by selecting a supplier and adding items (products) to the bill.
+   - Save the bill to update inventory.
+
+3. **Create an Invoice**:
+
+   - Navigate to the Invoices section.
+   - Create a new invoice by selecting a customer and adding items (products) to the invoice.
+   - Save the invoice to generate journal entries and update inventory.
+
+4. **Record Payments**:
+
+   - Go to the Payments section.
+   - Record payments against invoices or bills by selecting the appropriate invoice/bill and entering payment details.
+
+5. **Visit the Dashboard**:
+
+   - Access the Dashboard to view an overview of your financial metrics, revenue, and expenses.
+
+6. **Generate Reports**:
+   - Navigate to the Reports section.
+   - Generates financial reports such as income statements, balance sheets, and cash flow reports to analyze your financial data.
 
 ## Core Modules
 
@@ -120,3 +156,17 @@ This project is licensed under the LGPLv3 license.
 ### Third-Party Licenses
 
 This project makes use of the [Filament](https://github.com/filamentphp/filament) package, which is licensed under the MIT license. The original copyright notice for Filament is included in this repository.
+
+## Tests
+
+This package heavily depends on tests to ensure the accuracy of invoice and bill calculations, as well as the correctness of journal entries and inventory batches. Running tests is crucial to maintain the integrity of the accounting processes.
+
+Use the following command to run the tests:
+
+```bash
+composer test
+```
+
+**Writing tests**:
+
+When contributing to the project, ensure you write tests for any new features or bug fixes. Place your tests in the `tests` directory and follow the existing structure and naming conventions.

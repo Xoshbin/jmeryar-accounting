@@ -25,7 +25,7 @@ class JmeryarAccountingServiceProvider extends PackageServiceProvider
 
         $this->publishes([
             __DIR__ . '/../database/seeders' => database_path('seeders'),
-        ], 'seeds');
+        ], 'jmeryar-accounting-seeds');
 
 
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'jmeryar-accounting');
