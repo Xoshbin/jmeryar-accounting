@@ -2,22 +2,24 @@
 
 namespace Xoshbin\JmeryarAccounting\Observers;
 
-use Xoshbin\JmeryarAccounting\Models\Account;
 use Xoshbin\JmeryarAccounting\Models\Invoice;
-use Xoshbin\JmeryarAccounting\Models\JournalEntry;
-use Xoshbin\JmeryarAccounting\Models\Payment;
-use Xoshbin\JmeryarAccounting\Models\Transaction;
-use Filament\Facades\Filament;
-use Illuminate\Support\Facades\Log;
+use Xoshbin\JmeryarAccounting\Services\JournalEntriesService;
 
 class InvoiceObserver
 {
+    protected $journalEntryService;
+
+    public function __construct(JournalEntriesService $journalEntryService)
+    {
+        $this->journalEntryService = $journalEntryService;
+    }
+
     /**
      * Handle the Invoice "created" event.
      */
     public function created(Invoice $invoice): void
     {
-        $this->createInvoiceJournalEntries($invoice);
+        $this->journalEntryService->createInvoiceJournalEntries($invoice);
     }
 
     /**
@@ -25,11 +27,19 @@ class InvoiceObserver
      */
     public function updated(Invoice $invoice): void
     {
-        // Delete existing journal entries for the invoice
-        $this->deleteInvoiceJournalEntries($invoice);
+        $originalValues = $invoice->getOriginal();
+        $newValues = $invoice->getAttributes();
 
-        // Recreate journal entries with updated amounts
-        $this->createInvoiceJournalEntries($invoice);
+        // Check if amounts actually changed
+        if (
+            $originalValues['total_amount'] != $newValues['total_amount'] ||
+            $originalValues['untaxed_amount'] != $newValues['untaxed_amount'] ||
+            $originalValues['tax_amount'] != $newValues['tax_amount']
+        ) {
+
+            $this->journalEntryService->deleteJournalEntries($invoice);
+            $this->journalEntryService->createInvoiceJournalEntries($invoice);
+        }
     }
 
     /**
@@ -56,53 +66,6 @@ class InvoiceObserver
         }
 
         // Delete invoice journal entries
-        $this->deleteInvoiceJournalEntries($invoice);
-    }
-
-    /**
-     * Create journal entries for the invoice.
-     */
-    protected function createInvoiceJournalEntries(Invoice $invoice): void
-    {
-        // Revenue entry (credit)
-        $revenueEntry = JournalEntry::create([
-            'account_id' => $invoice->revenue_account_id,
-            'debit' => 0,
-            'credit' => $invoice->untaxed_amount,
-        ]);
-
-        $taxReceivableAccountId = Account::where('name', 'Tax Received')
-            ->first()
-            ->id;
-
-        $taxReceivableEntry = JournalEntry::create([
-            'account_id' => $taxReceivableAccountId,
-            'credit' => $invoice->tax_amount,
-            'debit' => 0,
-        ]);
-
-        // Accounts receivable entry (debit)
-        $accountsReceivableEntry = JournalEntry::create([
-            'account_id' => $invoice->inventory_account_id,
-            'debit' => $invoice->total_amount,
-            'credit' => 0,
-        ]);
-
-        // Attach journal entries to the invoice
-        $invoice->journalEntries()->attach([
-            $revenueEntry->id,
-            $taxReceivableEntry->id,
-            $accountsReceivableEntry->id,
-        ]);
-    }
-
-    /**
-     * Delete all journal entries related to the invoice.
-     */
-    protected function deleteInvoiceJournalEntries(Invoice $invoice): void
-    {
-        foreach ($invoice->journalEntries as $entry) {
-            $entry->delete();
-        }
+        $this->journalEntryService->deleteJournalEntries($invoice);
     }
 }

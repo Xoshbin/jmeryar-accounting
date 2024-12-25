@@ -2,20 +2,18 @@
 
 namespace Xoshbin\JmeryarAccounting\JmeryarPanel\Resources;
 
-use Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\TaxResource\Pages;
-use Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\TaxResource\RelationManagers;
-use Xoshbin\JmeryarAccounting\Models\Tax;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Xoshbin\JmeryarAccounting\Models\Tax;
 
 class TaxResource extends Resource
 {
     protected static ?string $model = Tax::class;
 
-//    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    //    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationGroup = 'Configuration';
 
@@ -37,7 +35,7 @@ class TaxResource extends Resource
                                     ->options([
                                         'Fixed' => 'Fixed',
                                         'Percentage' => 'Percentage',
-//                                        'Group' => 'Group',
+                                        //                                        'Group' => 'Group',
                                         'Percentage_inclusive' => 'Percentage_inclusive',
                                     ])
                                     ->default('Percentage')
@@ -47,13 +45,13 @@ class TaxResource extends Resource
                                     ->options([
                                         'Sales' => 'Sales',
                                         'Purchases' => 'Purchases',
-                                        'None' => 'None'
+                                        'None' => 'None',
                                     ])
                                     ->required(),
                                 Forms\Components\Select::make('tax_scope')
                                     ->options([
                                         'Goods' => 'Goods',
-                                        'Services' => 'Services'
+                                        'Services' => 'Services',
                                     ])
                                     ->required(),
                             ])
@@ -62,21 +60,21 @@ class TaxResource extends Resource
                             ->schema([
                                 Forms\Components\Section::make()->schema([
                                     Forms\Components\TextInput::make('amount')
-                                        ->postfix(function(callable $get){
-                                            if ($get('tax_computation') !== 'Fixed'){
+                                        ->postfix(function (callable $get) {
+                                            if ($get('tax_computation') !== 'Fixed') {
                                                 return '%';
                                             }
-                                        } )
-                                        ->required(fn($get) => $get('tax_computation') !== 'Group')
+                                        })
+                                        ->required(fn ($get) => $get('tax_computation') !== 'Group')
                                         ->numeric(),
                                 ])
-                                ->visible(fn($get) => $get('tax_computation') !== 'Group'),
+                                    ->visible(fn ($get) => $get('tax_computation') !== 'Group'),
 
                                 Forms\Components\Section::make()->schema([
                                     Forms\Components\Select::make('status')
                                         ->options([
                                             'Active' => 'Active',
-                                            'Inactive' => 'Inactive'
+                                            'Inactive' => 'Inactive',
                                         ])
                                         ->default('Active')
                                         ->required(),
@@ -85,84 +83,84 @@ class TaxResource extends Resource
                             ->columnSpan(1),
                     ]),
 
-                    //TODO:: right now the reapeater not supporting belongs to and hasmany relation
-                    // it's not working for the attach and associate too
-//                Forms\Components\Grid::make()
-//                    ->schema([
-//                        Forms\Components\Tabs::make('Taxes')
-//                            ->columns(1)
-//                            ->visible(fn($get) => $get('tax_computation') === 'Group') // Only show if parent is selected
-//                            ->schema([
-//                                Forms\Components\Tabs\Tab::make('Taxes')
-//                                    ->badge(fn($get) => count($get('children') ?? []))
-//                                    ->icon('heroicon-m-queue-list')
-//                                    ->schema([
-//                                        Forms\Components\Repeater::make('children')
-//                                            ->label('Child Taxes')
-//                                            ->hiddenLabel()
-//                                            ->relationship() // Reference to the child relationship
-//                                            ->schema([
-//                                                Forms\Components\Select::make('name')
-//                                                    ->label('Tax')
-//                                                    ->columnSpan(2)
-//                                                    ->relationship('children', 'name')
-//                                                    ->searchable()
-//                                                    ->preload()
-//                                                    ->afterStateUpdated(function ($state, callable $set) use ($itemModel) {
-//                                                        // Ensure the parent_id is updated in the database correctly
-//                                                        if ($state) {
-//                                                            $set('parent_id', $itemModel->id);
-//                                                        }
-//                                                    })
-//                                                    ->createOptionForm([
-//                                                        Forms\Components\TextInput::make('name')
-//                                                            ->required()
-//                                                            ->maxLength(255),
-//                                                        Forms\Components\Select::make('tax_computation')
-//                                                            ->options([
-//                                                                'Fixed' => 'Fixed',
-//                                                                'Percentage' => 'Percentage',
-//                                                                'Group' => 'Group',
-//                                                                'Percentage_inclusive' => 'Percentage_inclusive',
-//                                                            ])
-//                                                            ->live()
-//                                                            ->required(),
-//                                                        Forms\Components\TextInput::make('amount')
-//                                                            ->required()
-//                                                            ->numeric(),
-//                                                        Forms\Components\Select::make('type')
-//                                                            ->options([
-//                                                                'Sales' => 'Sales',
-//                                                                'Purchases' => 'Purchases',
-//                                                                'None' => 'None'
-//                                                            ])
-//                                                            ->required(),
-//                                                        Forms\Components\Select::make('tax_scope')
-//                                                            ->options([
-//                                                                'Goods' => 'Goods',
-//                                                                'Services' => 'Services'
-//                                                            ])
-//                                                            ->required(),
-//                                                        Forms\Components\Select::make('parent_id')
-//                                                            ->label('Parent Tax')
-//                                                            ->relationship('parent', 'name') // Select parent tax
-//                                                            ->nullable()
-//                                                            ->helperText('If this is a child tax, select a parent tax'),
-//                                                        Forms\Components\Select::make('status')
-//                                                            ->options([
-//                                                                'Active' => 'Active',
-//                                                                'Inactive' => 'Inactive'
-//                                                            ])
-//                                                            ->required(),
-//                                                    ]),
-//                                            ])
-//                                            ->columns(1)
-//                                            ->defaultItems(0)
-//                                            ->cloneable(),
-//                                    ]),
-//                            ])
-//                            ->columnSpan('full'),
-//                    ])
+                //TODO:: right now the reapeater not supporting belongs to and hasmany relation
+                // it's not working for the attach and associate too
+                //                Forms\Components\Grid::make()
+                //                    ->schema([
+                //                        Forms\Components\Tabs::make('Taxes')
+                //                            ->columns(1)
+                //                            ->visible(fn($get) => $get('tax_computation') === 'Group') // Only show if parent is selected
+                //                            ->schema([
+                //                                Forms\Components\Tabs\Tab::make('Taxes')
+                //                                    ->badge(fn($get) => count($get('children') ?? []))
+                //                                    ->icon('heroicon-m-queue-list')
+                //                                    ->schema([
+                //                                        Forms\Components\Repeater::make('children')
+                //                                            ->label('Child Taxes')
+                //                                            ->hiddenLabel()
+                //                                            ->relationship() // Reference to the child relationship
+                //                                            ->schema([
+                //                                                Forms\Components\Select::make('name')
+                //                                                    ->label('Tax')
+                //                                                    ->columnSpan(2)
+                //                                                    ->relationship('children', 'name')
+                //                                                    ->searchable()
+                //                                                    ->preload()
+                //                                                    ->afterStateUpdated(function ($state, callable $set) use ($itemModel) {
+                //                                                        // Ensure the parent_id is updated in the database correctly
+                //                                                        if ($state) {
+                //                                                            $set('parent_id', $itemModel->id);
+                //                                                        }
+                //                                                    })
+                //                                                    ->createOptionForm([
+                //                                                        Forms\Components\TextInput::make('name')
+                //                                                            ->required()
+                //                                                            ->maxLength(255),
+                //                                                        Forms\Components\Select::make('tax_computation')
+                //                                                            ->options([
+                //                                                                'Fixed' => 'Fixed',
+                //                                                                'Percentage' => 'Percentage',
+                //                                                                'Group' => 'Group',
+                //                                                                'Percentage_inclusive' => 'Percentage_inclusive',
+                //                                                            ])
+                //                                                            ->live()
+                //                                                            ->required(),
+                //                                                        Forms\Components\TextInput::make('amount')
+                //                                                            ->required()
+                //                                                            ->numeric(),
+                //                                                        Forms\Components\Select::make('type')
+                //                                                            ->options([
+                //                                                                'Sales' => 'Sales',
+                //                                                                'Purchases' => 'Purchases',
+                //                                                                'None' => 'None'
+                //                                                            ])
+                //                                                            ->required(),
+                //                                                        Forms\Components\Select::make('tax_scope')
+                //                                                            ->options([
+                //                                                                'Goods' => 'Goods',
+                //                                                                'Services' => 'Services'
+                //                                                            ])
+                //                                                            ->required(),
+                //                                                        Forms\Components\Select::make('parent_id')
+                //                                                            ->label('Parent Tax')
+                //                                                            ->relationship('parent', 'name') // Select parent tax
+                //                                                            ->nullable()
+                //                                                            ->helperText('If this is a child tax, select a parent tax'),
+                //                                                        Forms\Components\Select::make('status')
+                //                                                            ->options([
+                //                                                                'Active' => 'Active',
+                //                                                                'Inactive' => 'Inactive'
+                //                                                            ])
+                //                                                            ->required(),
+                //                                                    ]),
+                //                                            ])
+                //                                            ->columns(1)
+                //                                            ->defaultItems(0)
+                //                                            ->cloneable(),
+                //                                    ]),
+                //                            ])
+                //                            ->columnSpan('full'),
+                //                    ])
             ]);
     }
 

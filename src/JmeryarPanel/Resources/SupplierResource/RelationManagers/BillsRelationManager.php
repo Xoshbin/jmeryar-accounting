@@ -32,7 +32,7 @@ class BillsRelationManager extends RelationManager
                         'Pending' => 'Pending',
                         'Paid' => 'Paid',
                         'Canceled' => 'Canceled',
-                    ])
+                    ]),
             ]);
     }
 

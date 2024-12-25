@@ -2,7 +2,6 @@
 
 namespace Xoshbin\JmeryarAccounting\Models;
 
-use Xoshbin\JmeryarAccounting\Observers\PaymentObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Xoshbin\JmeryarAccounting\Casts\MoneyCast;
+use Xoshbin\JmeryarAccounting\Observers\PaymentObserver;
 
 #[ObservedBy([PaymentObserver::class])]
 class Payment extends Model
@@ -34,6 +34,7 @@ class Payment extends Model
     ];
 
     public const TYPE_INCOME = 'Income';
+
     public const TYPE_EXPENSE = 'Expense';
 
     /**
@@ -55,5 +56,10 @@ class Payment extends Model
     public function transactions(): MorphToMany
     {
         return $this->morphToMany(Transaction::class, 'transactionable');
+    }
+
+    public function journalEntries(): MorphToMany
+    {
+        return $this->morphToMany(JournalEntry::class, 'j_entryable', 'j_entryables');
     }
 }

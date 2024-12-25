@@ -16,8 +16,6 @@ class FinanceDashboard extends BaseDashboard
 
     protected static ?string $title = 'Finance dashboard';
 
-
-
     public function filtersForm(Form $form): Form
     {
         return $form

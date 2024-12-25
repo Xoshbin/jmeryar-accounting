@@ -2,8 +2,6 @@
 
 namespace Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\InvoiceResource\RelationManagers;
 
-use Xoshbin\JmeryarAccounting\Models\Account;
-use Xoshbin\JmeryarAccounting\Models\Product;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -11,6 +9,8 @@ use Filament\Forms\Set;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Xoshbin\JmeryarAccounting\Models\Account;
+use Xoshbin\JmeryarAccounting\Models\Product;
 
 class InvoiceItemsRelationManager extends RelationManager
 {
@@ -55,7 +55,7 @@ class InvoiceItemsRelationManager extends RelationManager
                     ->relationship('revenueAccount', 'name')
                     ->default(fn () => Account::where('type', Account::TYPE_REVENUE)->first()->id)
                     ->required(),
-                Forms\Components\Select::make('inventory_account_id')
+                Forms\Components\Select::make('asset_account_id')
                     ->relationship('inventoryAccount', 'name')
                     ->default(fn () => Account::where('type', Account::TYPE_ASSET)->first()->id)
                     ->required(),

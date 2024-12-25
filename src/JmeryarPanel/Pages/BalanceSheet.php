@@ -2,12 +2,12 @@
 
 namespace Xoshbin\JmeryarAccounting\JmeryarPanel\Pages;
 
-use Xoshbin\JmeryarAccounting\Models\Account;
 use Filament\Pages\Page;
+use Xoshbin\JmeryarAccounting\Models\Account;
 
 class BalanceSheet extends Page
 {
-//    protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
+    //    protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
 
     protected static string $view = 'jmeryar-accounting::pages.balance-sheet';
 

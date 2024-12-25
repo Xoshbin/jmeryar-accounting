@@ -27,13 +27,13 @@ class Product extends Model
     ];
 
     const TYPE_PRODUCT = 'Product';
+
     const TYPE_SERVICE = 'Service';
 
     public function inventoryBatches()
     {
         return $this->hasMany(InventoryBatch::class);
     }
-
 
     public function category(): BelongsTo
     {

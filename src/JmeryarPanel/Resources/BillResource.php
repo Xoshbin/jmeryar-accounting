@@ -2,7 +2,12 @@
 
 namespace Xoshbin\JmeryarAccounting\JmeryarPanel\Resources;
 
-use Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\BillResource\Pages;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Support\Collection;
 use Xoshbin\JmeryarAccounting\Models\Bill;
 use Xoshbin\JmeryarAccounting\Models\Currency;
 use Xoshbin\JmeryarAccounting\Models\Payment;
@@ -10,18 +15,12 @@ use Xoshbin\JmeryarAccounting\Models\Product;
 use Xoshbin\JmeryarAccounting\Models\Setting;
 use Xoshbin\JmeryarAccounting\Models\Supplier;
 use Xoshbin\JmeryarAccounting\Models\Tax;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Illuminate\Support\Collection;
 
 class BillResource extends Resource
 {
     protected static ?string $model = Bill::class;
 
-//    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    //    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationGroup = 'Vendors';
 
@@ -33,112 +32,112 @@ class BillResource extends Resource
                     ->schema([
                         // Left Side: Bill Details and Customer Details
                         Forms\Components\Grid::make(2) // Takes up two-thirds of the width
-                        ->schema([
-                            Forms\Components\Section::make('Bill Details')
-                                ->schema([
-                                    Forms\Components\TextInput::make('bill_number')
-                                        ->label('Bill Number')
-                                        ->required()
-                                        ->default(self::getNextBillNumber())
-                                        ->unique(ignoreRecord: true)
-                                        ->maxLength(255),
-                                    Forms\Components\DatePicker::make('bill_date')
-                                        ->label('Bill Date')
-                                        ->default(now())
-                                        ->required(),
-                                ])
-                                ->columns(2),
+                            ->schema([
+                                Forms\Components\Section::make('Bill Details')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('bill_number')
+                                            ->label('Bill Number')
+                                            ->required()
+                                            ->default(self::getNextBillNumber())
+                                            ->unique(ignoreRecord: true)
+                                            ->maxLength(255),
+                                        Forms\Components\DatePicker::make('bill_date')
+                                            ->label('Bill Date')
+                                            ->default(now())
+                                            ->required(),
+                                    ])
+                                    ->columns(2),
 
-                            Forms\Components\Section::make('Supplier Details')
-                                ->schema([
-                                    Forms\Components\Select::make('supplier_id')
-                                        ->label('Supplier')
-                                        ->relationship('supplier', 'name')
-                                        ->required()
-                                        ->searchable()
-                                        ->preload()
-                                        ->createOptionUsing(function (array $data) {
-                                            return Supplier::create(array_merge($data));
-                                        })
-                                        ->createOptionForm([
-                                            Forms\Components\Grid::make()->schema([
-                                                Forms\Components\TextInput::make('name')
-                                                    ->required()
-                                                    ->maxLength(255),
-                                                Forms\Components\TextInput::make('email')
-                                                    ->email()
-                                                    ->maxLength(255),
+                                Forms\Components\Section::make('Supplier Details')
+                                    ->schema([
+                                        Forms\Components\Select::make('supplier_id')
+                                            ->label('Supplier')
+                                            ->relationship('supplier', 'name')
+                                            ->required()
+                                            ->searchable()
+                                            ->preload()
+                                            ->createOptionUsing(function (array $data) {
+                                                return Supplier::create(array_merge($data));
+                                            })
+                                            ->createOptionForm([
+                                                Forms\Components\Grid::make()->schema([
+                                                    Forms\Components\TextInput::make('name')
+                                                        ->required()
+                                                        ->maxLength(255),
+                                                    Forms\Components\TextInput::make('email')
+                                                        ->email()
+                                                        ->maxLength(255),
+                                                ]),
+                                                Forms\Components\Grid::make()->schema([
+                                                    Forms\Components\TextInput::make('phone')
+                                                        ->tel()
+                                                        ->maxLength(255),
+                                                ]),
+                                                Forms\Components\Textarea::make('address')
+                                                    ->columnSpanFull(),
                                             ]),
-                                            Forms\Components\Grid::make()->schema([
-                                                Forms\Components\TextInput::make('phone')
-                                                    ->tel()
-                                                    ->maxLength(255),
-                                            ]),
-                                            Forms\Components\Textarea::make('address')
-                                                ->columnSpanFull(),
-                                        ]),
-                                    Forms\Components\Select::make('status')
-                                        ->label('Status')
-                                        ->default('Draft')
-                                        ->options([
-                                            'Draft' => 'Draft',
-                                            'Sent' => 'Sent',
-                                            'Partial' => 'Partial',
-                                            'Paid' => 'Paid',
-                                        ])
-                                        ->required(),
-                                ])
-                                ->columns(2),
+                                        Forms\Components\Select::make('status')
+                                            ->label('Status')
+                                            ->default('Draft')
+                                            ->options([
+                                                'Draft' => 'Draft',
+                                                'Sent' => 'Sent',
+                                                'Partial' => 'Partial',
+                                                'Paid' => 'Paid',
+                                            ])
+                                            ->required(),
+                                    ])
+                                    ->columns(2),
 
-                            Forms\Components\Section::make('Note')
-                                ->schema([
-                                    Forms\Components\Textarea::make('note')
-                                        ->hiddenLabel()
-                                        ->label('Note'),
-                                ])
-                                ->columns(1),
-                        ])
+                                Forms\Components\Section::make('Note')
+                                    ->schema([
+                                        Forms\Components\Textarea::make('note')
+                                            ->hiddenLabel()
+                                            ->label('Note'),
+                                    ])
+                                    ->columns(1),
+                            ])
                             ->columnSpan(2), // Left side takes two-thirds of the grid
 
                         // Right Side: Payments Section
                         Forms\Components\Grid::make(1) // Takes up one-third of the width
-                        ->schema([
-                            Forms\Components\Section::make('')
-                                ->hiddenLabel()
-                                ->schema([
-                                    Forms\Components\TextInput::make('untaxed_amount')
-                                    ->label('Untaxed Amount')
-                                    ->numeric()
-                                    ->readOnly(),
-                                    Forms\Components\TextInput::make('tax_amount')
-                                        ->label('Tax')
-                                        ->readOnly(),
-                                    Forms\Components\TextInput::make('total_amount')
-                                        ->label('Total Amount')
-                                        ->numeric()
-                                        ->readOnly(),
-                                ]),
-                            Forms\Components\Section::make()
-                                ->hiddenLabel()
-                                ->schema([
-                                    Forms\Components\TextInput::make('total_paid_amount')
-                                        ->label('Total Paid Amount')
-                                        ->formatStateUsing(fn($state, $record) => $record->total_paid_amount ?? 0)
-                                        ->readOnly(),
-                                    Forms\Components\TextInput::make('amount_due')
-                                        ->label('Amount Due')
-                                        ->formatStateUsing(fn($state, $record) => ($record->total_amount ?? 0) - ($record->total_paid_amount ?? 0))
-                                        ->readOnly(),
-                                    Forms\Components\DatePicker::make('due_date')
-                                        ->label('Due Date')
-                                        ->nullable(),
-                                    Forms\Components\Select::make('currency_id')
-                                        ->label('Currency')
-                                        ->default(fn() => Setting::first()?->currency->id)
-                                        ->relationship('currency', 'code')
-                                        ->disabled(fn($record) => $record?->status !== 'Draft' && $record !== null)
-                                ])
-                        ])
+                            ->schema([
+                                Forms\Components\Section::make('')
+                                    ->hiddenLabel()
+                                    ->schema([
+                                        Forms\Components\TextInput::make('untaxed_amount')
+                                            ->label('Untaxed Amount')
+                                            ->numeric()
+                                            ->readOnly(),
+                                        Forms\Components\TextInput::make('tax_amount')
+                                            ->label('Tax')
+                                            ->readOnly(),
+                                        Forms\Components\TextInput::make('total_amount')
+                                            ->label('Total Amount')
+                                            ->numeric()
+                                            ->readOnly(),
+                                    ]),
+                                Forms\Components\Section::make()
+                                    ->hiddenLabel()
+                                    ->schema([
+                                        Forms\Components\TextInput::make('total_paid_amount')
+                                            ->label('Total Paid Amount')
+                                            ->formatStateUsing(fn ($state, $record) => $record->total_paid_amount ?? 0)
+                                            ->readOnly(),
+                                        Forms\Components\TextInput::make('amount_due')
+                                            ->label('Amount Due')
+                                            ->formatStateUsing(fn ($state, $record) => ($record->total_amount ?? 0) - ($record->total_paid_amount ?? 0))
+                                            ->readOnly(),
+                                        Forms\Components\DatePicker::make('due_date')
+                                            ->label('Due Date')
+                                            ->nullable(),
+                                        Forms\Components\Select::make('currency_id')
+                                            ->label('Currency')
+                                            ->default(fn () => Setting::first()?->currency->id)
+                                            ->relationship('currency', 'code')
+                                            ->disabled(fn ($record) => $record?->status !== 'Draft' && $record !== null),
+                                    ]),
+                            ])
                             ->columnSpan(1), // Right side takes one-third of the grid
                     ]),
 
@@ -146,7 +145,7 @@ class BillResource extends Resource
                 Forms\Components\Tabs::make('Bill Tabs')
                     ->schema([
                         Forms\Components\Tabs\Tab::make('Bill Items')
-                            ->badge(fn($get) => count($get('billItems') ?? []))
+                            ->badge(fn ($get) => count($get('billItems') ?? []))
                             ->icon('heroicon-m-queue-list')
                             ->schema([
                                 Forms\Components\Repeater::make('billItems')
@@ -195,7 +194,7 @@ class BillResource extends Resource
                                             ->columnSpan(1)
                                             ->numeric()
                                             ->live(debounce: 600)
-                                            ->required(fn($get) => $get('quantity') > 0)
+                                            ->required(fn ($get) => $get('quantity') > 0)
                                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                                 $taxId = $get('taxes');
                                                 $tax = $taxId ? Tax::find($taxId) : null;
@@ -205,17 +204,17 @@ class BillResource extends Resource
                                         Forms\Components\TextInput::make('unit_price')
                                             ->label('Unit Price')
                                             ->columnSpan(1)
-                                            ->default(fn($get) => Product::find($get('product_id'))?->unit_price ?? null)
+                                            ->default(fn ($get) => Product::find($get('product_id'))?->unit_price ?? null)
                                             ->numeric(),
                                         Forms\Components\Select::make('tax_id')
                                             ->label(function ($state, callable $get) {
                                                 if ($state !== null) {
                                                     $tax = $state ? Tax::find($state) : 0;
                                                     if ($tax instanceof Collection) {
-                                                        return 'Tax ' . ($get('cost_price') * $get('quantity')) * ($tax->first()->amount / 100);
+                                                        return 'Tax '.($get('cost_price') * $get('quantity')) * ($tax->first()->amount / 100);
                                                     } else {
-                                                        if ($tax){
-                                                            return 'Tax ' . ($get('cost_price') * $get('quantity')) * ($tax->amount / 100);
+                                                        if ($tax) {
+                                                            return 'Tax '.($get('cost_price') * $get('quantity')) * ($tax->amount / 100);
                                                         }
                                                     }
                                                 } else {
@@ -241,7 +240,7 @@ class BillResource extends Resource
                                         Forms\Components\TextInput::make('total_cost')
                                             ->label('Total Cost')
                                             ->columnSpan(1)
-                                            ->required(fn($get) => $get('quantity') > 0)
+                                            ->required(fn ($get) => $get('quantity') > 0)
                                             ->numeric(),
                                     ])
                                     ->defaultItems(0)
@@ -251,9 +250,9 @@ class BillResource extends Resource
                                     ->afterStateUpdated(function (callable $set, $state) {
                                         // Calculate and set total amount
                                         // TODO: Fix delay in updating the total amount; it updates only after adding the next item.
-                                        $totalUntaxedAmount = collect($state)->sum(fn($item) => $item['untaxed_amount'] ?? 0);
-                                        $totalTaxAmount = collect($state)->sum(fn($item) => $item['tax_amount'] ?? 0);
-                                        $totalAmount = collect($state)->sum(fn($item) => $item['total_cost'] ?? 0);
+                                        $totalUntaxedAmount = collect($state)->sum(fn ($item) => $item['total_cost'] ?? 0) - collect($state)->sum(fn ($item) => $item['tax_amount'] ?? 0);
+                                        $totalTaxAmount = collect($state)->sum(fn ($item) => $item['tax_amount'] ?? 0);
+                                        $totalAmount = collect($state)->sum(fn ($item) => $item['total_cost'] ?? 0);
 
                                         $set('total_amount', $totalAmount);
                                         $set('tax_amount', $totalTaxAmount);
@@ -261,7 +260,7 @@ class BillResource extends Resource
                                     }),
                             ]),
                         Forms\Components\Tabs\Tab::make('Bill Payments')
-                            ->badge(fn($get) => count($get('payments') ?? []))
+                            ->badge(fn ($get) => count($get('payments') ?? []))
                             ->icon('heroicon-m-banknotes')
                             ->schema([
                                 Forms\Components\Repeater::make('payments')
@@ -275,7 +274,7 @@ class BillResource extends Resource
                                         Forms\Components\Select::make('currency_id')
                                             ->label('Currency')
                                             ->relationship('currency', 'code')
-                                            ->disabled(fn($record) => $record?->status === 'Paid' && $record !== null)
+                                            ->disabled(fn ($record) => $record?->status === 'Paid' && $record !== null)
                                             ->live(debounce: 600)
                                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                                 $currency = Currency::find($state);
@@ -307,7 +306,7 @@ class BillResource extends Resource
                                                 'Bank' => 'Bank',
                                                 'Credit Card' => 'Credit Card',
                                             ])
-                                            ->required(fn($get) => $get('amount') > 0),
+                                            ->required(fn ($get) => $get('amount') > 0),
                                     ])
                                     ->defaultItems(0)
                                     ->columns(6)
@@ -319,12 +318,12 @@ class BillResource extends Resource
                                         return $data;
                                     })
                                     ->afterStateUpdated(function (callable $set, $state, callable $get) {
-                                        $totalPaidAmount = collect($state)->sum(fn($item) => $item['amount_in_invoice_currency'] ?? 0);
+                                        $totalPaidAmount = collect($state)->sum(fn ($item) => $item['amount_in_invoice_currency'] ?? 0);
                                         $set('total_paid_amount', $totalPaidAmount);
                                         $set('amount_due', $get('total_amount') - $totalPaidAmount);
                                     })
-                                    ->itemLabel(fn(array $state): ?string => $state['payment_date'] . ' ' . $state['amount_in_invoice_currency'] ?? null),
-                            ])
+                                    ->itemLabel(fn (array $state): ?string => $state['payment_date'].' '.$state['amount_in_invoice_currency'] ?? null),
+                            ]),
                     ])
                     ->columnSpan('full'),
             ]);
@@ -349,7 +348,7 @@ class BillResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
-                ->badge(),
+                    ->badge(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -382,6 +381,7 @@ class BillResource extends Resource
                 return $basePrice + $tax->amount;
             }
         }
+
         return $basePrice;
     }
 
@@ -394,14 +394,15 @@ class BillResource extends Resource
     {
         $lastBill = Bill::latest('id')->first();
         $newNumber = $lastBill ? intval(substr($lastBill->bill_number, -4)) + 1 : 1;
-        return 'BILL-' . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
+
+        return 'BILL-'.str_pad($newNumber, 4, '0', STR_PAD_LEFT);
     }
 
     public static function getRelations(): array
     {
         return [
-//            RelationManagers\BillItemsRelationManager::class,
-//            RelationManagers\PaymentsRelationManager::class
+            //            RelationManagers\BillItemsRelationManager::class,
+            //            RelationManagers\PaymentsRelationManager::class
         ];
     }
 

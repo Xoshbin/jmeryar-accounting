@@ -2,7 +2,6 @@
 
 namespace Xoshbin\JmeryarAccounting\Models;
 
-use Xoshbin\JmeryarAccounting\Observers\BillObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Xoshbin\JmeryarAccounting\Casts\MoneyCast;
+use Xoshbin\JmeryarAccounting\Observers\BillObserver;
 
 #[ObservedBy([BillObserver::class])]
 class Bill extends Model
@@ -31,7 +31,7 @@ class Bill extends Model
         'liability_account_id',
         'currency_id',
         'untaxed_amount',
-        'tax_amount'
+        'tax_amount',
     ];
 
     protected $casts = [
@@ -44,8 +44,11 @@ class Bill extends Model
     ];
 
     public const TYPE_DRAFT = 'Draft';
+
     public const TYPE_RECEIVED = 'Received';
+
     public const TYPE_PARTIAL = 'Partial';
+
     public const TYPE_PAID = 'Paid';
 
     public function supplier(): BelongsTo

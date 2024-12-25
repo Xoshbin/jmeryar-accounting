@@ -4,7 +4,6 @@ namespace Xoshbin\JmeryarAccounting\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Currency extends Model
@@ -17,7 +16,7 @@ class Currency extends Model
         'symbol',
         'currency_unit',
         'currency_subunit',
-        'status'
+        'status',
     ];
 
     protected $casts = [
@@ -25,9 +24,10 @@ class Currency extends Model
     ];
 
     const TYPE_PRODUCT = 'Active';
+
     const TYPE_SERVICE = 'Inactive';
 
-    public function exchangeRatesAsBase() : HasMany
+    public function exchangeRatesAsBase(): HasMany
     {
         return $this->hasMany(ExchangeRate::class, 'base_currency_id');
     }

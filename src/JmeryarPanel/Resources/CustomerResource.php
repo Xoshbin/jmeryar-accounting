@@ -2,20 +2,18 @@
 
 namespace Xoshbin\JmeryarAccounting\JmeryarPanel\Resources;
 
-use Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\CustomerResource\Pages;
-use Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\CustomerResource\RelationManagers;
-use Xoshbin\JmeryarAccounting\Models\Customer;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Xoshbin\JmeryarAccounting\Models\Customer;
 
 class CustomerResource extends Resource
 {
     protected static ?string $model = Customer::class;
 
-//    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    //    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationGroup = 'Customers';
 
@@ -72,7 +70,7 @@ class CustomerResource extends Resource
     public static function getRelations(): array
     {
         return [
-            \Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\CustomerResource\RelationManagers\InvoicesRelationManager::class
+            \Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\CustomerResource\RelationManagers\InvoicesRelationManager::class,
         ];
     }
 

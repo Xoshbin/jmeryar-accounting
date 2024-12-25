@@ -35,13 +35,16 @@ class JournalEntry extends Model
         return $this->morphedByMany(Invoice::class, 'j_entryable', 'j_entryables', 'journal_entry_id', 'j_entryable_id');
     }
 
+    public function payments(): MorphToMany
+    {
+        return $this->morphedByMany(Payment::class, 'j_entryable', 'j_entryables', 'journal_entry_id', 'j_entryable_id');
+    }
 
     public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class);
     }
 
-    // Generic method to retrieve the related models
     public function related(): MorphToMany
     {
         return $this->morphedByMany(Bill::class, 'j_entryables')

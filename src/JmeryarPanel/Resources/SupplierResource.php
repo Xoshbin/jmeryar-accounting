@@ -2,20 +2,18 @@
 
 namespace Xoshbin\JmeryarAccounting\JmeryarPanel\Resources;
 
-use Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\SupplierResource\Pages;
-use Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\SupplierResource\RelationManagers;
-use Xoshbin\JmeryarAccounting\Models\Supplier;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Xoshbin\JmeryarAccounting\Models\Supplier;
 
 class SupplierResource extends Resource
 {
     protected static ?string $model = Supplier::class;
 
-//    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    //    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationGroup = 'Vendors';
 
@@ -76,7 +74,7 @@ class SupplierResource extends Resource
     public static function getRelations(): array
     {
         return [
-            \Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\SupplierResource\RelationManagers\BillsRelationManager::class
+            \Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\SupplierResource\RelationManagers\BillsRelationManager::class,
         ];
     }
 

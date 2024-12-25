@@ -2,22 +2,21 @@
 
 namespace Xoshbin\JmeryarAccounting\JmeryarPanel\Resources;
 
-use Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\ProductResource\Pages;
-use Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\ProductResource\RelationManagers;
-use Xoshbin\JmeryarAccounting\Models\Product;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Xoshbin\JmeryarAccounting\Models\Product;
 
 class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
 
-//    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    //    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationGroup = 'Inventory';
+
     public static function form(Form $form): Form
     {
         return $form

@@ -2,11 +2,6 @@
 
 namespace Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\InvoiceResource\Pages;
 
-use Xoshbin\JmeryarAccounting\Models\Account;
-use Xoshbin\JmeryarAccounting\Models\Invoice;
-use Xoshbin\JmeryarAccounting\Models\JournalEntry;
-use Xoshbin\JmeryarAccounting\Models\Payment;
-use Xoshbin\JmeryarAccounting\Models\Setting;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions;
 use Filament\Forms;
@@ -14,6 +9,11 @@ use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Blade;
 use Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\InvoiceResource;
+use Xoshbin\JmeryarAccounting\Models\Account;
+use Xoshbin\JmeryarAccounting\Models\Invoice;
+use Xoshbin\JmeryarAccounting\Models\JournalEntry;
+use Xoshbin\JmeryarAccounting\Models\Payment;
+use Xoshbin\JmeryarAccounting\Models\Setting;
 
 class EditInvoice extends EditRecord
 {
@@ -22,9 +22,9 @@ class EditInvoice extends EditRecord
     public function mutateFormDataBeforeSave(array $data): array
     {
         $data['revenue_account_id'] = Account::where('type', Account::TYPE_REVENUE)->first()->id;
-        $data['inventory_account_id'] = Account::where('name', Account::TYPE_ACCOUNTS_RECEIVABLE)->first()->id;
+        $data['asset_account_id'] = Account::where('name', Account::TYPE_ACCOUNTS_RECEIVABLE)->first()->id;
 
-        return  $data;
+        return $data;
     }
 
     /**
@@ -42,11 +42,12 @@ class EditInvoice extends EditRecord
                 ->action(function (Model $record) {
                     Pdf::setOptions(['debugCss' => false]);
                     $setting = Setting::first();
+
                     return response()->streamDownload(function () use ($record, $setting) {
                         echo Pdf::loadHtml(
                             Blade::render('jmeryar-accounting::invoices.invoice', ['record' => $record, 'setting' => $setting]),
                         )->stream();
-                    }, $record->invoice_number . '.pdf');
+                    }, $record->invoice_number.'.pdf');
                 }),
 
             Actions\Action::make('Register payment')
@@ -68,7 +69,7 @@ class EditInvoice extends EditRecord
                         ->default('')
                         ->required()
                         ->columnSpanFull(),
-            ])->action(function (array $data, Invoice $record): void {
+                ])->action(function (array $data, Invoice $record): void {
 
                     $payment = Payment::create([
                         'amount' => $data['amount'],
@@ -84,9 +85,9 @@ class EditInvoice extends EditRecord
                     // Create the associated transaction
                     $transaction = $payment->transactions()->create([
                         'date' => now(),
-                        'note' => 'Transaction for payment ID ' . $record->id,
+                        'note' => 'Transaction for payment ID '.$record->id,
                         'amount' => $data['amount'],
-                        'transaction_type' => 'credit' // For an invoice, this should be a credit transaction.
+                        'transaction_type' => 'credit', // For an invoice, this should be a credit transaction.
                     ]);
 
                     // Journal entry for payment account (Debit)
@@ -109,7 +110,7 @@ class EditInvoice extends EditRecord
                     } else {
                         $this->record->update(['status' => 'paid']);
                     }
-                })
+                }),
         ];
     }
 }

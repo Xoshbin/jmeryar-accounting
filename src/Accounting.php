@@ -6,11 +6,9 @@ use Filament\Contracts\Plugin;
 use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Xoshbin\JmeryarAccounting\JmeryarPanel\Pages\FinanceDashboard;
-use Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\BillResource;
 
 class Accounting implements Plugin
 {
-
     public function getId(): string
     {
         return 'xoshbin-jmeryar-accounting';
@@ -20,19 +18,19 @@ class Accounting implements Plugin
     {
         $panel
             ->discoverResources(
-                in: __DIR__ . '/JmeryarPanel/Resources',
+                in: __DIR__.'/JmeryarPanel/Resources',
                 for: 'Xoshbin\\JmeryarAccounting\\JmeryarPanel\\Resources'
             )
             ->discoverPages(
-                in: __DIR__ . '/JmeryarPanel/Pages',
+                in: __DIR__.'/JmeryarPanel/Pages',
                 for: 'Xoshbin\\JmeryarAccounting\\JmeryarPanel\\Pages'
             )
             ->discoverWidgets(
-                in: __DIR__ . '/JmeryarPanel/Widgets',
+                in: __DIR__.'/JmeryarPanel/Widgets',
                 for: 'Xoshbin\\JmeryarAccounting\\JmeryarPanel\\Widgets'
             )
             ->pages([
-                FinanceDashboard::class
+                FinanceDashboard::class,
             ])
             ->navigationGroups([
                 NavigationGroup::make()

@@ -1,10 +1,9 @@
 <?php
 
-namespace Database\Seeders;
+namespace Xoshbin\JmeryarAccounting\Database\Seeders;
 
-use Xoshbin\JmeryarAccounting\Models\ProductCategory;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Xoshbin\JmeryarAccounting\Models\ProductCategory;
 
 class ProductCategorySeeder extends Seeder
 {
@@ -16,7 +15,7 @@ class ProductCategorySeeder extends Seeder
         $productCategories = [
             ['name' => 'Electronics', 'description' => 'Electronic devices and accessories'],
             ['name' => 'Office Supplies', 'description' => 'Stationery and office supplies'],
-            ['name' => 'Furniture', 'description' => 'Office and home furniture']
+            ['name' => 'Furniture', 'description' => 'Office and home furniture'],
         ];
 
         ProductCategory::insert($productCategories);

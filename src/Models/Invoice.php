@@ -2,7 +2,6 @@
 
 namespace Xoshbin\JmeryarAccounting\Models;
 
-use Xoshbin\JmeryarAccounting\Observers\InvoiceObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Xoshbin\JmeryarAccounting\Casts\MoneyCast;
+use Xoshbin\JmeryarAccounting\Observers\InvoiceObserver;
 
 #[ObservedBy([InvoiceObserver::class])]
 class Invoice extends Model
@@ -28,10 +28,10 @@ class Invoice extends Model
         'status',
         'note',
         'revenue_account_id',
-        'inventory_account_id',
+        'asset_account_id',
         'currency_id',
         'untaxed_amount',
-        'tax_amount'
+        'tax_amount',
     ];
 
     protected $casts = [
@@ -44,8 +44,11 @@ class Invoice extends Model
     ];
 
     public const TYPE_DRAFT = 'Draft';
+
     public const TYPE_SENT = 'Sent';
+
     public const TYPE_PARTIAL = 'Partial';
+
     public const TYPE_PAID = 'Paid';
 
     // Relationships
@@ -91,6 +94,6 @@ class Invoice extends Model
     // Relationship to the inventory/COGS account
     public function inventoryAccount()
     {
-        return $this->belongsTo(Account::class, 'inventory_account_id');
+        return $this->belongsTo(Account::class, 'asset_account_id');
     }
 }

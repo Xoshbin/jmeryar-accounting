@@ -5,7 +5,13 @@
     "autoload": {
         "psr-4": {
             "Xoshbin\\JmeryarAccounting\\": "src/",
-            "Xoshbin\\JmeryarAccounting\\Database\\Seeders\\": "database/seeders/"
+            "Xoshbin\\JmeryarAccounting\\Database\\Seeders\\": "database/seeders/",
+            "Xoshbin\\JmeryarAccounting\\Database\\Factories\\": "database/factories/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
         }
     },
     "authors": [
@@ -14,7 +20,6 @@
             "email": "xoshbin@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
     "require": {
         "php": "^8.2",
         "illuminate/console": "^10.0|^11.0",
@@ -31,5 +36,29 @@
                 "Xoshbin\\JmeryarAccounting\\JmeryarAccountingServiceProvider"
             ]
         }
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.8",
+        "nunomaduro/collision": "^8.5",
+        "mockery/mockery": "^1.6",
+        "laravel/pint": "^1.18",
+        "pestphp/pest": "^3.7",
+        "pestphp/pest-plugin-laravel": "^3.0"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "config": {
+        "sort-package": true,
+        "preferred-install": "dist",
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": "@php ./vendor/bin/testbench package:discover --ansi",
+        "analyse": "vendor/bin/phpstan analyse",
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
+        "format": "vendor/bin/pint"
     }
 }

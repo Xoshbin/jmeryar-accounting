@@ -2,13 +2,10 @@
 
 namespace Xoshbin\JmeryarAccounting\Observers;
 
-
 use Xoshbin\JmeryarAccounting\Models\Account;
 use Xoshbin\JmeryarAccounting\Models\JournalEntry;
 use Xoshbin\JmeryarAccounting\Models\Payment;
 use Xoshbin\JmeryarAccounting\Models\Transaction;
-use Filament\Facades\Filament;
-use Illuminate\Support\Facades\Log;
 
 class PaymentObserver
 {
@@ -51,7 +48,7 @@ class PaymentObserver
 
         $transaction = Transaction::create([
             'date' => $payment->payment_date,
-            'note' => 'Transaction for payment ID ' . $payment->id,
+            'note' => 'Transaction for payment ID '.$payment->id,
             'amount' => $payment->amount,
             'transaction_type' => $parent instanceof \Xoshbin\JmeryarAccounting\Models\Invoice ? 'Credit' : 'Debit',
         ]);
@@ -61,22 +58,22 @@ class PaymentObserver
         // Create journal entries based on the parent type
         if ($parent instanceof \Xoshbin\JmeryarAccounting\Models\Invoice) {
             // Debit Cash/Bank account, Credit Accounts Receivable
-            $this->createJournalEntry($transaction, 'Cash', $payment->amount, 0);
-            $this->createJournalEntry($transaction, 'Accounts Receivable', 0, $payment->amount);
+            $this->createJournalEntry($payment, 'Cash', $payment->amount, 0);
+            $this->createJournalEntry($payment, 'Accounts Receivable', 0, $payment->amount);
         } elseif ($parent instanceof \Xoshbin\JmeryarAccounting\Models\Bill) {
             // Credit Cash/Bank account, Debit Accounts Payable
-            $this->createJournalEntry($transaction, 'Cash', 0, $payment->amount); // Credit the Cash account
-            $this->createJournalEntry($transaction, 'Accounts Payable', $payment->amount, 0); // Debit Accounts Payable
+            $this->createJournalEntry($payment, 'Cash', 0, $payment->amount); // Credit the Cash account
+            $this->createJournalEntry($payment, 'Accounts Payable', $payment->amount, 0); // Debit Accounts Payable
         }
 
         // Update the status of the parent based on the payment amount
-        $this->updateParentStatus($parent, $payment->amount);
+        $this->updateParentStatus($parent);
     }
 
     /**
      * create a journal entry for the transaction
      */
-    protected function createJournalEntry(Transaction $transaction, string $accountName, float $debit, float $credit): void
+    protected function createJournalEntry(Payment $payment, string $accountName, float $debit, float $credit): void
     {
         $account = Account::where('name', $accountName)->first();
         if ($account) {
@@ -86,7 +83,7 @@ class PaymentObserver
                 'credit' => $credit,
             ]);
 
-            $transaction->journalEntries()->attach([
+            $payment->journalEntries()->attach([
                 $journal_entry->id,
             ]);
         }
@@ -107,14 +104,16 @@ class PaymentObserver
     /**
      * Update the status of the parent model (e.g., Invoice or Bill) based on the payment.
      */
-    protected function updateParentStatus($parent, float $paymentAmount): void
+    protected function updateParentStatus($parent): void
     {
-        if ($paymentAmount < $parent->total_amount) {
-            $parent->status = 'partial';
+        $totalAmount = $parent->payments->sum('amount');
+        if ($totalAmount < $parent->total_amount) {
+            $parent->status = 'Partial';
+            $parent->amount_due = $parent->total_amount - $totalAmount;
         } else {
-            $parent->status = 'paid';
+            $parent->status = 'Paid';
+            $parent->amount_due = $parent->total_amount - $totalAmount;
         }
         $parent->save();
     }
 }
-

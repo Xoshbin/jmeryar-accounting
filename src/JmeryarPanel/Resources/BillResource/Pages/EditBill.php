@@ -2,26 +2,25 @@
 
 namespace Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\BillResource\Pages;
 
-use Xoshbin\JmeryarAccounting\Models\Account;
-use Xoshbin\JmeryarAccounting\Models\Bill;
-use Xoshbin\JmeryarAccounting\Models\JournalEntry;
-use Xoshbin\JmeryarAccounting\Models\Payment;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Pages\EditRecord;
 use Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\BillResource;
+use Xoshbin\JmeryarAccounting\Models\Account;
+use Xoshbin\JmeryarAccounting\Models\Bill;
+use Xoshbin\JmeryarAccounting\Models\JournalEntry;
+use Xoshbin\JmeryarAccounting\Models\Payment;
 
 class EditBill extends EditRecord
 {
     protected static string $resource = BillResource::class;
-
 
     public function mutateFormDataBeforeSave(array $data): array
     {
         $data['expense_account_id'] = Account::where('type', Account::TYPE_EXPENSE)->first()->id;
         $data['liability_account_id'] = Account::where('type', Account::TYPE_LIABILITY)->first()->id;
 
-        return  $data;
+        return $data;
     }
 
     /**
@@ -68,9 +67,9 @@ class EditBill extends EditRecord
                     // Create the associated transaction
                     $transaction = $payment->transactions()->create([
                         'date' => now(),
-                        'note' => 'Transaction for payment ID ' . $record->id,
+                        'note' => 'Transaction for payment ID '.$record->id,
                         'amount' => $data['amount'],
-                        'transaction_type' => 'debit' // For a bill, this should be a debit transaction.
+                        'transaction_type' => 'debit', // For a bill, this should be a debit transaction.
                     ]);
 
                     // Journal entry for payment account (Debit)
@@ -93,7 +92,7 @@ class EditBill extends EditRecord
                     } else {
                         $this->record->update(['status' => 'paid']);
                     }
-                })
+                }),
         ];
     }
 }

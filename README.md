@@ -58,7 +58,7 @@ Payments are handled as polymorphic entities, which means a payment can belong t
 
 - [x] **Add inventory with FIFO (First in first out)**
 - [x] **Multiple Currency Support**
-- [ ] **Automated Tests**
+- [x] **Write Tests**
 - [X] **Printable Invoices**:
 - [ ] **Add notifications for due dates (in app notifications)**:
 - [ ] **Add notifications for inventory - Out of stocks**:

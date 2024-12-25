@@ -1,10 +1,9 @@
 <?php
 
-namespace Database\Seeders;
+namespace Xoshbin\JmeryarAccounting\Database\Seeders;
 
-use Xoshbin\JmeryarAccounting\Models\Tax;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Xoshbin\JmeryarAccounting\Models\Tax;
 
 class TaxSeeder extends Seeder
 {

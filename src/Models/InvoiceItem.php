@@ -2,13 +2,13 @@
 
 namespace Xoshbin\JmeryarAccounting\Models;
 
-use Xoshbin\JmeryarAccounting\Observers\InvoiceItemObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Xoshbin\JmeryarAccounting\Casts\MoneyCast;
+use Xoshbin\JmeryarAccounting\Observers\InvoiceItemObserver;
 
 #[ObservedBy([InvoiceItemObserver::class])]
 class InvoiceItem extends Model
@@ -22,7 +22,7 @@ class InvoiceItem extends Model
         'unit_price',
         'total_price',
         'untaxed_amount',
-        'tax_amount'
+        'tax_amount',
     ];
 
     protected $casts = [

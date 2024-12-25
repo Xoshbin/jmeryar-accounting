@@ -2,11 +2,11 @@
 
 namespace Xoshbin\JmeryarAccounting\JmeryarPanel\Widgets;
 
-use Xoshbin\JmeryarAccounting\Models\JournalEntry;
 use Carbon\Carbon;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Xoshbin\JmeryarAccounting\Models\JournalEntry;
 
 class IncomeStatement extends BaseWidget
 {
@@ -16,11 +16,11 @@ class IncomeStatement extends BaseWidget
 
     protected function getStats(): array
     {
-        $startDate = !is_null($this->filters['startDate'] ?? null)
+        $startDate = ! is_null($this->filters['startDate'] ?? null)
             ? Carbon::parse($this->filters['startDate'])
             : null;
 
-        $endDate = !is_null($this->filters['endDate'] ?? null)
+        $endDate = ! is_null($this->filters['endDate'] ?? null)
             ? Carbon::parse($this->filters['endDate'])
             : now();
 
@@ -28,14 +28,14 @@ class IncomeStatement extends BaseWidget
         $revenues = JournalEntry::whereHas('account', function ($query) {
             $query->where('type', 'Revenue');
         })
-            ->when($startDate, fn($query) => $query->whereBetween('created_at', [$startDate, $endDate]))
+            ->when($startDate, fn ($query) => $query->whereBetween('created_at', [$startDate, $endDate]))
             ->sum('credit'); // Sum of credits for revenue accounts
 
         // Calculate Expenses
         $expenses = JournalEntry::whereHas('account', function ($query) {
             $query->where('type', 'Expense');
         })
-            ->when($startDate, fn($query) => $query->whereBetween('created_at', [$startDate, $endDate]))
+            ->when($startDate, fn ($query) => $query->whereBetween('created_at', [$startDate, $endDate]))
             ->sum('debit'); // Sum of debits for expense accounts
 
         // Calculate Net Profit

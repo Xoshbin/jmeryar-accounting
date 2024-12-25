@@ -1,12 +1,9 @@
 <?php
 
-namespace Database\Seeders;
+namespace Xoshbin\JmeryarAccounting\Database\Seeders;
 
-use Xoshbin\JmeryarAccounting\Models\Currency;
-use Xoshbin\JmeryarAccounting\Models\ExchangeRate;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Faker;
+use Xoshbin\JmeryarAccounting\Models\Currency;
 
 class CurrencySeeder extends Seeder
 {

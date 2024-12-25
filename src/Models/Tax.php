@@ -26,9 +26,9 @@ class Tax extends Model
         'type' => 'string', // 'Active', 'Inactive'
     ];
 
-    const TYPE_PRODUCT = 'Active';
-    const TYPE_SERVICE = 'Inactive';
+    const STATUS_ACTIVE = 'Active';
 
+    const STATUS_INACTIVE = 'Inactive';
 
     public function parent(): BelongsTo
     {
