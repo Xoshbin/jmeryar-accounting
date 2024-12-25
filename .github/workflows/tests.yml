@@ -29,8 +29,8 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          composer install --prefer-dist --no-progress --no-suggest
-          composer require --dev "illuminate/support:${{ matrix.laravel }}"
+            composer require --no-update illuminate/support:${{ matrix.laravel }}
+            composer update --prefer-dist --no-progress --no-suggest
 
       - name: Run Tests
         run: |
