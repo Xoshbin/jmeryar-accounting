@@ -1,0 +1,37 @@
+name: Run Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php: ['8.2']
+        laravel: ['9.*', '10.*']
+        os: [ubuntu-latest]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, dom, tokenizer
+          coverage: none
+
+      - name: Install Dependencies
+        run: |
+          composer install --prefer-dist --no-progress --no-suggest
+          composer require --dev "illuminate/support:${{ matrix.laravel }}"
+
+      - name: Run Tests
+        run: |
+          vendor/bin/pest
