@@ -12,8 +12,4 @@ return [
         'credit' => 'Credit',
         'updated_at' => 'Updated At',
     ],
-
-    'form' => [
-        'name' => 'Name',
-    ],
 ];
