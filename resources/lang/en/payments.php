@@ -2,7 +2,6 @@
 
 return [
     'table' => [
-        'name' => 'Name',
         'amount' => 'Amount',
         'payment_date' => 'Payment Date',
         'payment_type' => 'Payment Type',
@@ -12,7 +11,6 @@ return [
     ],
 
     'form' => [
-        'name' => 'Name',
         'amount' => 'Amount',
         'payment_date' => 'Payment Date',
         'payment_type' => 'Payment Type',
