@@ -74,10 +74,10 @@ class TaxResource extends Resource
                                                 return '%';
                                             }
                                         })
-                                        ->required(fn($get) => $get('tax_computation') !== 'Group')
+                                        ->required(fn ($get) => $get('tax_computation') !== 'Group')
                                         ->numeric(),
                                 ])
-                                    ->visible(fn($get) => $get('tax_computation') !== 'Group'),
+                                    ->visible(fn ($get) => $get('tax_computation') !== 'Group'),
 
                                 Forms\Components\Section::make()->schema([
                                     Forms\Components\Select::make('status')

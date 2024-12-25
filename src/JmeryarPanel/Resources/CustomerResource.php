@@ -17,7 +17,6 @@ class CustomerResource extends Resource
 
     protected static ?string $navigationGroup = 'Customers';
 
-
     public static function getNavigationLabel(): string
     {
         return __('jmeryar-accounting::customers.title');

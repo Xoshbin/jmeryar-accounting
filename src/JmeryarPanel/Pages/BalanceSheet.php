@@ -28,8 +28,8 @@ class BalanceSheet extends Page
 
         // Calculate totals
         $totals = [
-            'assets' => $data['assets']->sum(fn($account) => $account->journalEntries->sum('debit') - $account->journalEntries->sum('credit')),
-            'liabilities' => $data['liabilities']->sum(fn($account) => $account->journalEntries->sum('credit') - $account->journalEntries->sum('debit')),
+            'assets' => $data['assets']->sum(fn ($account) => $account->journalEntries->sum('debit') - $account->journalEntries->sum('credit')),
+            'liabilities' => $data['liabilities']->sum(fn ($account) => $account->journalEntries->sum('credit') - $account->journalEntries->sum('debit')),
         ];
 
         // Derive equity using the accounting equation
