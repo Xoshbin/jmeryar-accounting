@@ -44,24 +44,24 @@ class Settings extends Page implements HasForms
                             ->columns(2)
                             ->schema([
                                 Forms\Components\TextInput::make('company_name')
-                                    ->label('Company Name')
+                                    ->label(__('jmeryar-accounting::settings.company_name'))
                                     ->required(),
                                 Forms\Components\TextInput::make('company_email')
-                                    ->label('Company Email')
+                                    ->label(__('jmeryar-accounting::settings.company_email'))
                                     ->email()
                                     ->required(),
                                 Forms\Components\TextInput::make('company_phone')
-                                    ->label('Company Phone')
+                                    ->label(__('jmeryar-accounting::settings.company_phone'))
                                     ->required(),
                                 Forms\Components\TextInput::make('company_address')
-                                    ->label('Company Address')
+                                    ->label(__('jmeryar-accounting::settings.company_address'))
                                     ->required(),
                                 Forms\Components\TextInput::make('company_website')
-                                    ->label('Company Website')
+                                    ->label(__('jmeryar-accounting::settings.company_website'))
                                     ->url()
                                     ->required(),
                                 Forms\Components\Select::make('currency_id')
-                                    ->label('Default Currency')
+                                    ->label(__('jmeryar-accounting::settings.currency_id'))
                                     ->relationship('currency', 'name')
                                     ->required(),
                             ])->columnSpan(2),
@@ -71,7 +71,7 @@ class Settings extends Page implements HasForms
                                 Forms\Components\Section::make()
                                     ->schema([
                                         Forms\Components\FileUpload::make('company_logo')
-                                            ->label('Company Logo')
+                                            ->label(__('jmeryar-accounting::settings.company_logo'))
                                             ->image()
                                             ->disk('public')
                                             ->columnSpanFull(),
