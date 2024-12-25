@@ -12,7 +12,6 @@ Jmeryar is a robust accounting application built with a focus on flexibility, tr
 - [Contributing](#contributing)
 - [License](#license)
 - [Tests](#tests)
-- [Support](#support)
 
 ## Features
 
@@ -171,9 +170,3 @@ composer test
 **Writing tests**:
 
 When contributing to the project, ensure you write tests for any new features or bug fixes. Place your tests in the `tests` directory and follow the existing structure and naming conventions.
-
-## Support
-
-Since I'm in Iraq and platforms like GitHub Sponsors and Buy Me a Coffee are not available here, you can support us with crypto using Kivach. Your support helps us continue developing and maintaining this project.
-
-[![Kivach](https://kivach.org/api/banner?repo=xoshbin/jmeryar-accounting)](https://kivach.org/repo/xoshbin/jmeryar-accounting)
