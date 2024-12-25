@@ -20,7 +20,7 @@ class CustomerResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return __('jmeryar-accounting::customers.customers');
+        return __('jmeryar-accounting::customers.title');
     }
 
     public static function form(Form $form): Form

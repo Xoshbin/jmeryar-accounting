@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'title' => 'Profit & Loss',
     'revenue' => 'Revenue',
     'total_revenue' => 'Total Revenue',
     'less_operating_expenses' => 'Less Operating Expenses',

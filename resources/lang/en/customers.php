@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'customers' => 'Customers',
+    'title' => 'Customers',
     'table' => [
         'name' => 'Name',
         'email' => 'Email',

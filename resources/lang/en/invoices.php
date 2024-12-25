@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'title' => 'Invoices',
     'form' => [
         'PDF/Print' => 'PDF/Print',
         'Register payment' => 'Register payment',

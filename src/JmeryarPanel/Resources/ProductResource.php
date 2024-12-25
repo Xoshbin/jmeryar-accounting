@@ -17,6 +17,11 @@ class ProductResource extends Resource
 
     protected static ?string $navigationGroup = 'Inventory';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('jmeryar-accounting::products.title');
+    }
+
     public static function form(Form $form): Form
     {
         return $form

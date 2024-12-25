@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'title' => 'Product Categories',
     'table' => [
         'name' => 'Name',
         'parent_name' => 'Parent Name',

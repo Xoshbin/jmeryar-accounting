@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'title' => 'Journal Entries',
     'table' => [
         'created_at' => 'Created At',
         'journal_entry' => 'Journal Entry',
@@ -10,7 +11,7 @@ return [
         'debit' => 'Debit',
         'credit' => 'Credit',
         'updated_at' => 'Updated At',
-    ], 
+    ],
 
     'form' => [
         'name' => 'Name',

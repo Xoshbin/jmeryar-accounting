@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'title' => 'Payments',
     'table' => [
         'amount' => 'Amount',
         'payment_date' => 'Payment Date',

@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'title' => 'Suppliers',
     'table' => [
         'name' => 'Name',
         'contact_person' => 'Contact Person',

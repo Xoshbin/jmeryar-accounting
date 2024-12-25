@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'title' => 'Bills',
     'table' => [
         'name' => 'Name',
         'bill_number' => 'Bill Number',

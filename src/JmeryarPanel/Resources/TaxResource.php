@@ -17,6 +17,11 @@ class TaxResource extends Resource
 
     protected static ?string $navigationGroup = 'Configuration';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('jmeryar-accounting::taxes.title');
+    }
+
     public static function form(Form $form): Form
     {
         $itemModel = $form->getRecord();

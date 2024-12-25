@@ -17,6 +17,11 @@ class TransactionResource extends Resource
 
     protected static ?string $navigationGroup = 'Accounting';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('jmeryar-accounting::transactions.title');
+    }
+
     public static function form(Form $form): Form
     {
         return $form

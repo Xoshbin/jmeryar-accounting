@@ -17,6 +17,11 @@ class JournalEntryResource extends Resource
 
     protected static ?string $navigationGroup = 'Accounting';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('jmeryar-accounting::journal_entries.title');
+    }
+
     public static function form(Form $form): Form
     {
         return $form

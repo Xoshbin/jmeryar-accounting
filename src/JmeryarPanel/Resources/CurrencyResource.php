@@ -18,6 +18,11 @@ class CurrencyResource extends Resource
 
     protected static ?string $navigationGroup = 'Configuration';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('jmeryar-accounting::currencies.title');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -66,10 +71,10 @@ class CurrencyResource extends Resource
                     ]),
 
                 Forms\Components\Tabs::make('Exchange Rate Tab')
-                    ->disabled(fn ($record) => Setting::first()?->currency->code === $record->code)
+                    ->disabled(fn($record) => Setting::first()?->currency->code === $record->code)
                     ->schema([
                         Forms\Components\Tabs\Tab::make('Exchange Rates')
-                            ->badge(fn ($get) => count($get('exchangeRatesAsTarget') ?? []))
+                            ->badge(fn($get) => count($get('exchangeRatesAsTarget') ?? []))
                             ->icon('heroicon-m-queue-list')
                             ->schema([
                                 Forms\Components\Repeater::make('exchangeRatesAsTarget')

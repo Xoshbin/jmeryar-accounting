@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'title' => 'Transactions',
     'table' => [
         'date' => 'Date',
         'note' => 'Note',

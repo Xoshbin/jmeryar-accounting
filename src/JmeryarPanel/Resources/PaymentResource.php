@@ -17,6 +17,11 @@ class PaymentResource extends Resource
 
     protected static ?string $navigationGroup = 'Accounting';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('jmeryar-accounting::payments.title');
+    }
+
     public static function form(Form $form): Form
     {
         return $form

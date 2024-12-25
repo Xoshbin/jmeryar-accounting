@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'title' => 'Tax Rates',
     'table' => [
         'name' => 'Name',
         'tax_computation' => 'Tax Computation',

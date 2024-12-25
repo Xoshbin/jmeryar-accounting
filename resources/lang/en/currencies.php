@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'title' => 'Currencies',
     'table' => [
         'code' => 'Code',
         'name' => 'Name',

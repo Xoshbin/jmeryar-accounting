@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'title' => 'Products',
     'table' => [
         'name' => 'Name',
         'sku' => 'SKU',

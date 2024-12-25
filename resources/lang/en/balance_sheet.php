@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'title' => 'Balance Sheet',
     'assets' => 'Assets',
     'total_assets' => 'Total Assets',
     'liabilities' => 'Liabilities',

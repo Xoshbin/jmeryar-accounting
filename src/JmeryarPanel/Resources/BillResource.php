@@ -24,6 +24,11 @@ class BillResource extends Resource
 
     protected static ?string $navigationGroup = 'Vendors';
 
+    public static function getNavigationLabel(): string
+    {
+        return __('jmeryar-accounting::bills.title');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
