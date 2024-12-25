@@ -11,9 +11,9 @@ class BalanceSheet extends Page
 
     protected static string $view = 'jmeryar-accounting::pages.balance-sheet';
 
-    protected static ?string $navigationLabel = 'Balance Sheet';
+    protected static ?string $navigationLabel = 'jmeryar-accounting::Balance Sheet';
 
-    protected static ?string $navigationGroup = 'Reports';
+    protected static ?string $navigationGroup = 'jmeryar-accounting::Reports';
 
     public function getBalanceData(): array
     {
