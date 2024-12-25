@@ -8,4 +8,5 @@ return [
     'equity' => 'Equity',
     'derived_equity' => 'Derived Equity',
     'liabilities_equity' => 'Liabilities + Equity',
+    'balance_sheet' => 'Balance Sheet',
 ];
