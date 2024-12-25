@@ -28,18 +28,23 @@ class CurrencyResource extends Resource
                             ->columns(2)
                             ->schema([
                                 Forms\Components\TextInput::make('code')
+                                    ->label(__('jmeryar-accounting::currencies.form.code'))
                                     ->required()
                                     ->maxLength(255),
                                 Forms\Components\TextInput::make('name')
+                                    ->label(__('jmeryar-accounting::currencies.form.name'))
                                     ->required()
                                     ->maxLength(255),
                                 Forms\Components\TextInput::make('symbol')
+                                    ->label(__('jmeryar-accounting::currencies.form.symbol'))
                                     ->required()
                                     ->maxLength(255),
                                 Forms\Components\TextInput::make('currency_unit')
+                                    ->label(__('jmeryar-accounting::currencies.form.currency_unit'))
                                     ->required()
                                     ->maxLength(255),
                                 Forms\Components\TextInput::make('currency_subunit')
+                                    ->label(__('jmeryar-accounting::currencies.form.currency_subunit'))
                                     ->required()
                                     ->maxLength(255),
                             ])
@@ -48,9 +53,10 @@ class CurrencyResource extends Resource
                             ->schema([
                                 Forms\Components\Section::make()->schema([
                                     Forms\Components\Select::make('status')
+                                        ->label(__('jmeryar-accounting::currencies.form.status'))
                                         ->options([
-                                            'Active' => 'Active',
-                                            'Inactive' => 'Inactive',
+                                            'Active' => __('jmeryar-accounting::currencies.form.status_active'),
+                                            'Inactive' => __('jmeryar-accounting::currencies.form.status_inactive'),
                                         ])
                                         ->default('Active')
                                         ->required(),
@@ -74,7 +80,7 @@ class CurrencyResource extends Resource
                                     ->schema([
                                         Forms\Components\TextInput::make('rate')
                                             ->label(function () {
-                                                return Setting::first()?->currency->code.' per unit';
+                                                return __('jmeryar-accounting::currencies.form.rate_label', ['currency' => Setting::first()?->currency->code]);
                                             })
                                             ->numeric()
                                             ->live(debounce: 600)
@@ -88,7 +94,7 @@ class CurrencyResource extends Resource
 
                                         Forms\Components\TextInput::make('unit_per_base_currency')
                                             ->label(function () {
-                                                return 'Unit per '.Setting::first()?->currency->code;
+                                                return __('jmeryar-accounting::currencies.form.unit_per_base_currency_label', ['currency' => Setting::first()?->currency->code]);
                                             })
                                             ->numeric()
                                             ->live(debounce: 300)
@@ -108,6 +114,7 @@ class CurrencyResource extends Resource
                                                 }
                                             }),
                                         Forms\Components\DateTimePicker::make('created_at')
+                                            ->label(__('jmeryar-accounting::currencies.form.created_at'))
                                             ->default(now())
                                             ->label('Date and Time'),
                                     ])
@@ -128,21 +135,29 @@ class CurrencyResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('code')
+                    ->label(__('jmeryar-accounting::currencies.table.code'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('jmeryar-accounting::currencies.table.name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('symbol')
+                    ->label(__('jmeryar-accounting::currencies.table.symbol'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('currency_unit')
+                    ->label(__('jmeryar-accounting::currencies.table.currency_unit'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('currency_subunit')
+                    ->label(__('jmeryar-accounting::currencies.table.currency_subunit'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('status'),
+                Tables\Columns\TextColumn::make('status')
+                    ->label(__('jmeryar-accounting::currencies.table.status')),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('jmeryar-accounting::currencies.table.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('jmeryar-accounting::currencies.table.updated_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
