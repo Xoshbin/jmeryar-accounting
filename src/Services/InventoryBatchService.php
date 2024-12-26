@@ -59,7 +59,7 @@ class InventoryBatchService
         } else {
             // Create a new batch if none exists
             $product->inventoryBatches()->create([
-                'invoice_item_id' => $invoiceItem->id,
+                'bill_item_id' => $invoiceItem->id,
                 'quantity' => $invoiceItem->quantity,
                 'cost_price' => $invoiceItem->cost_price,
                 'unit_price' => $invoiceItem->unit_price,
