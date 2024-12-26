@@ -10,7 +10,6 @@ parameters:
         - database
 
     reportUnmatchedIgnoredErrors: false
-    checkModelProperties: true
 
     ignoreErrors:
         - '#Unable to resolve the template type TKey in call to function collect#'
