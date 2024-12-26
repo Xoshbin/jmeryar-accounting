@@ -27,11 +27,17 @@ class ExchangeRate extends Model
         return new ExchangeRateFactory;
     }
 
+    /**
+     * @return BelongsTo<Currency, $this>
+     */
     public function baseCurrency(): BelongsTo
     {
         return $this->belongsTo(Currency::class, 'base_currency_id');
     }
 
+    /**
+     * @return BelongsTo<Currency, $this>
+     */
     public function targetCurrency(): BelongsTo
     {
         return $this->belongsTo(Currency::class, 'target_currency_id');

@@ -32,26 +32,41 @@ class JournalEntry extends Model
         'credit' => MoneyCast::class,
     ];
 
+    /**
+     * @return MorphToMany<Bill, $this>
+     */
     public function bills(): MorphToMany
     {
         return $this->morphedByMany(Bill::class, 'j_entryable', 'j_entryables', 'journal_entry_id', 'j_entryable_id');
     }
 
+    /**
+     * @return MorphToMany<Invoice, $this>
+     */
     public function invoices(): MorphToMany
     {
         return $this->morphedByMany(Invoice::class, 'j_entryable', 'j_entryables', 'journal_entry_id', 'j_entryable_id');
     }
 
+    /**
+     * @return MorphToMany<Payment, $this>
+     */
     public function payments(): MorphToMany
     {
         return $this->morphedByMany(Payment::class, 'j_entryable', 'j_entryables', 'journal_entry_id', 'j_entryable_id');
     }
 
+    /**
+     * @return BelongsTo<Account, $this>
+     */
     public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class);
     }
 
+    /**
+     * @return MorphToMany<Bill|Invoice, $this>
+     */
     public function related(): MorphToMany
     {
         return $this->morphedByMany(Bill::class, 'j_entryables')

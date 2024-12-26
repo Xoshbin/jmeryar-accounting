@@ -29,6 +29,9 @@ class Setting extends Model
         'currency_id',
     ];
 
+    /**
+     * @return BelongsTo<Currency, $this>
+     */
     public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class);

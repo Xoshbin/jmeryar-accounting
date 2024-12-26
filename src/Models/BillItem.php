@@ -51,21 +51,33 @@ class BillItem extends Model
         return new BillItemFactory;
     }
 
+    /**
+     * @return BelongsTo<Bill, $this>
+     */
     public function bill(): BelongsTo
     {
         return $this->belongsTo(Bill::class);
     }
 
+    /**
+     * @return BelongsTo<Product, $this>
+     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
+    /**
+     * @return HasMany<InventoryBatch, $this>
+     */
     public function inventoryBatches(): HasMany
     {
         return $this->hasMany(InventoryBatch::class);
     }
 
+    /**
+     * @return MorphToMany<Tax, $this>
+     */
     public function taxes(): MorphToMany
     {
         return $this->morphToMany(Tax::class, 'taxable');

@@ -33,11 +33,17 @@ class InventoryBatch extends Model
         'cost_price' => MoneyCast::class,
     ];
 
+    /**
+     * @return BelongsTo<Product, $this>
+     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
+    /**
+     * @return BelongsTo<BillItem, $this>
+     */
     public function billItem(): BelongsTo
     {
         return $this->belongsTo(BillItem::class);

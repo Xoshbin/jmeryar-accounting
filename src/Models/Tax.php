@@ -39,11 +39,17 @@ class Tax extends Model
 
     const STATUS_INACTIVE = 'Inactive';
 
+    /**
+     * @return BelongsTo<Tax, $this>
+     */
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Tax::class, 'parent_id');
     }
 
+    /**
+     * @return HasMany<Tax, $this>
+     */
     public function children(): HasMany
     {
         return $this->hasMany(Tax::class, 'parent_id');
@@ -51,6 +57,7 @@ class Tax extends Model
 
     /**
      * Get all of the invoices that are assigned this Tax.
+     * @return MorphToMany<InvoiceItem, $this>
      */
     public function invoiceItems(): MorphToMany
     {
@@ -59,6 +66,7 @@ class Tax extends Model
 
     /**
      * Get all of the bills that are assigned this Tax.
+     * @return MorphToMany<BillItem, $this>
      */
     public function billItems(): MorphToMany
     {

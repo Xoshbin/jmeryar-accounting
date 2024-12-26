@@ -22,16 +22,25 @@ class ProductCategory extends Model
         'parent_id',
     ];
 
+    /**
+     * @return BelongsTo<ProductCategory, $this>
+     */
     public function parent(): BelongsTo
     {
         return $this->belongsTo(ProductCategory::class, 'parent_id');
     }
 
+    /**
+     * @return HasMany<ProductCategory, $this>
+     */
     public function children(): HasMany
     {
         return $this->hasMany(ProductCategory::class, 'parent_id');
     }
 
+    /**
+     * @return HasMany<Product, $this>
+     */
     public function products(): HasMany
     {
         return $this->hasMany(Product::class, 'category_id');

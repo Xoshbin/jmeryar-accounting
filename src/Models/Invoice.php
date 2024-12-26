@@ -73,22 +73,33 @@ class Invoice extends Model
         return new InvoiceFactory;
     }
 
-    // Relationships
+    /**
+     * @return BelongsTo<Customer, $this>
+     */
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
     }
 
+    /**
+     * @return MorphToMany<JournalEntry, $this>
+     */
     public function journalEntries(): MorphToMany
     {
         return $this->morphToMany(JournalEntry::class, 'j_entryable', 'j_entryables');
     }
 
+    /**
+     * @return BelongsTo<Currency, $this>
+     */
     public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class);
     }
 
+    /**
+     * @return HasMany<InvoiceItem, $this>
+     */
     public function invoiceItems(): HasMany
     {
         return $this->hasMany(InvoiceItem::class);
@@ -96,25 +107,35 @@ class Invoice extends Model
 
     /**
      * Get all of the payments for the invoice.
+     * @return MorphMany<Payment, $this>
      */
     public function payments(): MorphMany
     {
         return $this->morphMany(Payment::class, 'paymentable');
     }
 
+    /**
+     * @return MorphToMany<Tax, $this>
+     */
     public function taxes(): MorphToMany
     {
         return $this->morphToMany(Tax::class, 'taxable');
     }
 
-    // Relationship to the revenue account
-    public function revenueAccount()
+    /**
+     * Relationship to the revenue account
+     * @return BelongsTo<Account, $this>
+     */
+    public function revenueAccount(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'revenue_account_id');
     }
 
-    // Relationship to the inventory/COGS account
-    public function inventoryAccount()
+    /**
+     * Relationship to the inventory/COGS account
+     * @return BelongsTo<Account, $this>
+     */
+    public function inventoryAccount(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'asset_account_id');
     }

@@ -45,21 +45,33 @@ class Product extends Model
         return new ProductFactory;
     }
 
+    /**
+     * @return HasMany<InventoryBatch, $this>
+     */
     public function inventoryBatches(): HasMany
     {
         return $this->hasMany(InventoryBatch::class);
     }
 
+    /**
+     * @return BelongsTo<ProductCategory, $this>
+     */
     public function category(): BelongsTo
     {
         return $this->belongsTo(ProductCategory::class);
     }
 
+    /**
+     * @return HasMany<InvoiceItem, $this>
+     */
     public function invoiceItems(): HasMany
     {
         return $this->hasMany(InvoiceItem::class);
     }
 
+    /**
+     * @return HasMany<BillItem, $this>
+     */
     public function billItems(): HasMany
     {
         return $this->hasMany(BillItem::class);

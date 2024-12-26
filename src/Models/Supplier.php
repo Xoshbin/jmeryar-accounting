@@ -29,6 +29,9 @@ class Supplier extends Model
         return new SupplierFactory;
     }
 
+    /**
+     * @return HasMany<Bill, $this>
+     */
     public function bills(): HasMany
     {
         return $this->hasMany(Bill::class);

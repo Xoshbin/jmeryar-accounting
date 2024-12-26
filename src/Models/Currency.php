@@ -35,31 +35,49 @@ class Currency extends Model
 
     const TYPE_SERVICE = 'Inactive';
 
+    /**
+     * @return HasMany<ExchangeRate, $this>
+     */
     public function exchangeRatesAsBase(): HasMany
     {
         return $this->hasMany(ExchangeRate::class, 'base_currency_id');
     }
 
+    /**
+     * @return HasMany<ExchangeRate, $this>
+     */
     public function exchangeRatesAsTarget(): HasMany
     {
         return $this->hasMany(ExchangeRate::class, 'target_currency_id');
     }
 
+    /**
+     * @return HasMany<Setting, $this>
+     */
     public function setting(): HasMany
     {
         return $this->hasMany(Setting::class);
     }
 
+    /**
+     * @return HasMany<Bill, $this>
+     */
     public function bills(): HasMany
     {
         return $this->hasMany(Bill::class);
     }
 
+    /**
+     * @return HasMany<Invoice, $this>
+     */
     public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class);
     }
 
+    /**
+     * @return HasMany<Payment, $this>
+     */
     public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);

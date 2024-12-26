@@ -55,12 +55,16 @@ class Payment extends Model
 
     /**
      * Define the polymorphic relationship to the parent model (e.g., Invoice, Bill).
+     * @return MorphTo<Invoice|Bill, $this>
      */
     public function paymentable(): MorphTo
     {
         return $this->morphTo();
     }
 
+    /**
+     * @return BelongsTo<Currency, $this>
+     */
     public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class);
@@ -68,12 +72,16 @@ class Payment extends Model
 
     /**
      * Get all of the transactions for the Payment.
+     * @return MorphToMany<Transaction, $this>
      */
     public function transactions(): MorphToMany
     {
         return $this->morphToMany(Transaction::class, 'transactionable');
     }
 
+    /**
+     * @return MorphToMany<JournalEntry, $this>
+     */
     public function journalEntries(): MorphToMany
     {
         return $this->morphToMany(JournalEntry::class, 'j_entryable', 'j_entryables');

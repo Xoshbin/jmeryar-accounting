@@ -47,16 +47,25 @@ class InvoiceItem extends Model
         return new InvoiceItemFactory;
     }
 
+    /**
+     * @return BelongsTo<Invoice, $this>
+     */
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);
     }
 
+    /**
+     * @return BelongsTo<Product, $this>
+     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
     }
 
+    /**
+     * @return MorphToMany<Tax, $this>
+     */
     public function taxes(): MorphToMany
     {
         return $this->morphToMany(Tax::class, 'taxable');

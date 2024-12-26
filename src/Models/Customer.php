@@ -29,6 +29,9 @@ class Customer extends Model
         return new CustomerFactory;
     }
 
+    /**
+     * @return HasMany<Invoice, $this>
+     */
     public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class);

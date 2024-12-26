@@ -73,21 +73,33 @@ class Bill extends Model
         return new BillFactory;
     }
 
+    /**
+     * @return BelongsTo<Supplier, $this>
+     */
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class);
     }
 
+    /**
+     * @return MorphToMany<JournalEntry, $this>
+     */
     public function journalEntries(): MorphToMany
     {
         return $this->morphToMany(JournalEntry::class, 'j_entryable', 'j_entryables');
     }
 
+    /**
+     * @return BelongsTo<Currency, $this>
+     */
     public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class);
     }
 
+    /**
+     * @return HasMany<BillItem, $this>
+     */
     public function billItems(): HasMany
     {
         return $this->hasMany(BillItem::class);
@@ -95,24 +107,32 @@ class Bill extends Model
 
     /**
      * Get all of the payments for the bill.
+     * @return MorphMany<Payment, $this>
      */
     public function payments(): MorphMany
     {
         return $this->morphMany(Payment::class, 'paymentable');
     }
 
+    /**
+     * @return MorphToMany<Tax, $this>
+     */
     public function taxes(): MorphToMany
     {
         return $this->morphToMany(Tax::class, 'taxable');
     }
 
-    // Relationship to the expense account
+    /**
+     * @return BelongsTo<Account, $this>
+     */
     public function expenseAccount(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'expense_account_id');
     }
 
-    // Relationship to the liability account (e.g., Accounts Payable)
+    /**
+     * @return BelongsTo<Account, $this>
+     */
     public function liabilityAccount(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'liability_account_id');
