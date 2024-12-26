@@ -35,12 +35,16 @@ class Transaction extends Model
 
     /**
      * Get all of the payments that are assigned this Transaction.
+     * @return MorphToMany<Payment, $this>
      */
     public function payments(): MorphToMany
     {
         return $this->morphedByMany(Payment::class, 'transactionable');
     }
 
+    /**
+     * @return MorphToMany<JournalEntry, $this>
+     */
     public function journalEntries(): MorphToMany
     {
         return $this->morphToMany(JournalEntry::class, 'j_entryable', 'j_entryables');
