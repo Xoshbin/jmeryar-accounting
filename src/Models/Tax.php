@@ -57,6 +57,7 @@ class Tax extends Model
 
     /**
      * Get all of the invoices that are assigned this Tax.
+     *
      * @return MorphToMany<InvoiceItem, $this>
      */
     public function invoiceItems(): MorphToMany
@@ -66,6 +67,7 @@ class Tax extends Model
 
     /**
      * Get all of the bills that are assigned this Tax.
+     *
      * @return MorphToMany<BillItem, $this>
      */
     public function billItems(): MorphToMany

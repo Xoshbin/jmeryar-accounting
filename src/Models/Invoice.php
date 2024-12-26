@@ -107,6 +107,7 @@ class Invoice extends Model
 
     /**
      * Get all of the payments for the invoice.
+     *
      * @return MorphMany<Payment, $this>
      */
     public function payments(): MorphMany
@@ -124,6 +125,7 @@ class Invoice extends Model
 
     /**
      * Relationship to the revenue account
+     *
      * @return BelongsTo<Account, $this>
      */
     public function revenueAccount(): BelongsTo
@@ -133,6 +135,7 @@ class Invoice extends Model
 
     /**
      * Relationship to the inventory/COGS account
+     *
      * @return BelongsTo<Account, $this>
      */
     public function inventoryAccount(): BelongsTo

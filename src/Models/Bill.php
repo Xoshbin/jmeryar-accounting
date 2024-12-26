@@ -107,6 +107,7 @@ class Bill extends Model
 
     /**
      * Get all of the payments for the bill.
+     *
      * @return MorphMany<Payment, $this>
      */
     public function payments(): MorphMany

@@ -35,6 +35,7 @@ class Transaction extends Model
 
     /**
      * Get all of the payments that are assigned this Transaction.
+     *
      * @return MorphToMany<Payment, $this>
      */
     public function payments(): MorphToMany

@@ -55,6 +55,7 @@ class Payment extends Model
 
     /**
      * Define the polymorphic relationship to the parent model (e.g., Invoice, Bill).
+     *
      * @return MorphTo<Invoice|Bill, $this>
      */
     public function paymentable(): MorphTo
@@ -72,6 +73,7 @@ class Payment extends Model
 
     /**
      * Get all of the transactions for the Payment.
+     *
      * @return MorphToMany<Transaction, $this>
      */
     public function transactions(): MorphToMany
