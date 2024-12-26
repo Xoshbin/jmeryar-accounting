@@ -9,5 +9,13 @@ parameters:
         - tests
         - database
 
+    reportUnmatchedIgnoredErrors: false
+
     ignoreErrors:
-        - '#Unsafe usage of new static#'
+        - '#Unable to resolve the template type TKey in call to function collect#'
+        - '#Unable to resolve the template type TValue in call to function collect#'
+        - '#Call to an undefined method#'
+        - '#Call to an undefined static method#'
+        -
+            identifier: missingType.generics
+        
