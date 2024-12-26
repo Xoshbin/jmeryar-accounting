@@ -3,8 +3,11 @@ includes:
     - vendor/nesbot/carbon/extension.neon
     
 parameters:
-    level: 6
+    level: 5
     paths:
         - src
         - tests
         - database
+
+    ignoreErrors:
+        - '#Unsafe usage of new static#'

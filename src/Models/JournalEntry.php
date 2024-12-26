@@ -8,6 +8,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Xoshbin\JmeryarAccounting\Casts\MoneyCast;
 
+/**
+ * @property int $transaction_id
+ * @property int $account_id
+ * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $debit
+ * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $credit
+ * @property string $label
+ */
 class JournalEntry extends Model
 {
     use HasFactory;

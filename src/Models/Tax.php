@@ -8,6 +8,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
+/**
+ * @property string $name
+ * @property string $type
+ * @property string $tax_computation
+ * @property float $amount
+ * @property int $parent_id
+ * @property string $tax_scope
+ * @property string $status
+ */
 class Tax extends Model
 {
     use HasFactory;

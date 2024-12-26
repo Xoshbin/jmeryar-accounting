@@ -12,6 +12,15 @@ use Xoshbin\JmeryarAccounting\Database\Factories\InvoiceItemFactory;
 use Xoshbin\JmeryarAccounting\Observers\InvoiceItemObserver;
 
 #[ObservedBy([InvoiceItemObserver::class])]
+/**
+ * @property int $invoice_id
+ * @property int $product_id
+ * @property int $quantity
+ * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $unit_price
+ * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $total_price
+ * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $untaxed_amount
+ * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $tax_amount
+ */
 class InvoiceItem extends Model
 {
     use HasFactory;

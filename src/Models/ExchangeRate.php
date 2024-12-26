@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Xoshbin\JmeryarAccounting\Database\Factories\ExchangeRateFactory;
 
+/**
+ * @property int $base_currency_id
+ * @property int $target_currency_id
+ * @property float $rate
+ */
 class ExchangeRate extends Model
 {
     use HasFactory;

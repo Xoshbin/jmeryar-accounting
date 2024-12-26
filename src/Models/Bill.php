@@ -14,6 +14,22 @@ use Xoshbin\JmeryarAccounting\Database\Factories\BillFactory;
 use Xoshbin\JmeryarAccounting\Observers\BillObserver;
 
 #[ObservedBy([BillObserver::class])]
+/**
+ * @property string $bill_number
+ * @property \Illuminate\Support\Carbon $bill_date
+ * @property \Illuminate\Support\Carbon $due_date
+ * @property int $supplier_id
+ * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $total_amount
+ * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $total_paid_amount
+ * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $amount_due
+ * @property string $status
+ * @property string $note
+ * @property int $expense_account_id
+ * @property int $liability_account_id
+ * @property int $currency_id
+ * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $untaxed_amount
+ * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $tax_amount
+ */
 class Bill extends Model
 {
     use HasFactory;
@@ -91,13 +107,13 @@ class Bill extends Model
     }
 
     // Relationship to the expense account
-    public function expenseAccount()
+    public function expenseAccount(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'expense_account_id');
     }
 
     // Relationship to the liability account (e.g., Accounts Payable)
-    public function liabilityAccount()
+    public function liabilityAccount(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'liability_account_id');
     }

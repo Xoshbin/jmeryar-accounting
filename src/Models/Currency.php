@@ -6,6 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property string $code
+ * @property string $name
+ * @property string $symbol
+ * @property string $currency_unit
+ * @property string $currency_subunit
+ * @property string $status
+ */
 class Currency extends Model
 {
     use HasFactory;

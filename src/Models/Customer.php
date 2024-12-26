@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Xoshbin\JmeryarAccounting\Database\Factories\CustomerFactory;
 
+/**
+ * @property string $name
+ * @property string $email
+ * @property string $phone
+ * @property string $address
+ */
 class Customer extends Model
 {
     use HasFactory;

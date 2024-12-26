@@ -9,6 +9,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Xoshbin\JmeryarAccounting\Casts\MoneyCast;
 use Xoshbin\JmeryarAccounting\Database\Factories\ProductFactory;
 
+/**
+ * @property string $type
+ * @property string $name
+ * @property string $sku
+ * @property string|null $description
+ * @property int $category_id
+ * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $unit_price
+ * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $cost_price
+ */
 class Product extends Model
 {
     use HasFactory;
@@ -36,7 +45,7 @@ class Product extends Model
         return new ProductFactory;
     }
 
-    public function inventoryBatches()
+    public function inventoryBatches(): HasMany
     {
         return $this->hasMany(InventoryBatch::class);
     }

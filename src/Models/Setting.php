@@ -6,6 +6,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property string $company_name
+ * @property string $company_email
+ * @property string $company_phone
+ * @property string $company_address
+ * @property string $company_website
+ * @property string $company_logo
+ * @property int $currency_id
+ */
 class Setting extends Model
 {
     use HasFactory;

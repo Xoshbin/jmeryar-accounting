@@ -13,6 +13,16 @@ use Xoshbin\JmeryarAccounting\Database\Factories\PaymentFactory;
 use Xoshbin\JmeryarAccounting\Observers\PaymentObserver;
 
 #[ObservedBy([PaymentObserver::class])]
+/**
+ * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $amount
+ * @property string $payment_date
+ * @property string $payment_type
+ * @property string $payment_method
+ * @property string|null $note
+ * @property int $currency_id
+ * @property float $exchange_rate
+ * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $amount_in_invoice_currency
+ */
 class Payment extends Model
 {
     use HasFactory;

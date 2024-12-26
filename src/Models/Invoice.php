@@ -14,6 +14,22 @@ use Xoshbin\JmeryarAccounting\Database\Factories\InvoiceFactory;
 use Xoshbin\JmeryarAccounting\Observers\InvoiceObserver;
 
 #[ObservedBy([InvoiceObserver::class])]
+/**
+ * @property string $invoice_number
+ * @property \Illuminate\Support\Carbon $invoice_date
+ * @property \Illuminate\Support\Carbon $due_date
+ * @property int $customer_id
+ * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $total_amount
+ * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $total_paid_amount
+ * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $amount_due
+ * @property string $status
+ * @property string $note
+ * @property int $revenue_account_id
+ * @property int $asset_account_id
+ * @property int $currency_id
+ * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $untaxed_amount
+ * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $tax_amount
+ */
 class Invoice extends Model
 {
     use HasFactory;

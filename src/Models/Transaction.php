@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Xoshbin\JmeryarAccounting\Casts\MoneyCast;
 
+/**
+ * @property \Illuminate\Support\Carbon $date
+ * @property string|null $note
+ * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $amount
+ * @property string $transaction_type
+ */
 class Transaction extends Model
 {
     use HasFactory;
