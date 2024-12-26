@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Xoshbin\JmeryarAccounting\Casts\MoneyCast;
+use Xoshbin\JmeryarAccounting\Database\Factories\BillItemFactory;
 use Xoshbin\JmeryarAccounting\Observers\BillItemObserver;
 
 #[ObservedBy([BillItemObserver::class])]
@@ -33,6 +34,11 @@ class BillItem extends Model
         'untaxed_amount' => MoneyCast::class,
         'tax_amount' => MoneyCast::class,
     ];
+
+    protected static function newFactory()
+    {
+        return new BillItemFactory;
+    }
 
     public function bill(): BelongsTo
     {

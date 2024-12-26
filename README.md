@@ -67,12 +67,22 @@ Jmeryar is a robust accounting application built with a focus on flexibility, tr
    }
    ```
 
-6. **Optional: Publish and run seeders**:
+6. **Optional: Seed your database with base data**:
 
    ```bash
    php artisan vendor:publish --tag=jmeryar-accounting-seeds
    php artisan db:seed --class=JmeryarSeeder
    ```
+
+   These commands will populate your database with essential data including accounts, currencies, product categories, and taxes.
+
+7. **Optional: Fully seed the database with dummy data**:
+
+   ```bash
+   php artisan jmeryaraccounting:install
+   ```
+
+   This command will populate your database with sample data including products, customers, suppliers, invoices, and bills.
 
 ## Usage
 

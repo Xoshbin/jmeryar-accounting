@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Xoshbin\JmeryarAccounting\Casts\MoneyCast;
+use Xoshbin\JmeryarAccounting\Database\Factories\ProductFactory;
 
 class Product extends Model
 {
@@ -29,6 +30,11 @@ class Product extends Model
     const TYPE_PRODUCT = 'Product';
 
     const TYPE_SERVICE = 'Service';
+
+    protected static function newFactory()
+    {
+        return new ProductFactory;
+    }
 
     public function inventoryBatches()
     {

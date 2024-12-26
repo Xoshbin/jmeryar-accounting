@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Xoshbin\JmeryarAccounting\Casts\MoneyCast;
+use Xoshbin\JmeryarAccounting\Database\Factories\InvoiceFactory;
 use Xoshbin\JmeryarAccounting\Observers\InvoiceObserver;
 
 #[ObservedBy([InvoiceObserver::class])]
@@ -50,6 +51,11 @@ class Invoice extends Model
     public const TYPE_PARTIAL = 'Partial';
 
     public const TYPE_PAID = 'Paid';
+
+    protected static function newFactory()
+    {
+        return new InvoiceFactory;
+    }
 
     // Relationships
     public function customer(): BelongsTo

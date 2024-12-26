@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Xoshbin\JmeryarAccounting\Casts\MoneyCast;
+use Xoshbin\JmeryarAccounting\Database\Factories\PaymentFactory;
 use Xoshbin\JmeryarAccounting\Observers\PaymentObserver;
 
 #[ObservedBy([PaymentObserver::class])]
@@ -36,6 +37,11 @@ class Payment extends Model
     public const TYPE_INCOME = 'Income';
 
     public const TYPE_EXPENSE = 'Expense';
+
+    protected static function newFactory()
+    {
+        return new PaymentFactory;
+    }
 
     /**
      * Define the polymorphic relationship to the parent model (e.g., Invoice, Bill).

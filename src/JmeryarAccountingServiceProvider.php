@@ -6,6 +6,7 @@ use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Xoshbin\JmeryarAccounting\Console\JmeryarAccountingInstallCommand;
 
 class JmeryarAccountingServiceProvider extends PackageServiceProvider
 {
@@ -40,6 +41,12 @@ class JmeryarAccountingServiceProvider extends PackageServiceProvider
         $this->publishes([
             __DIR__.'/../resources/lang' => base_path('lang/vendor/jmeryar-accounting'),
         ], 'jmeryar-accounting-lang');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                JmeryarAccountingInstallCommand::class,
+            ]);
+        }
     }
 
     public function packageBooted()
