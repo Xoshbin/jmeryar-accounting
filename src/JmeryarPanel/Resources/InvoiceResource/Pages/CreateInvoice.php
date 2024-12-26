@@ -13,7 +13,7 @@ class CreateInvoice extends CreateRecord
     public function mutateFormDataBeforeCreate(array $data): array
     {
         $data['revenue_account_id'] = Account::where('type', Account::TYPE_REVENUE)->first()->id;
-        $data['asset_account_id'] = Account::where('name', Account::TYPE_ACCOUNTS_RECEIVABLE)->first()->id;
+        $data['asset_account_id'] = Account::where('name', 'Accounts Receivable')->first()->id;
 
         return $data;
     }

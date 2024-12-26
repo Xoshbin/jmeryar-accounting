@@ -12,3 +12,4 @@ yarn-error.log
 /.zed
 .DS_Store
 /.history
+/build
