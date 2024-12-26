@@ -2,6 +2,8 @@
 
 Jmeryar is a robust accounting application built with a focus on flexibility, transparency, and extensibility. Developed to streamline accounting processes, Jmeryar integrates key features for handling invoices, bills, payments, journal entries, inventory management, and more. It is designed for use in commercial environments and is versatile enough for both small businesses and enterprise applications.
 
+![img.png](assets/invoice.jpeg)
+
 ## Table of Contents
 
 - [Features](#features)
