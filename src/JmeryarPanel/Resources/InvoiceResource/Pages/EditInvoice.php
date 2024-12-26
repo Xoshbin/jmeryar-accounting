@@ -22,7 +22,7 @@ class EditInvoice extends EditRecord
     public function mutateFormDataBeforeSave(array $data): array
     {
         $data['revenue_account_id'] = Account::where('type', Account::TYPE_REVENUE)->first()->id;
-        $data['asset_account_id'] = Account::where('name', Account::TYPE_ACCOUNTS_RECEIVABLE)->first()->id;
+        $data['asset_account_id'] = Account::where('name', 'Accounts Receivable')->first()->id;
 
         return $data;
     }
@@ -47,7 +47,7 @@ class EditInvoice extends EditRecord
                         echo Pdf::loadHtml(
                             Blade::render('jmeryar-accounting::invoices.invoice', ['record' => $record, 'setting' => $setting]),
                         )->stream();
-                    }, $record->invoice_number.'.pdf');
+                    }, $record->invoice_number . '.pdf');
                 }),
 
             Actions\Action::make('Register payment')
@@ -90,7 +90,7 @@ class EditInvoice extends EditRecord
                     // Create the associated transaction
                     $transaction = $payment->transactions()->create([
                         'date' => now(),
-                        'note' => 'Transaction for payment ID '.$record->id,
+                        'note' => 'Transaction for payment ID ' . $record->id,
                         'amount' => $data['amount'],
                         'transaction_type' => 'credit', // For an invoice, this should be a credit transaction.
                     ]);
