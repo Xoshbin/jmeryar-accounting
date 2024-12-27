@@ -6,6 +6,7 @@ use Xoshbin\JmeryarAccounting\Database\Seeders\DatabaseSeeder;
 use Xoshbin\JmeryarAccounting\Models\Account;
 use Xoshbin\JmeryarAccounting\Models\Currency;
 use Xoshbin\JmeryarAccounting\Models\Customer;
+use Xoshbin\JmeryarAccounting\Models\ExchangeRate;
 use Xoshbin\JmeryarAccounting\Models\JournalEntry;
 use Xoshbin\JmeryarAccounting\Models\Product;
 use Xoshbin\JmeryarAccounting\Models\Supplier;
@@ -834,3 +835,94 @@ it('creates an invoice with five items and mixed taxes correctly', function () {
     expect($invoice->tax_amount)->toBe($expectedTaxAmount);
     expect($invoice->total_amount)->toBe($expectedTotalAmount);
 });
+
+it('attaches the correct journal entries when an invoice is partially paid with two payments in different currencies', function () {
+    $quantity = 2;
+    $unitPrice = 200;
+    $taxPercent = 0;
+
+    $invoice = TestServices::createInvoice($this->customer, $quantity, $unitPrice, $taxPercent);
+
+    $invoiceItem = TestServices::createInvoiceItem($invoice, $this->product, $quantity, $unitPrice, $taxPercent);
+
+    // Assert that exactly two journal entries are created and attached to the invoice
+    expect($invoice->journalEntries()->count())->toBe(2);
+
+    // Assert that the journal entries have the correct amounts and accounts
+    $accountsReceivableEntry = $invoice->journalEntries()->where('debit', 400 * 100)->first(); // * 100 CastMoney
+    $salesRevenueEntry = $invoice->journalEntries()->where('credit', 400 * 100)->first();
+
+    // Assert Accounts Receivable entry
+    expect($accountsReceivableEntry->account_id)->toBe(Account::where('name', 'Accounts Receivable')->first()->id);
+    expect($accountsReceivableEntry->debit)->toBe(400.0);
+
+    // Assert Sales Revenue entry
+    expect($salesRevenueEntry->account_id)->toBe(Account::where('type', Account::TYPE_REVENUE)->first()->id);
+    expect($salesRevenueEntry->credit)->toBe(400.0);
+
+    // Stage 2: Make first payment in USD
+    $usdCurrencyId = Currency::where('code', 'USD')->first()->id;
+    $usdPaymentAmount = 150; // $150
+    $exchangeRateUSD = 1; // $1 = 1 USD
+    $paymentUSD = TestServices::createPayment($invoice, $usdPaymentAmount, 'Cash', 'Income', $usdCurrencyId, $exchangeRateUSD, $usdPaymentAmount);
+
+    expect($paymentUSD->amount)->toBe(150.0);
+
+    $exchangeRateEUR = ExchangeRate::create([
+        'base_currency_id' => Currency::where('code', 'USD')->first()->id,
+        'target_currency_id' => Currency::where('code', 'EUR')->first()->id,
+        'rate' => 0.96,
+    ]);
+
+    // Stage 3: Make second payment in EUR
+    $eurCurrencyId = Currency::where('code', 'EUR')->first()->id;
+    $eurPaymentAmount = 220; // €220
+
+    $paymentEUR = TestServices::createPayment($invoice, $eurPaymentAmount, 'Cash', 'Income', $eurCurrencyId, $exchangeRateEUR->rate, $eurPaymentAmount / $exchangeRateEUR->rate);
+
+    expect($paymentEUR->amount_in_document_currency)->toBe(229.0);
+
+    // Assert that both payments created journal entries
+    expect($paymentUSD->journalEntries()->count())->toBe(2);
+    expect($paymentEUR->journalEntries()->count())->toBe(2);
+
+    // Assert journal entries for first payment
+    $usdReceivableEntry = $paymentUSD->journalEntries()
+        ->where('account_id', Account::where('name', 'Accounts Receivable')->first()->id)
+        ->where('credit', $usdPaymentAmount * 100)
+        ->first();
+
+    $usdCashEntry = $paymentUSD->journalEntries()
+        ->where('account_id', Account::where('name', 'Cash')->first()->id)
+        ->where('debit', $usdPaymentAmount * 100)
+        ->first();
+
+    expect($usdReceivableEntry)->not->toBeNull();
+    expect($usdCashEntry)->not->toBeNull();
+
+    // Assert journal entries for second payment
+    $eurReceivableEntry = $paymentEUR->journalEntries()
+        ->where('account_id', Account::where('name', 'Accounts Receivable')->first()->id)
+        ->where('credit', 229.0 * 100)
+        ->first();
+
+    $eurCashEntry = $paymentEUR->journalEntries()
+        ->where('account_id', Account::where('name', 'Cash')->first()->id)
+        ->where('debit', 229.0 * 100)
+        ->first();
+
+    expect($eurReceivableEntry)->not->toBeNull();
+    expect($eurCashEntry)->not->toBeNull();
+
+    $invoice->refresh();
+
+    expect($invoice->status)->toBe('Partial');
+
+    // Ensure total debits equal total credits
+    $totalDebits = $invoice->journalEntries()->sum('debit');
+    $totalCredits = $invoice->journalEntries()->sum('credit');
+    expect($totalDebits)->toBe($totalCredits);
+
+    // Assert that the invoice's untaxed_amount is correct
+    expect($invoice->untaxed_amount)->toBe(400.0);
+})->only();
