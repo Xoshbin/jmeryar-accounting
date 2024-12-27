@@ -58,7 +58,7 @@ class InvoiceResource extends Resource
                                     ->label(__('jmeryar-accounting::invoices.form.Customer Details'))
                                     ->schema([
                                         Forms\Components\Select::make('customer_id')
-                                            ->label(__('jmeryar-accounting::invoices.form.customer_id'))
+                                            ->label(__('jmeryar-accounting::invoices.form.customer'))
                                             ->relationship('customer', 'name')
                                             ->required()
                                             ->searchable()
@@ -140,7 +140,7 @@ class InvoiceResource extends Resource
                                             ->label(__('jmeryar-accounting::invoices.form.due_date'))
                                             ->nullable(),
                                         Forms\Components\Select::make('currency_id')
-                                            ->label(__('jmeryar-accounting::invoices.form.currency_id'))
+                                            ->label(__('jmeryar-accounting::invoices.form.currency'))
                                             ->default(fn() => Setting::first()?->currency->id)
                                             ->relationship('currency', 'code')
                                             ->disabled(fn($record) => $record?->status !== 'Draft' && $record !== null),
@@ -346,7 +346,7 @@ class InvoiceResource extends Resource
                                             ->numeric()
                                             ->required(),
                                         Forms\Components\TextInput::make('amount_in_document_currency')
-                                            ->label(__('jmeryar-accounting::invoices.form.amount_in_bill_currency'))
+                                            ->label(__('jmeryar-accounting::invoices.form.amount_in_invoice_currency'))
                                             ->numeric()
                                             ->required()
                                             ->prefix('='),
