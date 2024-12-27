@@ -36,6 +36,7 @@ class PaymentObserver
     {
         // Delete associated transaction and journal entries
         $this->deleteExistingTransactionAndEntries($payment);
+        $this->deleteJournalEntries($payment);
     }
 
     /**
@@ -88,6 +89,19 @@ class PaymentObserver
             ]);
         }
     }
+
+
+    /**
+     * Delete associated journal entries for a payment.
+     */
+    protected function deleteJournalEntries(Payment $payment): void
+    {
+        $journalEntries = $payment->journalEntries;
+        foreach ($journalEntries as $entry) {
+            $entry->delete();
+        }
+    }
+
 
     /**
      * Delete existing transaction and associated journal entries for a payment.
