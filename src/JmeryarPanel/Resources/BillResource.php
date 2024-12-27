@@ -351,15 +351,20 @@ class BillResource extends Resource
                                             ->postfix('*')
                                             ->required()
                                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                                                $exchange_rate = $get('exchange_rate') ?? 0;
-                                                $set('amount_in_invoice_currency', $exchange_rate * $state);
+                                                $exchange_rate = $get('exchange_rate') ?? 0; // Exchange rate in IQD per USD
+                                                if ($exchange_rate > 0) {
+                                                    $amount_in_usd = $state / $exchange_rate; // Convert IQD to USD
+                                                    $set('amount_in_document_currency', $amount_in_usd);
+                                                } else {
+                                                    $set('amount_in_document_currency', 0); // Default to 0 if exchange rate is invalid
+                                                }
                                             }),
                                         Forms\Components\TextInput::make('exchange_rate')
                                             ->label(__('jmeryar-accounting::bills.form.exchange_rate'))
                                             ->numeric()
                                             ->required(),
-                                        Forms\Components\TextInput::make('amount_in_invoice_currency')
-                                            ->label(__('jmeryar-accounting::bills.form.amount_in_invoice_currency'))
+                                        Forms\Components\TextInput::make('amount_in_document_currency')
+                                            ->label(__('jmeryar-accounting::bills.form.amount_in_bill_currency'))
                                             ->numeric()
                                             ->required()
                                             ->prefix('='),
@@ -382,7 +387,7 @@ class BillResource extends Resource
                                         return $data;
                                     })
                                     ->afterStateUpdated(function (callable $set, $state, callable $get) {
-                                        $totalPaidAmount = collect($state)->sum(fn ($item) => $item['amount_in_invoice_currency'] ?? 0);
+                                        $totalPaidAmount = collect($state)->sum(fn ($item) => $item['amount_in_document_currency'] ?? 0);
                                         $set('total_paid_amount', $totalPaidAmount);
                                         $set('amount_due', $get('total_amount') - $totalPaidAmount);
                                     })

@@ -48,7 +48,7 @@ class PaymentObserver
 
         $transaction = Transaction::create([
             'date' => $payment->payment_date,
-            'note' => 'Transaction for payment ID '.$payment->id,
+            'note' => 'Transaction for payment ID ' . $payment->id,
             'amount' => $payment->amount,
             'transaction_type' => $parent instanceof \Xoshbin\JmeryarAccounting\Models\Invoice ? 'Credit' : 'Debit',
         ]);
@@ -106,7 +106,7 @@ class PaymentObserver
      */
     protected function updateParentStatus($parent): void
     {
-        $totalAmount = $parent->payments->sum('amount');
+        $totalAmount = $parent->payments->sum('amount_in_document_currency');
         if ($totalAmount < $parent->total_amount) {
             $parent->status = 'Partial';
             $parent->amount_due = $parent->total_amount - $totalAmount;
