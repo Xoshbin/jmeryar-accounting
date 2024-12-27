@@ -26,38 +26,38 @@ class CustomerResource extends Resource
     {
         return
             $form
-            ->schema([
-                Forms\Components\Grid::make(3)
-                    ->schema([
-                        Forms\Components\Section::make()
-                            ->columns(2)
-                            ->schema([
-                                Forms\Components\TextInput::make('name')
-                                    ->label(__('jmeryar-accounting::customers.form.name'))
-                                    ->required()
-                                    ->maxLength(255),
-                                Forms\Components\TextInput::make('email')
-                                    ->label(__('jmeryar-accounting::customers.form.email'))
-                                    ->email()
-                                    ->maxLength(255),
-                                Forms\Components\TextInput::make('phone')
-                                    ->label(__('jmeryar-accounting::customers.form.phone'))
-                                    ->tel()
-                                    ->maxLength(255),
-                                Forms\Components\Textarea::make('address')
-                                    ->label(__('jmeryar-accounting::customers.form.address'))
-                                    ->columnSpanFull(),
-                            ])
-                            ->columnSpan(2),
-                        Forms\Components\Grid::make()
-                            ->schema([
-                                Forms\Components\Section::make()->schema([
-                                    // TODO::You may list customer debts here just in numbers
-                                ]),
-                            ])
-                            ->columnSpan(1),
-                    ]),
-            ]);
+                ->schema([
+                    Forms\Components\Grid::make(3)
+                        ->schema([
+                            Forms\Components\Section::make()
+                                ->columns(2)
+                                ->schema([
+                                    Forms\Components\TextInput::make('name')
+                                        ->label(__('jmeryar-accounting::customers.form.name'))
+                                        ->required()
+                                        ->maxLength(255),
+                                    Forms\Components\TextInput::make('email')
+                                        ->label(__('jmeryar-accounting::customers.form.email'))
+                                        ->email()
+                                        ->maxLength(255),
+                                    Forms\Components\TextInput::make('phone')
+                                        ->label(__('jmeryar-accounting::customers.form.phone'))
+                                        ->tel()
+                                        ->maxLength(255),
+                                    Forms\Components\Textarea::make('address')
+                                        ->label(__('jmeryar-accounting::customers.form.address'))
+                                        ->columnSpanFull(),
+                                ])
+                                ->columnSpan(2),
+                            Forms\Components\Grid::make()
+                                ->schema([
+                                    Forms\Components\Section::make()->schema([
+                                        // TODO::You may list customer debts here just in numbers
+                                    ]),
+                                ])
+                                ->columnSpan(1),
+                        ]),
+                ]);
     }
 
     public static function table(Table $table): Table

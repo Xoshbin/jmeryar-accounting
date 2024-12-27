@@ -26,37 +26,37 @@ class ProductResource extends Resource
     {
         return
             $form
-            ->schema([
-                Forms\Components\Grid::make(3)
-                    ->schema([
-                        Forms\Components\Section::make()
-                            ->columns(2)
-                            ->schema([
-                                Forms\Components\TextInput::make('name')
-                                    ->label(__('jmeryar-accounting::products.form.name'))
-                                    ->required()
-                                    ->maxLength(255),
-                                Forms\Components\TextInput::make('sku')
-                                    ->label(__('jmeryar-accounting::products.form.sku'))
-                                    ->required()
-                                    ->maxLength(255),
-                                Forms\Components\Textarea::make('description')
-                                    ->label(__('jmeryar-accounting::products.form.description'))
-                                    ->columnSpanFull(),
-                            ])
-                            ->columnSpan(2),
-                        Forms\Components\Grid::make()
-                            ->schema([
-                                Forms\Components\Section::make()->schema([
-                                    Forms\Components\Select::make('category_id')
-                                        ->label(__('jmeryar-accounting::products.form.category'))
-                                        ->relationship('category', 'name')
-                                        ->required(),
-                                ]),
-                            ])
-                            ->columnSpan(1),
-                    ]),
-            ]);
+                ->schema([
+                    Forms\Components\Grid::make(3)
+                        ->schema([
+                            Forms\Components\Section::make()
+                                ->columns(2)
+                                ->schema([
+                                    Forms\Components\TextInput::make('name')
+                                        ->label(__('jmeryar-accounting::products.form.name'))
+                                        ->required()
+                                        ->maxLength(255),
+                                    Forms\Components\TextInput::make('sku')
+                                        ->label(__('jmeryar-accounting::products.form.sku'))
+                                        ->required()
+                                        ->maxLength(255),
+                                    Forms\Components\Textarea::make('description')
+                                        ->label(__('jmeryar-accounting::products.form.description'))
+                                        ->columnSpanFull(),
+                                ])
+                                ->columnSpan(2),
+                            Forms\Components\Grid::make()
+                                ->schema([
+                                    Forms\Components\Section::make()->schema([
+                                        Forms\Components\Select::make('category_id')
+                                            ->label(__('jmeryar-accounting::products.form.category'))
+                                            ->relationship('category', 'name')
+                                            ->required(),
+                                    ]),
+                                ])
+                                ->columnSpan(1),
+                        ]),
+                ]);
     }
 
     public static function table(Table $table): Table
