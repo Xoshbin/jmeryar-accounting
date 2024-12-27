@@ -660,7 +660,7 @@ it('attaches the correct journal entries when a bill is partially paid without t
     $currency_id = Currency::where('code', 'USD')->first()->id;
 
     // Stage 2: Pay the bill
-    $payment = TestServices::createPayment($bill, 100, 'Cash', 'Expense', $currency_id, 1, 200);
+    $payment = TestServices::createPayment($bill, 100, 'Cash', 'Expense', $currency_id, 1, 100);
 
     expect($payment->amount)->toBe(100.0);
 
@@ -738,7 +738,7 @@ it('attaches the correct journal entries when a bill is partially paid with tax'
     $currency_id = Currency::where('code', 'USD')->first()->id;
 
     // Stage 2: Pay the bill
-    $payment = TestServices::createPayment($bill, 110, 'Cash', 'Expense', $currency_id, 1, 230);
+    $payment = TestServices::createPayment($bill, 110, 'Cash', 'Expense', $currency_id, 1, 110);
 
     expect($payment->journalEntries()->count())->toBe(2);
     expect($payment->amount)->toBe(110.0);
@@ -839,7 +839,7 @@ it('calculates amount_due correctly when bill is partially paid', function () {
 
     // Make first partial payment
     $currency_id = Currency::where('code', 'USD')->first()->id;
-    $payment1 = TestServices::createPayment($bill, 100, 'Cash', 'Expense', $currency_id, 1, 230);
+    $payment1 = TestServices::createPayment($bill, 100, 'Cash', 'Expense', $currency_id, 1, 100);
 
     $bill->refresh();
 
@@ -848,7 +848,7 @@ it('calculates amount_due correctly when bill is partially paid', function () {
     expect($bill->status)->toBe('Partial');
 
     // Make second partial payment
-    $payment2 = TestServices::createPayment($bill, 80, 'Cash', 'Expense', $currency_id, 1, 230);
+    $payment2 = TestServices::createPayment($bill, 80, 'Cash', 'Expense', $currency_id, 1, 80);
 
     $bill->refresh();
 
@@ -857,7 +857,7 @@ it('calculates amount_due correctly when bill is partially paid', function () {
     expect($bill->status)->toBe('Partial');
 
     // Make final payment
-    $payment3 = TestServices::createPayment($bill, 50, 'Cash', 'Expense', $currency_id, 1, 230);
+    $payment3 = TestServices::createPayment($bill, 50, 'Cash', 'Expense', $currency_id, 1, 50);
 
     $bill->refresh();
 

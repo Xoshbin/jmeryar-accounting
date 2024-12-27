@@ -616,7 +616,7 @@ it('attaches the correct journal entries when an invoice is partially paid witho
     $currency_id = Currency::where('code', 'USD')->first()->id;
 
     // Stage 2: Pay the invoice
-    $payment = TestServices::createPayment($invoice, 200, 'Cash', 'Income', $currency_id, 1, 400);
+    $payment = TestServices::createPayment($invoice, 200, 'Cash', 'Income', $currency_id, 1, 200);
 
     expect($payment->amount)->toBe(200.0);
 
