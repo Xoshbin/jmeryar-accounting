@@ -48,7 +48,6 @@ class InvoiceSeeder extends Seeder
                 $paymentAmount = mt_rand(10, 100) / 100 * $remainingBalance;
                 $paymentAmount = min($paymentAmount, $remainingBalance);
 
-                $organ_id = 1; // Default organization ID
                 $currency = Currency::where('code', 'USD')->first();
 
                 // Retrieve exchange rate for the invoice's base currency

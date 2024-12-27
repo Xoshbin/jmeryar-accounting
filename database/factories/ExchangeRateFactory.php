@@ -24,7 +24,6 @@ class ExchangeRateFactory extends Factory
             'base_currency_id' => Currency::inRandomOrder()->first()->id,
             'target_currency_id' => Currency::inRandomOrder()->first()->id,
             'rate' => $this->faker->numberBetween(8, 18),
-            'organization_id' => 1,
             'created_at' => $this->faker->date(),
             'updated_at' => $this->faker->date(),
         ];
