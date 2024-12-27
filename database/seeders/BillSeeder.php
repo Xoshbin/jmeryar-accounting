@@ -56,7 +56,7 @@ class BillSeeder extends Seeder
                 $exchangeRate = $currency->exchangeRatesAsBase->first()->rate;
 
                 // Calculate the amount in the invoice's currency using the exchange rate
-                $amountInInvoiceCurrency = $paymentAmount / $exchangeRate;
+                $amountInBillCurrency = $paymentAmount / $exchangeRate;
 
                 $payment = new Payment([
                     'amount' => $paymentAmount,
@@ -66,14 +66,14 @@ class BillSeeder extends Seeder
                     'note' => 'Generated payment',
                     'currency_id' => $currency->id,
                     'exchange_rate' => $exchangeRate,
-                    'amount_in_invoice_currency' => $amountInInvoiceCurrency,
+                    'amount_in_document_currency' => $amountInBillCurrency,
                 ]);
 
                 // Attach the payment
                 $bill->payments()->save($payment);
 
                 // Update the total paid amount in the bill's currency
-                $totalPaidAmountInInvoiceCurrency += $amountInInvoiceCurrency;
+                $totalPaidAmountInInvoiceCurrency += $amountInBillCurrency;
 
                 // Update the total_paid_amount by adding the current payment amount
                 $remainingBalance = $totalAmount - $totalPaidAmountInInvoiceCurrency;

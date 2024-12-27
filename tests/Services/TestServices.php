@@ -42,7 +42,7 @@ class TestServices
         return $billItem;
     }
 
-    public static function createPayment(Model $parent, int $amount, string $paymentMethod, string $paymentType, int $currencyId, int $exchangeRate, int $amountInInvoiceCurrency): Payment
+    public static function createPayment(Model $parent, int $amount, string $paymentMethod, string $paymentType, int $currencyId, int $exchangeRate, int $amountInDocumentCurrency): Payment
     {
         $payment = $parent->payments()->create([
             'amount' => $amount,
@@ -51,7 +51,7 @@ class TestServices
             'payment_type' => $paymentType,
             'currency_id' => $currencyId,
             'exchange_rate' => $exchangeRate,
-            'amount_in_invoice_currency' => $amountInInvoiceCurrency,
+            'amount_in_document_currency' => $amountInDocumentCurrency,
         ]);
 
         return $payment;

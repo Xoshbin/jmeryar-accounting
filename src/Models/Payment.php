@@ -21,7 +21,7 @@ use Xoshbin\JmeryarAccounting\Observers\PaymentObserver;
  * @property string|null $note
  * @property int $currency_id
  * @property float $exchange_rate
- * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $amount_in_invoice_currency
+ * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $amount_in_document_currency
  */
 class Payment extends Model
 {
@@ -35,12 +35,12 @@ class Payment extends Model
         'note',
         'currency_id',
         'exchange_rate',
-        'amount_in_invoice_currency',
+        'amount_in_document_currency',
     ];
 
     protected $casts = [
         'amount' => MoneyCast::class,
-        'amount_in_invoice_currency' => MoneyCast::class,
+        'amount_in_document_currency' => MoneyCast::class,
         'payment_type' => 'string', //'Income', 'Expense'
     ];
 

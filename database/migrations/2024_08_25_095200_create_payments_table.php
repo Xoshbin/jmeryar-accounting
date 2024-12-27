@@ -21,7 +21,7 @@ return new class extends Migration
             $table->nullableMorphs('paymentable');
             $table->foreignId('currency_id')->constrained('currencies');
             $table->unsignedBigInteger('exchange_rate'); // Rate used for conversion
-            $table->unsignedBigInteger('amount_in_invoice_currency'); // Converted amount in invoice's currency
+            $table->unsignedBigInteger('amount_in_document_currency'); // Converted amount in document's currency
             $table->timestamps();
         });
     }

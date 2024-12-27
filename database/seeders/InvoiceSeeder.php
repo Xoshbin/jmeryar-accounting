@@ -64,7 +64,7 @@ class InvoiceSeeder extends Seeder
                     'payment_method' => 'Cash',
                     'currency_id' => $currency->id,
                     'exchange_rate' => $exchangeRate,
-                    'amount_in_invoice_currency' => $amountInInvoiceCurrency, // Payment in invoice currency
+                    'amount_in_document_currency' => $amountInInvoiceCurrency, // Payment in invoice currency
                     'note' => 'Generated payment',
                 ]);
 
