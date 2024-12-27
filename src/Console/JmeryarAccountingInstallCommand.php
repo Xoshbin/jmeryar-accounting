@@ -3,8 +3,8 @@
 namespace Xoshbin\JmeryarAccounting\Console;
 
 use Illuminate\Console\Command;
-use Xoshbin\JmeryarAccounting\Models\Setting;
 use Xoshbin\JmeryarAccounting\Models\Currency;
+use Xoshbin\JmeryarAccounting\Models\Setting;
 
 class JmeryarAccountingInstallCommand extends Command
 {
@@ -60,6 +60,7 @@ class JmeryarAccountingInstallCommand extends Command
             return $currency->id;
         } else {
             $this->error('Currency not found. Please try again.');
+
             return $this->getCurrencyId();
         }
     }
