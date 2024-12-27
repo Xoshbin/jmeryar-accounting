@@ -25,7 +25,7 @@ class CurrencySeeder extends Seeder
             ['code' => 'CAD', 'name' => 'Canadian Dollar', 'symbol' => 'C$', 'currency_unit' => 'Dollar', 'currency_subunit' => 'Cent', 'status' => 'Active'],
             ['code' => 'ZAR', 'name' => 'South African Rand', 'symbol' => 'R', 'currency_unit' => 'Rand', 'currency_subunit' => 'Cent', 'status' => 'Active'],
             ['code' => 'IRR', 'name' => 'Iranian Rial', 'symbol' => '﷼', 'currency_unit' => 'Rial', 'currency_subunit' => 'Dinar', 'status' => 'Active'],
-            ['code' => 'AED', 'name' => 'United Arab Emirates Dirham', 'symbol' => 'د.إ', 'currency_unit' => 'Dirham', 'currency_subunit' => 'Fils', 'status' => 'Active']
+            ['code' => 'AED', 'name' => 'United Arab Emirates Dirham', 'symbol' => 'د.إ', 'currency_unit' => 'Dirham', 'currency_subunit' => 'Fils', 'status' => 'Active'],
         ];
 
         Currency::insert($currencies);

@@ -1,9 +1,9 @@
 <?php
 
-use Xoshbin\JmeryarAccounting\Models\ExchangeRate;
-use Xoshbin\JmeryarAccounting\Models\Currency;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Xoshbin\JmeryarAccounting\Database\Seeders\DatabaseSeeder;
+use Xoshbin\JmeryarAccounting\Models\Currency;
+use Xoshbin\JmeryarAccounting\Models\ExchangeRate;
 
 uses(RefreshDatabase::class);
 
