@@ -71,10 +71,10 @@ class CurrencyResource extends Resource
                     ]),
 
                 Forms\Components\Tabs::make('Exchange Rate Tab')
-                    ->disabled(fn ($record) => Setting::first()?->currency->code === $record->code)
+                    ->disabled(fn($record) => Setting::first()?->currency->code === $record->code)
                     ->schema([
                         Forms\Components\Tabs\Tab::make('Exchange Rates')
-                            ->badge(fn ($get) => count($get('exchangeRatesAsTarget') ?? []))
+                            ->badge(fn($get) => count($get('exchangeRatesAsTarget') ?? []))
                             ->icon('heroicon-m-queue-list')
                             ->schema([
                                 Forms\Components\Repeater::make('exchangeRatesAsTarget')
@@ -83,7 +83,7 @@ class CurrencyResource extends Resource
                                     ->relationship()
                                     ->columns(4)
                                     ->schema([
-                                        Forms\Components\TextInput::make('rate')
+                                        Forms\Components\TextInput::make('base_currency_per_unit')
                                             ->label(function () {
                                                 return __('jmeryar-accounting::currencies.form.rate_label', ['currency' => Setting::first()?->currency->code]);
                                             })
@@ -92,21 +92,7 @@ class CurrencyResource extends Resource
                                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                                 // Automatically calculate "Unit per Base Currency" when "Rate" is updated
                                                 if ($state && $state > 0) {
-                                                    // "Rate" now stores "IQD per USD", so we set "unit_per_base_currency" (USD per IQD)
-                                                    $set('unit_per_base_currency', 1 / $state);
-                                                }
-                                            }),
-
-                                        Forms\Components\TextInput::make('unit_per_base_currency')
-                                            ->label(function () {
-                                                return __('jmeryar-accounting::currencies.form.unit_per_base_currency_label', ['currency' => Setting::first()?->currency->code]);
-                                            })
-                                            ->numeric()
-                                            ->live(debounce: 300)
-                                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                                                // Automatically calculate "Rate" when "Unit per Base Currency" is updated
-                                                if ($state && $state > 0) {
-                                                    // "Unit per Base Currency" stores "USD per IQD", so we set "rate" (IQD per USD)
+                                                    // "Rate" now stores "IQD per USD", so we set "rate" (USD per IQD)
                                                     $set('rate', 1 / $state);
                                                 }
                                             })
@@ -115,7 +101,21 @@ class CurrencyResource extends Resource
                                                 $rate = $get('rate');
                                                 if ($rate && $rate > 0) {
                                                     // Set "Unit per Base Currency" when "Rate" exists
-                                                    $set('unit_per_base_currency', 1 / $rate);
+                                                    $set('base_currency_per_unit', 1 / $rate);
+                                                }
+                                            }),
+
+                                        Forms\Components\TextInput::make('rate')
+                                            ->label(function () {
+                                                return __('jmeryar-accounting::currencies.form.unit_per_base_currency_label', ['currency' => Setting::first()?->currency->code]);
+                                            })
+                                            ->numeric()
+                                            ->live(debounce: 600)
+                                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                                // Automatically calculate "Rate" when "Unit per Base Currency" is updated
+                                                if ($state && $state > 0) {
+                                                    // "Unit per Base Currency" stores "USD per IQD", so we set "rate" (IQD per USD)
+                                                    $set('base_currency_per_unit', 1 / $state);
                                                 }
                                             }),
                                         Forms\Components\DateTimePicker::make('created_at')
