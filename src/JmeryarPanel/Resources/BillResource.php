@@ -3,6 +3,7 @@
 namespace Xoshbin\JmeryarAccounting\JmeryarPanel\Resources;
 
 use Filament\Forms;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -10,14 +11,12 @@ use Filament\Tables\Table;
 use Illuminate\Support\Collection;
 use Xoshbin\JmeryarAccounting\Models\Bill;
 use Xoshbin\JmeryarAccounting\Models\Currency;
+use Xoshbin\JmeryarAccounting\Models\ExchangeRate;
 use Xoshbin\JmeryarAccounting\Models\Payment;
 use Xoshbin\JmeryarAccounting\Models\Product;
 use Xoshbin\JmeryarAccounting\Models\Setting;
 use Xoshbin\JmeryarAccounting\Models\Supplier;
 use Xoshbin\JmeryarAccounting\Models\Tax;
-use Filament\Forms\Components\Actions\Action;
-use Xoshbin\JmeryarAccounting\Models\ExchangeRate;
-use Filament\Facades\Filament;
 
 class BillResource extends Resource
 {
@@ -133,20 +132,20 @@ class BillResource extends Resource
                                     ->schema([
                                         Forms\Components\TextInput::make('total_paid_amount')
                                             ->label(__('jmeryar-accounting::bills.form.total_paid_amount'))
-                                            ->formatStateUsing(fn($state, $record) => $record->total_paid_amount ?? 0)
+                                            ->formatStateUsing(fn ($state, $record) => $record->total_paid_amount ?? 0)
                                             ->readOnly(),
                                         Forms\Components\TextInput::make('amount_due')
                                             ->label(__('jmeryar-accounting::bills.form.amount_due'))
-                                            ->formatStateUsing(fn($state, $record) => ($record->total_amount ?? 0) - ($record->total_paid_amount ?? 0))
+                                            ->formatStateUsing(fn ($state, $record) => ($record->total_amount ?? 0) - ($record->total_paid_amount ?? 0))
                                             ->readOnly(),
                                         Forms\Components\DatePicker::make('due_date')
                                             ->label(__('jmeryar-accounting::bills.form.due_date'))
                                             ->nullable(),
                                         Forms\Components\Select::make('currency_id')
                                             ->label(__('jmeryar-accounting::bills.form.currency'))
-                                            ->default(fn() => Setting::first()?->currency->id)
+                                            ->default(fn () => Setting::first()?->currency->id)
                                             ->relationship('currency', 'code')
-                                            ->disabled(fn($record) => $record?->status !== 'Draft' && $record !== null),
+                                            ->disabled(fn ($record) => $record?->status !== 'Draft' && $record !== null),
                                     ]),
                             ])
                             ->columnSpan(1), // Right side takes one-third of the grid
@@ -158,7 +157,7 @@ class BillResource extends Resource
                     ->schema([
                         Forms\Components\Tabs\Tab::make('Bill Items')
                             ->label(__('jmeryar-accounting::bills.form.bill_items'))
-                            ->badge(fn($get) => count($get('billItems') ?? []))
+                            ->badge(fn ($get) => count($get('billItems') ?? []))
                             ->icon('heroicon-m-queue-list')
                             ->schema([
                                 Forms\Components\Repeater::make('billItems')
@@ -207,7 +206,7 @@ class BillResource extends Resource
                                             ->columnSpan(1)
                                             ->numeric()
                                             ->live(debounce: 600)
-                                            ->required(fn($get) => $get('quantity') > 0)
+                                            ->required(fn ($get) => $get('quantity') > 0)
                                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                                 $taxId = $get('taxes');
                                                 $tax = $taxId ? Tax::find($taxId) : null;
@@ -217,7 +216,7 @@ class BillResource extends Resource
                                         Forms\Components\TextInput::make('unit_price')
                                             ->label(__('jmeryar-accounting::bills.form.unit_price'))
                                             ->columnSpan(1)
-                                            ->default(fn($get) => Product::find($get('product_id'))?->unit_price ?? null)
+                                            ->default(fn ($get) => Product::find($get('product_id'))?->unit_price ?? null)
                                             ->numeric(),
                                         Forms\Components\Select::make('tax_id')
                                             ->label(__('jmeryar-accounting::bills.form.tax'))
@@ -225,10 +224,10 @@ class BillResource extends Resource
                                                 if ($state !== null) {
                                                     $tax = $state ? Tax::find($state) : 0;
                                                     if ($tax instanceof Collection) {
-                                                        return 'Tax ' . ($get('cost_price') * $get('quantity')) * ($tax->first()->amount / 100);
+                                                        return 'Tax '.($get('cost_price') * $get('quantity')) * ($tax->first()->amount / 100);
                                                     } else {
                                                         if ($tax) {
-                                                            return 'Tax ' . ($get('cost_price') * $get('quantity')) * ($tax->amount / 100);
+                                                            return 'Tax '.($get('cost_price') * $get('quantity')) * ($tax->amount / 100);
                                                         }
                                                     }
                                                 } else {
@@ -254,7 +253,7 @@ class BillResource extends Resource
                                         Forms\Components\TextInput::make('total_cost')
                                             ->label(__('jmeryar-accounting::bills.form.total_cost'))
                                             ->columnSpan(1)
-                                            ->required(fn($get) => $get('quantity') > 0)
+                                            ->required(fn ($get) => $get('quantity') > 0)
                                             ->numeric(),
                                     ])
                                     ->defaultItems(0)
@@ -264,9 +263,9 @@ class BillResource extends Resource
                                     ->afterStateUpdated(function (callable $set, $state) {
                                         // Calculate and set total amount
                                         // TODO: Fix delay in updating the total amount; it updates only after adding the next item.
-                                        $totalUntaxedAmount = collect($state)->sum(fn($item) => $item['total_cost'] ?? 0) - collect($state)->sum(fn($item) => $item['tax_amount'] ?? 0);
-                                        $totalTaxAmount = collect($state)->sum(fn($item) => $item['tax_amount'] ?? 0);
-                                        $totalAmount = collect($state)->sum(fn($item) => $item['total_cost'] ?? 0);
+                                        $totalUntaxedAmount = collect($state)->sum(fn ($item) => $item['total_cost'] ?? 0) - collect($state)->sum(fn ($item) => $item['tax_amount'] ?? 0);
+                                        $totalTaxAmount = collect($state)->sum(fn ($item) => $item['tax_amount'] ?? 0);
+                                        $totalAmount = collect($state)->sum(fn ($item) => $item['total_cost'] ?? 0);
 
                                         $set('total_amount', $totalAmount);
                                         $set('tax_amount', $totalTaxAmount);
@@ -275,7 +274,7 @@ class BillResource extends Resource
                             ]),
                         Forms\Components\Tabs\Tab::make('Bill Payments')
                             ->label(__('jmeryar-accounting::bills.form.bill_payments'))
-                            ->badge(fn($get) => count($get('payments') ?? []))
+                            ->badge(fn ($get) => count($get('payments') ?? []))
                             ->icon('heroicon-m-banknotes')
                             ->schema([
                                 Forms\Components\Repeater::make('payments')
@@ -289,7 +288,7 @@ class BillResource extends Resource
                                         Forms\Components\Select::make('currency_id')
                                             ->label(__('jmeryar-accounting::bills.form.currency'))
                                             ->relationship('currency', 'code')
-                                            ->disabled(fn($record) => $record?->status === 'Paid' && $record !== null)
+                                            ->disabled(fn ($record) => $record?->status === 'Paid' && $record !== null)
                                             ->live(debounce: 600)
                                             ->registerActions([
                                                 Action::make('addExchangeRate')
@@ -331,12 +330,12 @@ class BillResource extends Resource
                                                             }),
                                                     ])
                                                     ->action(function (array $data, $state): void {
-                                                        $record = new ExchangeRate();
+                                                        $record = new ExchangeRate;
                                                         $record->base_currency_id = Setting::first()?->currency->id;
                                                         $record->target_currency_id = $state;
                                                         $record->rate = $data['unit_per_base_currency'];
                                                         $record->save();
-                                                    })
+                                                    }),
                                             ])
                                             ->afterStateUpdated(function ($state, callable $set, callable $get, $component, $livewire) {
                                                 $currency = Currency::find($state);
@@ -379,7 +378,7 @@ class BillResource extends Resource
                                                 'Bank' => __('jmeryar-accounting::bills.form.bank'),
                                                 'Credit Card' => __('jmeryar-accounting::bills.form.credit_card'),
                                             ])
-                                            ->required(fn($get) => $get('amount') > 0),
+                                            ->required(fn ($get) => $get('amount') > 0),
                                     ])
                                     ->defaultItems(0)
                                     ->columns(6)
@@ -391,11 +390,11 @@ class BillResource extends Resource
                                         return $data;
                                     })
                                     ->afterStateUpdated(function (callable $set, $state, callable $get) {
-                                        $totalPaidAmount = collect($state)->sum(fn($item) => $item['amount_in_invoice_currency'] ?? 0);
+                                        $totalPaidAmount = collect($state)->sum(fn ($item) => $item['amount_in_invoice_currency'] ?? 0);
                                         $set('total_paid_amount', $totalPaidAmount);
                                         $set('amount_due', $get('total_amount') - $totalPaidAmount);
                                     })
-                                    ->itemLabel(fn(array $state): ?string => $state['payment_date'] . ' ' . $state['amount_in_invoice_currency'] ?? null),
+                                    ->itemLabel(fn (array $state): ?string => $state['payment_date'].' '.$state['amount_in_invoice_currency'] ?? null),
                             ]),
                     ])
                     ->columnSpan('full'),
@@ -476,7 +475,7 @@ class BillResource extends Resource
         $lastBill = Bill::latest('id')->first();
         $newNumber = $lastBill ? intval(substr($lastBill->bill_number, -4)) + 1 : 1;
 
-        return 'BILL-' . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
+        return 'BILL-'.str_pad($newNumber, 4, '0', STR_PAD_LEFT);
     }
 
     public static function getRelations(): array
