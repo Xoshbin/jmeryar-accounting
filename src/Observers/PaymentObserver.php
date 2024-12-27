@@ -58,12 +58,12 @@ class PaymentObserver
         // Create journal entries based on the parent type
         if ($parent instanceof \Xoshbin\JmeryarAccounting\Models\Invoice) {
             // Debit Cash/Bank account, Credit Accounts Receivable
-            $this->createJournalEntry($payment, 'Cash', $payment->amount, 0);
-            $this->createJournalEntry($payment, 'Accounts Receivable', 0, $payment->amount);
+            $this->createJournalEntry($payment, 'Cash', $payment->amount_in_document_currency, 0);
+            $this->createJournalEntry($payment, 'Accounts Receivable', 0, $payment->amount_in_document_currency);
         } elseif ($parent instanceof \Xoshbin\JmeryarAccounting\Models\Bill) {
             // Credit Cash/Bank account, Debit Accounts Payable
-            $this->createJournalEntry($payment, 'Cash', 0, $payment->amount); // Credit the Cash account
-            $this->createJournalEntry($payment, 'Accounts Payable', $payment->amount, 0); // Debit Accounts Payable
+            $this->createJournalEntry($payment, 'Cash', 0, $payment->amount_in_document_currency); // Credit the Cash account
+            $this->createJournalEntry($payment, 'Accounts Payable', $payment->amount_in_document_currency, 0); // Debit Accounts Payable
         }
 
         // Update the status of the parent based on the payment amount
