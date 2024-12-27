@@ -71,10 +71,10 @@ class CurrencyResource extends Resource
                     ]),
 
                 Forms\Components\Tabs::make('Exchange Rate Tab')
-                    ->disabled(fn ($record) => Setting::first()?->currency->code === $record->code)
+                    ->disabled(fn($record) => Setting::first()?->currency->code === $record->code)
                     ->schema([
                         Forms\Components\Tabs\Tab::make('Exchange Rates')
-                            ->badge(fn ($get) => count($get('exchangeRatesAsTarget') ?? []))
+                            ->badge(fn($get) => count($get('exchangeRatesAsTarget') ?? []))
                             ->icon('heroicon-m-queue-list')
                             ->schema([
                                 Forms\Components\Repeater::make('exchangeRatesAsTarget')
@@ -124,7 +124,7 @@ class CurrencyResource extends Resource
                                             ->label('Date and Time'),
                                     ])
                                     ->mutateRelationshipDataBeforeCreateUsing(function (array $data, $record): array {
-                                        $data['base_currency_id'] = Currency::first()->get('id');
+                                        $data['base_currency_id'] = Setting::first()?->currency->id;
                                         $data['target_currency_id'] = $record->id;
 
                                         return $data;
