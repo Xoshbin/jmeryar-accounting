@@ -3,19 +3,13 @@ includes:
     - vendor/nesbot/carbon/extension.neon
     
 parameters:
-    level: 5
+    level: 0
     paths:
         - src
         - tests
         - database
 
-    reportUnmatchedIgnoredErrors: false
+    excludePaths:
+        - ./vendor/**
 
-    ignoreErrors:
-        - '#Unable to resolve the template type TKey in call to function collect#'
-        - '#Unable to resolve the template type TValue in call to function collect#'
-        - '#Call to an undefined method#'
-        - '#Call to an undefined static method#'
-        -
-            identifier: missingType.generics
-        
+    reportUnmatchedIgnoredErrors: true
