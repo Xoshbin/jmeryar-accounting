@@ -50,5 +50,7 @@ return [
         'cash' => 'Cash',
         'bank' => 'Bank',
         'credit_card' => 'Credit Card',
+        'exchange_rate' => 'Exchange Rate',
+        'amount_in_invoice_currency' => 'Amount in Invoice Currency',
     ],
 ];

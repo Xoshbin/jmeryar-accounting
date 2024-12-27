@@ -2,6 +2,16 @@
 
 return [
     'title' => 'Invoices',
+    'table' => [
+        'invoice_number' => 'Invoice Number',
+        'invoice_date' => 'Invoice Date',
+        'due_date' => 'Due Date',
+        'customer_name' => 'Customer Name',
+        'total_amount' => 'Total Amount',
+        'status' => 'Status',
+        'created_at' => 'Created At',
+        'updated_at' => 'Updated At',
+    ],
     'form' => [
         'PDF/Print' => 'PDF/Print',
         'Register payment' => 'Register payment',
@@ -25,15 +35,7 @@ return [
         'currency_id' => 'Currency',
         'Invoice Items' => 'Invoice Items',
         'Invoice Payments' => 'Invoice Payments',
-    ],
-    'table' => [
-        'invoice_number' => 'Invoice Number',
-        'invoice_date' => 'Invoice Date',
-        'due_date' => 'Due Date',
-        'customer_name' => 'Customer Name',
-        'total_amount' => 'Total Amount',
-        'status' => 'Status',
-        'created_at' => 'Created At',
-        'updated_at' => 'Updated At',
+        'exchange_rate' => 'Exchange Rate',
+        'amount_in_invoice_currency' => 'Amount in Invoice Currency',
     ],
 ];
