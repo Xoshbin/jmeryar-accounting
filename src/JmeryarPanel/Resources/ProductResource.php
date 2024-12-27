@@ -100,7 +100,7 @@ class ProductResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            \Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\ProductResource\RelationManagers\InventoryBatchesRelationManager::class,
         ];
     }
 
