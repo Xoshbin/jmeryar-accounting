@@ -24,18 +24,33 @@ class ProductCategoryResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form
+        return
+            $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label(__('jmeryar-accounting::product_categories.form.name'))
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('description')
-                    ->label(__('jmeryar-accounting::product_categories.form.description'))
-                    ->columnSpanFull(),
-                Forms\Components\Select::make('parent_id')
-                    ->label(__('jmeryar-accounting::product_categories.form.parent_id'))
-                    ->relationship('parent', 'name'),
+                Forms\Components\Grid::make(3)
+                    ->schema([
+                        Forms\Components\Section::make()
+                            ->columns(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('name')
+                                    ->label(__('jmeryar-accounting::product_categories.form.name'))
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\Textarea::make('description')
+                                    ->label(__('jmeryar-accounting::product_categories.form.description'))
+                                    ->columnSpanFull(),
+                            ])
+                            ->columnSpan(2),
+                        Forms\Components\Grid::make()
+                            ->schema([
+                                Forms\Components\Section::make()->schema([
+                                    Forms\Components\Select::make('parent_id')
+                                        ->label(__('jmeryar-accounting::product_categories.form.parent_id'))
+                                        ->relationship('parent', 'name'),
+                                ]),
+                            ])
+                            ->columnSpan(1),
+                    ]),
             ]);
     }
 

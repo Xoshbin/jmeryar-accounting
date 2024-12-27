@@ -24,26 +24,39 @@ class SupplierResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form
+        return
+            $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label(__('jmeryar-accounting::suppliers.form.name'))
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('contact_person')
-                    ->label(__('jmeryar-accounting::suppliers.form.contact_person'))
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->label(__('jmeryar-accounting::suppliers.form.email'))
-                    ->email()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('phone')
-                    ->label(__('jmeryar-accounting::suppliers.form.phone'))
-                    ->tel()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('address')
-                    ->label(__('jmeryar-accounting::suppliers.form.address'))
-                    ->columnSpanFull(),
+                Forms\Components\Grid::make(3)
+                    ->schema([
+                        Forms\Components\Section::make()
+                            ->columns(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('name')
+                                    ->label(__('jmeryar-accounting::suppliers.form.name'))
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('email')
+                                    ->label(__('jmeryar-accounting::suppliers.form.email'))
+                                    ->email()
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('phone')
+                                    ->label(__('jmeryar-accounting::suppliers.form.phone'))
+                                    ->tel()
+                                    ->maxLength(255),
+                                Forms\Components\Textarea::make('address')
+                                    ->label(__('jmeryar-accounting::suppliers.form.address'))
+                                    ->columnSpanFull(),
+                            ])
+                            ->columnSpan(2),
+                        Forms\Components\Grid::make()
+                            ->schema([
+                                Forms\Components\Section::make()->schema([
+                                    //TODO:: You may list supplier debt's here
+                                ]),
+                            ])
+                            ->columnSpan(1),
+                    ]),
             ]);
     }
 

@@ -98,8 +98,8 @@ class TransactionResource extends Resource
     {
         return [
             'index' => \Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\TransactionResource\Pages\ListTransactions::route('/'),
-            'create' => \Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\TransactionResource\Pages\CreateTransaction::route('/create'),
-            'edit' => \Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\TransactionResource\Pages\EditTransaction::route('/{record}/edit'),
+            // 'create' => \Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\TransactionResource\Pages\CreateTransaction::route('/create'),
+            // 'edit' => \Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\TransactionResource\Pages\EditTransaction::route('/{record}/edit'),
         ];
     }
 }
