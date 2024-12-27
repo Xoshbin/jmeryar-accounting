@@ -18,28 +18,28 @@ class JmeryarAccountingServiceProvider extends PackageServiceProvider
 
     public function boot()
     {
-        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->publishes([
-            __DIR__.'/../database/migrations' => database_path('migrations'),
+            __DIR__ . '/../database/migrations' => database_path('migrations'),
         ]);
 
         $this->publishes([
-            __DIR__.'/../database/seeders' => database_path('seeders'),
+            __DIR__ . '/../database/seeders' => database_path('seeders'),
         ], 'jmeryar-accounting-seeds');
 
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'jmeryar-accounting');
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'jmeryar-accounting');
 
         //Publish Views
         $this->publishes([
-            __DIR__.'/../resources/views' => resource_path('views/vendor/jmeryar-accounting'),
+            __DIR__ . '/../resources/views' => resource_path('views/vendor/jmeryar-accounting'),
         ], 'jmeryar-accounting-views');
 
         //Register Langs
-        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'jmeryar-accounting');
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'jmeryar-accounting');
 
         //Publish Lang
         $this->publishes([
-            __DIR__.'/../resources/lang' => base_path('lang/vendor/jmeryar-accounting'),
+            __DIR__ . '/../resources/lang' => base_path('lang/vendor/jmeryar-accounting'),
         ], 'jmeryar-accounting-lang');
 
         if ($this->app->runningInConsole()) {
@@ -52,7 +52,7 @@ class JmeryarAccountingServiceProvider extends PackageServiceProvider
     public function packageBooted()
     {
         FilamentAsset::register([
-            Css::make('jmeryar-assets', __DIR__.'/../resources/css/jmeryar/theme.css'),
+            Css::make('jmeryar-assets', __DIR__ . '/../resources/css/jmeryar/theme.css'),
         ]);
     }
 }

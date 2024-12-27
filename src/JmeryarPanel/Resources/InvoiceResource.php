@@ -130,20 +130,20 @@ class InvoiceResource extends Resource
                                     ->schema([
                                         Forms\Components\TextInput::make('total_paid_amount')
                                             ->label(__('jmeryar-accounting::invoices.form.total_paid_amount'))
-                                            ->formatStateUsing(fn($state, $record) => $record->total_paid_amount ?? 0)
+                                            ->formatStateUsing(fn ($state, $record) => $record->total_paid_amount ?? 0)
                                             ->readOnly(),
                                         Forms\Components\TextInput::make('amount_due')
                                             ->label(__('jmeryar-accounting::invoices.form.amount_due'))
-                                            ->formatStateUsing(fn($state, $record) => ($record->total_amount ?? 0) - ($record->total_paid_amount ?? 0))
+                                            ->formatStateUsing(fn ($state, $record) => ($record->total_amount ?? 0) - ($record->total_paid_amount ?? 0))
                                             ->readOnly(),
                                         Forms\Components\DatePicker::make('due_date')
                                             ->label(__('jmeryar-accounting::invoices.form.due_date'))
                                             ->nullable(),
                                         Forms\Components\Select::make('currency_id')
                                             ->label(__('jmeryar-accounting::invoices.form.currency'))
-                                            ->default(fn() => Setting::first()?->currency->id)
+                                            ->default(fn () => Setting::first()?->currency->id)
                                             ->relationship('currency', 'code')
-                                            ->disabled(fn($record) => $record?->status !== 'Draft' && $record !== null),
+                                            ->disabled(fn ($record) => $record?->status !== 'Draft' && $record !== null),
                                     ]),
                             ])
                             ->columnSpan(1), // Right side takes one-third of the grid
@@ -154,7 +154,7 @@ class InvoiceResource extends Resource
                     ->schema([
                         Forms\Components\Tabs\Tab::make('Invoice Items')
                             ->label(__('jmeryar-accounting::invoices.form.invoice_items'))
-                            ->badge(fn($get) => count($get('invoiceItems') ?? []))
+                            ->badge(fn ($get) => count($get('invoiceItems') ?? []))
                             ->icon('heroicon-m-queue-list')
                             ->schema([
                                 Forms\Components\Repeater::make('invoiceItems')
@@ -240,7 +240,7 @@ class InvoiceResource extends Resource
                                             ->columnSpan(1)
                                             ->numeric()
                                             ->live(debounce: 600)
-                                            ->required(fn($get) => $get('quantity') > 0)
+                                            ->required(fn ($get) => $get('quantity') > 0)
                                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                                 $taxId = $get('taxes');
                                                 $tax = $taxId ? Tax::find($taxId) : null;
@@ -297,9 +297,9 @@ class InvoiceResource extends Resource
                                     ->afterStateUpdated(function (callable $set, $state, callable $get) {
                                         // Calculate and set total amount
                                         // TODO: Fix delay in updating the total amount; it updates only after adding the next item.
-                                        $totalUntaxedAmount = collect($state)->sum(fn($item) => $item['untaxed_amount'] ?? 0);
-                                        $totalTaxAmount = collect($state)->sum(fn($item) => $item['tax_amount'] ?? 0);
-                                        $totalAmount = collect($state)->sum(fn($item) => $item['total_price'] ?? 0);
+                                        $totalUntaxedAmount = collect($state)->sum(fn ($item) => $item['untaxed_amount'] ?? 0);
+                                        $totalTaxAmount = collect($state)->sum(fn ($item) => $item['tax_amount'] ?? 0);
+                                        $totalAmount = collect($state)->sum(fn ($item) => $item['total_price'] ?? 0);
 
                                         $set('total_amount', $totalAmount);
                                         $set('tax_amount', $totalTaxAmount);
@@ -308,7 +308,7 @@ class InvoiceResource extends Resource
                             ]),
                         Forms\Components\Tabs\Tab::make('Invoice Payments')
                             ->label(__('jmeryar-accounting::invoices.form.invoice_payments'))
-                            ->badge(fn($get) => count($get('payments') ?? []))
+                            ->badge(fn ($get) => count($get('payments') ?? []))
                             ->icon('heroicon-m-banknotes')
                             ->schema([
                                 Forms\Components\Repeater::make('payments')
@@ -323,7 +323,7 @@ class InvoiceResource extends Resource
                                         Forms\Components\Select::make('currency_id')
                                             ->label(__('jmeryar-accounting::invoices.form.currency'))
                                             ->relationship('currency', 'code')
-                                            ->disabled(fn($record) => $record?->status === 'Paid' && $record !== null)
+                                            ->disabled(fn ($record) => $record?->status === 'Paid' && $record !== null)
                                             ->live(debounce: 600)
                                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                                 $currency = Currency::find($state);
@@ -363,7 +363,7 @@ class InvoiceResource extends Resource
                                                 'Bank' => 'Bank',
                                                 'Credit Card' => 'Credit Card',
                                             ])
-                                            ->required(fn($get) => $get('amount') > 0),
+                                            ->required(fn ($get) => $get('amount') > 0),
                                     ])
                                     ->defaultItems(0)
                                     ->columns(6)
@@ -376,11 +376,11 @@ class InvoiceResource extends Resource
                                     })
                                     ->afterStateUpdated(function (callable $set, $state, callable $get) {
                                         // Calculate and set total paid amount
-                                        $totalPaidAmount = collect($state)->sum(fn($item) => $item['amount_in_document_currency'] ?? 0);
+                                        $totalPaidAmount = collect($state)->sum(fn ($item) => $item['amount_in_document_currency'] ?? 0);
                                         $set('total_paid_amount', $totalPaidAmount);
                                         $set('amount_due', $get('total_amount') - $totalPaidAmount);
                                     })
-                                    ->itemLabel(fn(array $state): ?string => $state['payment_date'] . ' ' . $state['amount_in_document_currency'] ?? null),
+                                    ->itemLabel(fn (array $state): ?string => $state['payment_date'] . ' ' . $state['amount_in_document_currency'] ?? null),
                             ]),
                     ])
                     ->columnSpan('full'),

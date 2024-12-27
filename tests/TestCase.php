@@ -23,7 +23,7 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     {
         parent::setUp();
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'Xoshbin\\JmeryarAccounting\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            fn (string $modelName) => 'Xoshbin\\JmeryarAccounting\\Database\\Factories\\' . class_basename($modelName) . 'Factory'
         );
     }
 

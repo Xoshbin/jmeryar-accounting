@@ -90,7 +90,6 @@ class PaymentObserver
         }
     }
 
-
     /**
      * Delete associated journal entries for a payment.
      */
@@ -101,7 +100,6 @@ class PaymentObserver
             $entry->delete();
         }
     }
-
 
     /**
      * Delete existing transaction and associated journal entries for a payment.

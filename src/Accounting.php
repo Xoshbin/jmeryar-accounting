@@ -18,15 +18,15 @@ class Accounting implements Plugin
     {
         $panel
             ->discoverResources(
-                in: __DIR__.'/JmeryarPanel/Resources',
+                in: __DIR__ . '/JmeryarPanel/Resources',
                 for: 'Xoshbin\\JmeryarAccounting\\JmeryarPanel\\Resources'
             )
             ->discoverPages(
-                in: __DIR__.'/JmeryarPanel/Pages',
+                in: __DIR__ . '/JmeryarPanel/Pages',
                 for: 'Xoshbin\\JmeryarAccounting\\JmeryarPanel\\Pages'
             )
             ->discoverWidgets(
-                in: __DIR__.'/JmeryarPanel/Widgets',
+                in: __DIR__ . '/JmeryarPanel/Widgets',
                 for: 'Xoshbin\\JmeryarAccounting\\JmeryarPanel\\Widgets'
             )
             ->pages([

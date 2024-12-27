@@ -77,6 +77,7 @@ class InventoryBatchService
         foreach ($invoiceItem->product->inventoryBatches()->oldest()->get() as $batch) {
             if ($batch->quantity >= $remainingQuantity) {
                 $batch->decrement('quantity', $remainingQuantity);
+
                 break;
             } else {
                 $remainingQuantity -= $batch->quantity;

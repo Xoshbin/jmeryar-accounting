@@ -5,8 +5,8 @@ namespace Xoshbin\JmeryarAccounting\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Xoshbin\JmeryarAccounting\Database\Factories\ExchangeRateFactory;
 use Xoshbin\JmeryarAccounting\Casts\MoneyCast;
+use Xoshbin\JmeryarAccounting\Database\Factories\ExchangeRateFactory;
 
 /**
  * @property int $base_currency_id
