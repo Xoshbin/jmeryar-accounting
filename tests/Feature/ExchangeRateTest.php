@@ -22,7 +22,7 @@ it('can create an exchange rate', function () {
         'rate' => 1500,
     ]);
 
-    expect($exchangeRate->rate)->toBe(1500);
+    expect($exchangeRate->rate)->toBe(1500.0);
     expect($exchangeRate->baseCurrency->code)->toBe('USD');
     expect($exchangeRate->targetCurrency->code)->toBe('IQD');
 
@@ -30,7 +30,7 @@ it('can create an exchange rate', function () {
     expect(1 / $exchangeRate->rate)->toBe(0.0006666666666666666);
 
     // 100 USD = 150,000 IQD
-    expect($exchangeRate->rate * 100)->toBe(150000);
+    expect($exchangeRate->rate * 100)->toBe(150000.0);
 });
 
 it('can handle USD to EUR exchange rate', function () {

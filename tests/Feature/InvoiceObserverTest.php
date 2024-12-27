@@ -925,4 +925,4 @@ it('attaches the correct journal entries when an invoice is partially paid with 
 
     // Assert that the invoice's untaxed_amount is correct
     expect($invoice->untaxed_amount)->toBe(400.0);
-})->only();
+});
