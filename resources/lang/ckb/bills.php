@@ -50,5 +50,7 @@ return [
         'cash' => 'نەقد',
         'bank' => 'بانک',
         'credit_card' => 'کارتی متمانە',
+        'exchange_rate' => 'نرخی گۆڕینەوە',
+        'amount_in_bill_currency' => 'بڕی پارە بە دراوی پسووڵە',
     ],
 ];
