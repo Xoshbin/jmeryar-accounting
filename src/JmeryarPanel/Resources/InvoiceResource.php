@@ -153,17 +153,17 @@ class InvoiceResource extends Resource
                 Forms\Components\Tabs::make('Invoice Tabs')
                     ->schema([
                         Forms\Components\Tabs\Tab::make('Invoice Items')
-                            ->label(__('jmeryar-accounting::invoices.form.Invoice Items'))
+                            ->label(__('jmeryar-accounting::invoices.form.invoice_items'))
                             ->badge(fn($get) => count($get('invoiceItems') ?? []))
                             ->icon('heroicon-m-queue-list')
                             ->schema([
                                 Forms\Components\Repeater::make('invoiceItems')
                                     ->hiddenLabel()
-                                    ->label('Items')
+                                    ->label(__('jmeryar-accounting::invoices.form.items'))
                                     ->relationship()
                                     ->schema([
                                         Forms\Components\Select::make('product_id')
-                                            ->label('Product')
+                                            ->label(__('jmeryar-accounting::invoices.form.product'))
                                             ->columnSpan(2)
                                             ->relationship('product', 'name')
                                             ->searchable()
@@ -225,7 +225,7 @@ class InvoiceResource extends Resource
                                                 }
                                             }),
                                         Forms\Components\TextInput::make('quantity')
-                                            ->label('Quantity')
+                                            ->label(__('jmeryar-accounting::invoices.form.quantity'))
                                             ->columnSpan(1)
                                             ->numeric()
                                             ->live(debounce: 600)
@@ -236,7 +236,7 @@ class InvoiceResource extends Resource
                                                 $set('total_price', self::calculateTotalPerRow($state, $unitPrice, $tax));
                                             }),
                                         Forms\Components\TextInput::make('unit_price')
-                                            ->label('Unit Price')
+                                            ->label(__('jmeryar-accounting::invoices.form.unit_price'))
                                             ->columnSpan(1)
                                             ->numeric()
                                             ->live(debounce: 600)
@@ -248,6 +248,7 @@ class InvoiceResource extends Resource
                                                 $set('total_price', self::calculateTotalPerRow($quantity, $state, $tax));
                                             }),
                                         Forms\Components\Select::make('tax_id')
+                                            ->label(__('jmeryar-accounting::invoices.form.tax'))
                                             ->label(function ($state, callable $get) {
                                                 if ($state !== null) {
                                                     $tax = $state ? Tax::find($state) : null;
@@ -286,7 +287,7 @@ class InvoiceResource extends Resource
                                         Forms\Components\Hidden::make('tax_amount'),
                                         Forms\Components\Hidden::make('untaxed_amount'),
                                         Forms\Components\TextInput::make('total_price')
-                                            ->label('Total Price')
+                                            ->label(__('jmeryar-accounting::invoices.form.total_price'))
                                             ->numeric(),
                                     ])
                                     ->defaultItems(0)
@@ -306,7 +307,7 @@ class InvoiceResource extends Resource
                                     }),
                             ]),
                         Forms\Components\Tabs\Tab::make('Invoice Payments')
-                            ->label(__('jmeryar-accounting::invoices.form.Invoice Payments'))
+                            ->label(__('jmeryar-accounting::invoices.form.invoice_payments'))
                             ->badge(fn($get) => count($get('payments') ?? []))
                             ->icon('heroicon-m-banknotes')
                             ->schema([
@@ -316,11 +317,11 @@ class InvoiceResource extends Resource
                                     ->relationship()
                                     ->schema([
                                         Forms\Components\DatePicker::make('payment_date')
-                                            ->label('Payment Date')
+                                            ->label(__('jmeryar-accounting::invoices.form.payment_date'))
                                             ->default(now())
                                             ->required(),
                                         Forms\Components\Select::make('currency_id')
-                                            ->label('Currency')
+                                            ->label(__('jmeryar-accounting::invoices.form.currency'))
                                             ->relationship('currency', 'code')
                                             ->disabled(fn($record) => $record?->status === 'Paid' && $record !== null)
                                             ->live(debounce: 600)
@@ -331,7 +332,7 @@ class InvoiceResource extends Resource
                                                 $set('exchange_rate', $rate ?? 0);
                                             }),
                                         Forms\Components\TextInput::make('amount')
-                                            ->label('Amount')
+                                            ->label(__('jmeryar-accounting::invoices.form.amount'))
                                             ->numeric()
                                             ->live(debounce: 600)
                                             ->postfix('*')
@@ -341,13 +342,16 @@ class InvoiceResource extends Resource
                                                 $set('amount_in_document_currency', $exchange_rate * $state);
                                             }),
                                         Forms\Components\TextInput::make('exchange_rate')
+                                            ->label(__('jmeryar-accounting::invoices.form.exchange_rate'))
                                             ->numeric()
                                             ->required(),
                                         Forms\Components\TextInput::make('amount_in_document_currency')
+                                            ->label(__('jmeryar-accounting::invoices.form.amount_in_bill_currency'))
                                             ->numeric()
                                             ->required()
                                             ->prefix('='),
                                         Forms\Components\Select::make('payment_method')
+                                            ->label(__('jmeryar-accounting::invoices.form.payment_method'))
                                             ->label('Payment Method')
                                             ->options([
                                                 'Cash' => 'Cash',
