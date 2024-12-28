@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Xoshbin\JmeryarAccounting\Casts\MoneyCast;
 use Xoshbin\JmeryarAccounting\Database\Factories\BillFactory;
 use Xoshbin\JmeryarAccounting\Observers\BillObserver;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 #[ObservedBy([BillObserver::class])]
 /**
@@ -30,9 +32,9 @@ use Xoshbin\JmeryarAccounting\Observers\BillObserver;
  * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $untaxed_amount
  * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $tax_amount
  */
-class Bill extends Model
+class Bill extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
         'bill_number',

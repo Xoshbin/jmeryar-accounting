@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Xoshbin\JmeryarAccounting\Casts\MoneyCast;
 use Xoshbin\JmeryarAccounting\Database\Factories\ProductFactory;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * @property string $type
@@ -18,9 +20,9 @@ use Xoshbin\JmeryarAccounting\Database\Factories\ProductFactory;
  * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $unit_price
  * @property \Xoshbin\JmeryarAccounting\Casts\MoneyCast $cost_price
  */
-class Product extends Model
+class Product extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
 
     protected $fillable = [
         'type',
