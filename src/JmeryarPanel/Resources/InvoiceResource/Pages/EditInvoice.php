@@ -3,12 +3,20 @@
 namespace Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\InvoiceResource\Pages;
 
 use Filament\Resources\Pages\EditRecord;
+use Filament\Actions;
 use Xoshbin\JmeryarAccounting\JmeryarPanel\Resources\InvoiceResource;
 use Xoshbin\JmeryarAccounting\Models\Account;
 
 class EditInvoice extends EditRecord
 {
     protected static string $resource = InvoiceResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\DeleteAction::make(),
+        ];
+    }
 
     public function mutateFormDataBeforeSave(array $data): array
     {

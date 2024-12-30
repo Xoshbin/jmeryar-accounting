@@ -126,12 +126,15 @@ class BillResource extends Resource
                                     ->schema([
                                         MoneyInput::make('untaxed_amount')
                                             ->label(__('jmeryar-accounting::bills.form.untaxed_amount'))
+                                            ->currencyCode(fn($get) => Currency::find($get('currency_id'))?->code)
                                             ->readOnly(),
                                         MoneyInput::make('tax_amount')
                                             ->label(__('jmeryar-accounting::bills.form.tax'))
+                                            ->currencyCode(fn($get) => Currency::find($get('currency_id'))?->code)
                                             ->readOnly(),
                                         MoneyInput::make('total_amount')
                                             ->label(__('jmeryar-accounting::bills.form.total_amount'))
+                                            ->currencyCode(fn($get) => Currency::find($get('currency_id'))?->code)
                                             ->readOnly(),
                                     ]),
                                 Forms\Components\Section::make()
@@ -139,10 +142,12 @@ class BillResource extends Resource
                                     ->schema([
                                         MoneyInput::make('total_paid_amount')
                                             ->label(__('jmeryar-accounting::bills.form.total_paid_amount'))
+                                            ->currencyCode(fn($get) => Currency::find($get('currency_id'))?->code)
                                             ->formatStateUsing(fn($state, $record) => $record->total_paid_amount ?? 0)
                                             ->readOnly(),
                                         MoneyInput::make('amount_due')
                                             ->label(__('jmeryar-accounting::bills.form.amount_due'))
+                                            ->currencyCode(fn($get) => Currency::find($get('currency_id'))?->code)
                                             ->formatStateUsing(fn($state, $record) => ($record->total_amount ?? 0) - ($record->total_paid_amount ?? 0))
                                             ->readOnly(),
                                         Forms\Components\DatePicker::make('due_date')
@@ -151,6 +156,7 @@ class BillResource extends Resource
                                         Forms\Components\Select::make('currency_id')
                                             ->label(__('jmeryar-accounting::bills.form.currency'))
                                             ->default(fn() => Setting::first()?->currency->id)
+                                            ->live()
                                             ->relationship('currency', 'code')
                                             ->disabled(fn($record) => $record?->status !== 'Draft' && $record !== null),
                                     ]),

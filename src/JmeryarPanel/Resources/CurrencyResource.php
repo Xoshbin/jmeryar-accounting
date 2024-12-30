@@ -7,6 +7,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Xoshbin\JmeryarAccounting\JmeryarPanel\Forms\Components\Field\MoneyInput;
 use Xoshbin\JmeryarAccounting\Models\Currency;
 use Xoshbin\JmeryarAccounting\Models\Setting;
 
@@ -71,10 +72,10 @@ class CurrencyResource extends Resource
                     ]),
 
                 Forms\Components\Tabs::make('Exchange Rate Tab')
-                    ->disabled(fn ($record) => Setting::first()?->currency->code === $record->code)
+                    ->disabled(fn($record) => Setting::first()?->currency->code === $record->code)
                     ->schema([
                         Forms\Components\Tabs\Tab::make('Exchange Rates')
-                            ->badge(fn ($get) => count($get('exchangeRatesAsTarget') ?? []))
+                            ->badge(fn($get) => count($get('exchangeRatesAsTarget') ?? []))
                             ->icon('heroicon-m-queue-list')
                             ->schema([
                                 Forms\Components\Repeater::make('exchangeRatesAsTarget')
@@ -83,11 +84,18 @@ class CurrencyResource extends Resource
                                     ->relationship()
                                     ->columns(4)
                                     ->schema([
-                                        Forms\Components\TextInput::make('base_currency_per_unit')
+                                        MoneyInput::make('base_currency_per_unit')
                                             ->label(function () {
                                                 return __('jmeryar-accounting::currencies.form.rate_label', ['currency' => Setting::first()?->currency->code]);
                                             })
-                                            ->numeric()
+                                            ->hint(function (Forms\Components\Component $component) {
+                                                // Get the Livewire component instance
+                                                $livewire = $component->getLivewire();
+
+                                                // Access the main record
+                                                $currentCurrency = $livewire->record->code;
+                                                return "1 " . $currentCurrency . " = x " . Setting::first()?->currency->code;
+                                            })
                                             ->live(debounce: 600)
                                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                                 // Automatically calculate "Unit per Base Currency" when "Rate" is updated
@@ -105,11 +113,25 @@ class CurrencyResource extends Resource
                                                 }
                                             }),
 
-                                        Forms\Components\TextInput::make('rate')
+                                        MoneyInput::make('rate')
                                             ->label(function () {
                                                 return __('jmeryar-accounting::currencies.form.unit_per_base_currency_label', ['currency' => Setting::first()?->currency->code]);
                                             })
-                                            ->numeric()
+                                            ->hint(function (Forms\Components\Component $component) {
+                                                // Get the Livewire component instance
+                                                $livewire = $component->getLivewire();
+
+                                                // Access the main record
+                                                $currentCurrency = $livewire->record->code;
+                                                return "1 " . Setting::first()?->currency->code . " = x " . $currentCurrency;
+                                            })
+                                            ->currencyCode(function (Forms\Components\Component $component) {
+                                                // Get the Livewire component instance
+                                                $livewire = $component->getLivewire();
+
+                                                // Access the main record
+                                                return $livewire->record->code;
+                                            })
                                             ->live(debounce: 600)
                                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                                 // Automatically calculate "Rate" when "Unit per Base Currency" is updated
