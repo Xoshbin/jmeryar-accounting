@@ -19,6 +19,7 @@ use Xoshbin\JmeryarAccounting\Models\Supplier;
 use Xoshbin\JmeryarAccounting\Models\Tax;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Xoshbin\JmeryarAccounting\JmeryarPanel\Forms\Components\Field\MoneyInput;
+use Xoshbin\JmeryarAccounting\JmeryarPanel\Tables\Columns\MoneyColumn;
 
 class BillResource extends Resource
 {
@@ -423,11 +424,10 @@ class BillResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('supplier.name')
                     ->label(__('jmeryar-accounting::bills.table.supplier_name'))
-                    ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('total_amount')
+                MoneyColumn::make('total_amount')
+                    ->currencyCode(fn($record) => Currency::find($record->currency_id)?->code)
                     ->label(__('jmeryar-accounting::bills.table.total_amount'))
-                    ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('jmeryar-accounting::bills.table.status'))

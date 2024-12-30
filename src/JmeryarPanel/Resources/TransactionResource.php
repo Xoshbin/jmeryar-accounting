@@ -7,6 +7,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Xoshbin\JmeryarAccounting\JmeryarPanel\Tables\Columns\MoneyColumn;
 use Xoshbin\JmeryarAccounting\Models\Transaction;
 
 class TransactionResource extends Resource
@@ -57,9 +58,9 @@ class TransactionResource extends Resource
                 Tables\Columns\TextColumn::make('note')
                     ->label(__('jmeryar-accounting::transactions.table.note'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('amount')
+                MoneyColumn::make('amount')
                     ->label(__('jmeryar-accounting::transactions.table.amount'))
-                    ->numeric()
+                    ->currencyCode(fn($record) => $record->payments->first()?->currency?->code ?? 'USD')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('transaction_type')
                     ->label(__('jmeryar-accounting::transactions.table.transaction_type')),

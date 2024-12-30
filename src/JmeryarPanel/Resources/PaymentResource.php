@@ -8,6 +8,8 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Xoshbin\JmeryarAccounting\JmeryarPanel\Forms\Components\Field\MoneyInput;
+use Xoshbin\JmeryarAccounting\JmeryarPanel\Tables\Columns\MoneyColumn;
+use Xoshbin\JmeryarAccounting\Models\Currency;
 use Xoshbin\JmeryarAccounting\Models\Payment;
 
 class PaymentResource extends Resource
@@ -67,9 +69,9 @@ class PaymentResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('amount')
+                MoneyColumn::make('amount')
                     ->label(__('jmeryar-accounting::payments.table.amount'))
-                    ->numeric()
+                    ->currencyCode(fn($record) => Currency::find($record->currency_id)?->code)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('payment_date')
                     ->label(__('jmeryar-accounting::payments.table.payment_date'))

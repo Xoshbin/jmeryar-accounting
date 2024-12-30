@@ -12,6 +12,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Xoshbin\JmeryarAccounting\JmeryarPanel\Forms\Components\Field\MoneyInput;
+use Xoshbin\JmeryarAccounting\JmeryarPanel\Tables\Columns\MoneyColumn;
 use Xoshbin\JmeryarAccounting\Models\InventoryBatch;
 
 class InventoryResource extends Resource
@@ -78,12 +79,12 @@ class InventoryResource extends Resource
                     ->label(__('jmeryar-accounting::inventory.table.quantity'))
                     ->searchable()
                     ->summarize(Sum::make()),
-                Tables\Columns\TextColumn::make('cost_price')
+                MoneyColumn::make('cost_price')
                     ->label(__('jmeryar-accounting::inventory.table.cost_price'))
                     ->summarize(Summarizer::make()
                         ->label('Total Cost')
                         ->using(fn(Builder $query): string => (string) $query->sum(DB::raw('cost_price * quantity')) / 100)),
-                Tables\Columns\TextColumn::make('unit_price')
+                MoneyColumn::make('unit_price')
                     ->label(__('jmeryar-accounting::inventory.table.unit_price'))
                     ->summarize(Summarizer::make()
                         ->label('Total Value')

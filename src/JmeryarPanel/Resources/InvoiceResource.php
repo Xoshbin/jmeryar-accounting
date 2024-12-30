@@ -18,6 +18,7 @@ use Xoshbin\JmeryarAccounting\Models\Product;
 use Xoshbin\JmeryarAccounting\Models\Setting;
 use Xoshbin\JmeryarAccounting\Models\Tax;
 use Filament\Forms\Components\Actions\Action;
+use Xoshbin\JmeryarAccounting\JmeryarPanel\Tables\Columns\MoneyColumn;
 
 class InvoiceResource extends Resource
 {
@@ -457,9 +458,9 @@ class InvoiceResource extends Resource
                     ->label(__('jmeryar-accounting::invoices.table.customer_name'))
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('total_amount')
+                MoneyColumn::make('total_amount')
+                    ->currencyCode(fn($record) => Currency::find($record->currency_id)?->code)
                     ->label(__('jmeryar-accounting::invoices.table.total_amount'))
-                    ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->label(__('jmeryar-accounting::invoices.table.status'))

@@ -7,6 +7,8 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
+use Xoshbin\JmeryarAccounting\JmeryarPanel\Tables\Columns\MoneyColumn;
+use Xoshbin\JmeryarAccounting\Models\Currency;
 use Xoshbin\JmeryarAccounting\Models\JournalEntry;
 
 class JournalEntryResource extends Resource
@@ -54,13 +56,18 @@ class JournalEntryResource extends Resource
                     ->label(__('jmeryar-accounting::journal_entries.table.description'))
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('debit')
+                MoneyColumn::make('debit')
+                    ->currencyCode(function ($record) {
+                        $parent = $record->bills->first() // Check if related to a Bill
+                            ?? $record->invoices->first() // If not, check Invoice
+                            ?? $record->payments->first(); // If not, check Payment
+
+                        return $parent?->currency?->code;
+                    })
                     ->label(__('jmeryar-accounting::journal_entries.table.debit'))
-                    ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('credit')
+                MoneyColumn::make('credit')
                     ->label(__('jmeryar-accounting::journal_entries.table.credit'))
-                    ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label(__('jmeryar-accounting::journal_entries.table.updated_at'))
