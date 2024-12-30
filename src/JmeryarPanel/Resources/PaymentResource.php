@@ -7,6 +7,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Xoshbin\JmeryarAccounting\JmeryarPanel\Forms\Components\Field\MoneyInput;
 use Xoshbin\JmeryarAccounting\Models\Payment;
 
 class PaymentResource extends Resource
@@ -26,40 +27,40 @@ class PaymentResource extends Resource
     {
         return
             $form
-                ->schema([
-                    Forms\Components\Grid::make(3)
-                        ->schema([
-                            Forms\Components\Section::make()
-                                ->columns(2)
-                                ->schema([
-                                    Forms\Components\TextInput::make('amount')
-                                        ->label(__('jmeryar-accounting::payments.form.amount'))
-                                        ->required()
-                                        ->numeric(),
-                                    Forms\Components\DatePicker::make('payment_date')
-                                        ->label(__('jmeryar-accounting::payments.form.payment_date'))
-                                        ->required(),
-                                    Forms\Components\TextInput::make('payment_type')
-                                        ->label(__('jmeryar-accounting::payments.form.payment_type'))
-                                        ->required(),
-                                    Forms\Components\TextInput::make('payment_method')
-                                        ->label(__('jmeryar-accounting::payments.form.payment_method'))
-                                        ->required()
-                                        ->maxLength(255),
-                                    Forms\Components\Textarea::make('note')
-                                        ->label(__('jmeryar-accounting::payments.form.note'))
-                                        ->columnSpanFull(),
-                                ])
-                                ->columnSpan(2),
-                            Forms\Components\Grid::make()
-                                ->schema([
-                                    Forms\Components\Section::make()->schema([
-                                        //
-                                    ]),
-                                ])
-                                ->columnSpan(1),
-                        ]),
-                ]);
+            ->schema([
+                Forms\Components\Grid::make(3)
+                    ->schema([
+                        Forms\Components\Section::make()
+                            ->columns(2)
+                            ->schema([
+                                MoneyInput::make('amount')
+                                    ->label(__('jmeryar-accounting::payments.form.amount'))
+                                    ->required()
+                                    ->numeric(),
+                                Forms\Components\DatePicker::make('payment_date')
+                                    ->label(__('jmeryar-accounting::payments.form.payment_date'))
+                                    ->required(),
+                                Forms\Components\TextInput::make('payment_type')
+                                    ->label(__('jmeryar-accounting::payments.form.payment_type'))
+                                    ->required(),
+                                Forms\Components\TextInput::make('payment_method')
+                                    ->label(__('jmeryar-accounting::payments.form.payment_method'))
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\Textarea::make('note')
+                                    ->label(__('jmeryar-accounting::payments.form.note'))
+                                    ->columnSpanFull(),
+                            ])
+                            ->columnSpan(2),
+                        Forms\Components\Grid::make()
+                            ->schema([
+                                Forms\Components\Section::make()->schema([
+                                    //
+                                ]),
+                            ])
+                            ->columnSpan(1),
+                    ]),
+            ]);
     }
 
     public static function table(Table $table): Table
