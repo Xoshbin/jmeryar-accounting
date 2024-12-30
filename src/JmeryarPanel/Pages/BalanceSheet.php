@@ -4,6 +4,7 @@ namespace Xoshbin\JmeryarAccounting\JmeryarPanel\Pages;
 
 use Filament\Pages\Page;
 use Xoshbin\JmeryarAccounting\Models\Account;
+use Xoshbin\JmeryarAccounting\Models\Setting;
 
 class BalanceSheet extends Page
 {
@@ -24,12 +25,14 @@ class BalanceSheet extends Page
             'assets' => Account::where('type', 'Asset')->with('journalEntries')->get(),
             'liabilities' => Account::where('type', 'Liability')->with('journalEntries')->get(),
             'equity' => Account::where('type', 'Equity')->with('journalEntries')->get(),
+            'defaultCurrecny' => Setting::first()?->currency->symbol,
+
         ];
 
         // Calculate totals
         $totals = [
-            'assets' => $data['assets']->sum(fn ($account) => $account->journalEntries->sum('debit') - $account->journalEntries->sum('credit')),
-            'liabilities' => $data['liabilities']->sum(fn ($account) => $account->journalEntries->sum('credit') - $account->journalEntries->sum('debit')),
+            'assets' => $data['assets']->sum(fn($account) => $account->journalEntries->sum('debit') - $account->journalEntries->sum('credit')),
+            'liabilities' => $data['liabilities']->sum(fn($account) => $account->journalEntries->sum('credit') - $account->journalEntries->sum('debit')),
         ];
 
         // Derive equity using the accounting equation
