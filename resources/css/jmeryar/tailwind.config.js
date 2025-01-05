@@ -7,6 +7,5 @@ export default {
         './resources/views/filament/**/*.blade.php',
         './vendor/filament/**/*.blade.php',
         './vendor/filament/**/*.blade.php',
-        '/vendor/tomatophp/filament-simple-theme/resources/views/**/*.blade.php',
     ],
 }
