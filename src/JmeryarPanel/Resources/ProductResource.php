@@ -33,6 +33,19 @@ class ProductResource extends Resource
                         Forms\Components\Section::make()
                             ->columns(3)
                             ->schema([
+                                Forms\Components\Grid::make()
+                                    ->columns(3)
+                                    ->schema([
+                                        Forms\Components\Radio::make('type')
+                                            ->label(__('jmeryar-accounting::products.form.type'))
+                                            ->options([
+                                                'Product' => 'Product',
+                                                'Service' => 'Service',
+                                            ])
+                                            ->default('Product')
+                                            ->inline()
+                                            ->required(),
+                                    ]),
                                 Forms\Components\TextInput::make('name')
                                     ->label(__('jmeryar-accounting::products.form.name'))
                                     ->required()

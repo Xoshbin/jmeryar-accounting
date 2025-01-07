@@ -3,6 +3,7 @@
 return [
     'title' => 'Products',
     'table' => [
+        'type' => 'Type',
         'name' => 'Name',
         'sku' => 'SKU',
         'category' => 'Category',
@@ -11,6 +12,7 @@ return [
     ],
 
     'form' => [
+        'type' => 'Type',
         'name' => 'Name',
         'sku' => 'SKU',
         'description' => 'Description',
