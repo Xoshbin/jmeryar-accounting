@@ -48,18 +48,14 @@ class Settings extends Page implements HasForms
                                     ->required(),
                                 Forms\Components\TextInput::make('company_email')
                                     ->label(__('jmeryar-accounting::settings.company_email'))
-                                    ->email()
-                                    ->required(),
+                                    ->email(),
                                 Forms\Components\TextInput::make('company_phone')
-                                    ->label(__('jmeryar-accounting::settings.company_phone'))
-                                    ->required(),
+                                    ->label(__('jmeryar-accounting::settings.company_phone')),
                                 Forms\Components\TextInput::make('company_address')
-                                    ->label(__('jmeryar-accounting::settings.company_address'))
-                                    ->required(),
+                                    ->label(__('jmeryar-accounting::settings.company_address')),
                                 Forms\Components\TextInput::make('company_website')
                                     ->label(__('jmeryar-accounting::settings.company_website'))
-                                    ->url()
-                                    ->required(),
+                                    ->url(),
                                 Forms\Components\Select::make('currency_id')
                                     ->label(__('jmeryar-accounting::settings.currency_id'))
                                     ->relationship('currency', 'name')
