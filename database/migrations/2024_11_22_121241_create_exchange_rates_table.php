@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('base_currency_id')->constrained('currencies')->onDelete('cascade');
             $table->foreignId('target_currency_id')->constrained('currencies')->onDelete('cascade');
-            $table->unsignedInteger('rate')->default(0);
+            $table->decimal('rate', 12, 6)->default(0);
             $table->timestamps();
         });
     }

@@ -364,7 +364,7 @@ class BillResource extends Resource
                                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                                 $exchange_rate = intval($get('exchange_rate') ?? 0); // Exchange rate in IQD per USD
                                                 if ($exchange_rate > 0) {
-                                                    $amount_in_usd = intval($state) / $exchange_rate; // Convert IQD to USD
+                                                    $amount_in_usd = intval($state) * $exchange_rate; // Convert IQD to USD
                                                     $set('amount_in_document_currency', $amount_in_usd);
                                                 } else {
                                                     $set('amount_in_document_currency', 0); // Default to 0 if exchange rate is invalid

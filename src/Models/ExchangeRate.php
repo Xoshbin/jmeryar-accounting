@@ -23,10 +23,6 @@ class ExchangeRate extends Model
         'rate',
     ];
 
-    protected $casts = [
-        'rate' => MoneyCast::class,
-    ];
-
     protected static function newFactory()
     {
         return new ExchangeRateFactory;

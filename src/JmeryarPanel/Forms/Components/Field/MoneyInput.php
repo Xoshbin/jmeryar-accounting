@@ -10,7 +10,7 @@ use Closure;
 
 class MoneyInput extends TextInput
 {
-    protected string|Closure|null $currencyCode = null; // Allow Closure type
+    protected string|Closure|null $currencyCode = null;
 
     protected string $defaultCurrencyCode = 'USD'; // Default currency code
 
@@ -23,7 +23,9 @@ class MoneyInput extends TextInput
             return $this->getCurrencySymbol();
         });
 
-        // Set numeric behavior with input mask if needed
+        $this->numeric();
+
+        // The mask (Decimal) is preventing calculations, disabled for now.
         // $this->mask(function () {
         //     return RawJs::make(
         //         strtr(
