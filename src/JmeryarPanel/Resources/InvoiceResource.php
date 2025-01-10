@@ -303,7 +303,7 @@ class InvoiceResource extends Resource
                                     ->afterStateUpdated(function (callable $set, $state, callable $get) {
                                         // Calculate and set total amount
                                         // TODO: Fix delay in updating the total amount; it updates only after adding the next item.
-                                        $totalUntaxedAmount = collect($state)->sum(fn($item) => $item['untaxed_amount'] ?? 0);
+                                        $totalUntaxedAmount = collect($state)->sum(fn($item) => intval($item['total_price'] ?? 0)) - collect($state)->sum(fn($item) => intval($item['tax_amount'] ?? 0));
                                         $totalTaxAmount = collect($state)->sum(fn($item) => $item['tax_amount'] ?? 0);
                                         $totalAmount = collect($state)->sum(fn($item) => $item['total_price'] ?? 0);
 
