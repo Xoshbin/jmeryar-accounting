@@ -1103,4 +1103,4 @@ it('records journal entries correctly in two stages for a bill', function () {
         'debit' => 0,
         'credit' => $costPrice * 100
     ]);
-})->only();
+});
