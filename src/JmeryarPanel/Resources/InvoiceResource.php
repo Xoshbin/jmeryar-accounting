@@ -4,21 +4,22 @@ namespace Xoshbin\JmeryarAccounting\JmeryarPanel\Resources;
 
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Collection;
-use Xoshbin\JmeryarAccounting\JmeryarPanel\Forms\Components\Field\MoneyInput;
-use Xoshbin\JmeryarAccounting\Models\Currency;
-use Xoshbin\JmeryarAccounting\Models\Customer;
-use Xoshbin\JmeryarAccounting\Models\ExchangeRate;
 use Xoshbin\JmeryarAccounting\Models\Invoice;
+use Xoshbin\JmeryarAccounting\Models\Currency;
+use Xoshbin\JmeryarAccounting\Models\ExchangeRate;
 use Xoshbin\JmeryarAccounting\Models\Payment;
 use Xoshbin\JmeryarAccounting\Models\Product;
 use Xoshbin\JmeryarAccounting\Models\Setting;
+use Xoshbin\JmeryarAccounting\Models\Customer;
 use Xoshbin\JmeryarAccounting\Models\Tax;
-use Filament\Forms\Components\Actions\Action;
+use Xoshbin\JmeryarAccounting\JmeryarPanel\Forms\Components\Field\MoneyInput;
 use Xoshbin\JmeryarAccounting\JmeryarPanel\Tables\Columns\MoneyColumn;
+
 
 class InvoiceResource extends Resource
 {
@@ -116,6 +117,7 @@ class InvoiceResource extends Resource
                         Forms\Components\Grid::make(1) // Takes up one-third of the width
                             ->schema([
                                 Forms\Components\Section::make('')
+                                    ->label(__('jmeryar-accounting::invoices.form.untaxed_amount'))
                                     ->hiddenLabel()
                                     ->schema([
                                         MoneyInput::make('untaxed_amount')
@@ -132,6 +134,7 @@ class InvoiceResource extends Resource
                                             ->readOnly(),
                                     ]),
                                 Forms\Components\Section::make('')
+                                    ->label(__('jmeryar-accounting::invoices.form.total_paid_amount'))
                                     ->schema([
                                         MoneyInput::make('total_paid_amount')
                                             ->label(__('jmeryar-accounting::invoices.form.total_paid_amount'))
@@ -147,9 +150,9 @@ class InvoiceResource extends Resource
                                             ->label(__('jmeryar-accounting::invoices.form.due_date'))
                                             ->nullable(),
                                         Forms\Components\Select::make('currency_id')
-                                            ->live()
                                             ->label(__('jmeryar-accounting::invoices.form.currency'))
                                             ->default(fn() => Setting::first()?->currency->id)
+                                            ->live()
                                             ->relationship('currency', 'code')
                                             ->disabled(fn($record) => $record?->status !== 'Draft' && $record !== null),
                                     ]),
@@ -159,6 +162,7 @@ class InvoiceResource extends Resource
 
                 // Tabs for Invoices and Payments, placed outside the left-right split layout
                 Forms\Components\Tabs::make('Invoice Tabs')
+                    ->label(__('jmeryar-accounting::invoices.form.invoice_tabs'))
                     ->schema([
                         Forms\Components\Tabs\Tab::make('Invoice Items')
                             ->label(__('jmeryar-accounting::invoices.form.invoice_items'))
@@ -166,8 +170,8 @@ class InvoiceResource extends Resource
                             ->icon('heroicon-m-queue-list')
                             ->schema([
                                 Forms\Components\Repeater::make('invoiceItems')
-                                    ->hiddenLabel()
                                     ->label(__('jmeryar-accounting::invoices.form.items'))
+                                    ->hiddenLabel()
                                     ->relationship()
                                     ->schema([
                                         Forms\Components\Select::make('product_id')
@@ -258,12 +262,12 @@ class InvoiceResource extends Resource
                                             ->label(__('jmeryar-accounting::invoices.form.tax'))
                                             ->label(function ($state, callable $get) {
                                                 if ($state !== null) {
-                                                    $tax = $state ? Tax::find($state) : null;
+                                                    $tax = $state ? Tax::find($state) : 0;
 
                                                     if ($tax instanceof Collection) {
-                                                        $taxAmount = optional($tax->first())->amount; // Safely access 'amount'
+                                                        $taxAmount = optional($tax->first())->amount;
                                                     } else {
-                                                        $taxAmount = optional($tax)->amount; // Safely access 'amount' on the single Tax
+                                                        $taxAmount = optional($tax)->amount;
                                                     }
 
                                                     if ($taxAmount !== null) {
@@ -294,12 +298,14 @@ class InvoiceResource extends Resource
                                         Forms\Components\Hidden::make('tax_amount'),
                                         Forms\Components\Hidden::make('untaxed_amount'),
                                         MoneyInput::make('total_price')
-                                            ->label(__('jmeryar-accounting::invoices.form.total_price')),
+                                            ->label(__('jmeryar-accounting::invoices.form.total_price'))
+                                            ->columnSpan(1)
+                                            ->required(fn($get) => $get('quantity') > 0),
                                     ])
                                     ->defaultItems(0)
                                     ->columns(6)
                                     ->cloneable()
-                                    ->live()
+                                    ->live(onBlur: true)
                                     ->afterStateUpdated(function (callable $set, $state, callable $get) {
                                         // Calculate and set total amount
                                         // TODO: Fix delay in updating the total amount; it updates only after adding the next item.

@@ -3,8 +3,8 @@
 namespace Xoshbin\JmeryarAccounting\JmeryarPanel\Resources;
 
 use Filament\Forms;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Form;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -124,6 +124,7 @@ class BillResource extends Resource
                             ->schema([
                                 Forms\Components\Section::make('')
                                     ->label(__('jmeryar-accounting::bills.form.untaxed_amount'))
+                                    ->hiddenLabel()
                                     ->schema([
                                         MoneyInput::make('untaxed_amount')
                                             ->label(__('jmeryar-accounting::bills.form.untaxed_amount'))
@@ -235,12 +236,19 @@ class BillResource extends Resource
                                             ->label(function ($state, callable $get) {
                                                 if ($state !== null) {
                                                     $tax = $state ? Tax::find($state) : 0;
+
                                                     if ($tax instanceof Collection) {
-                                                        return 'Tax ' . ($get('cost_price') * $get('quantity')) * ($tax->first()->amount / 100);
+                                                        $taxAmount = optional($tax->first())->amount;
                                                     } else {
-                                                        if ($tax) {
-                                                            return 'Tax ' . ($get('cost_price') * $get('quantity')) * ($tax->amount / 100);
-                                                        }
+                                                        $taxAmount = optional($tax)->amount;
+                                                    }
+
+                                                    if ($taxAmount !== null) {
+                                                        $totalTax = ($get('cost_price') * $get('quantity')) * ($taxAmount / 100);
+
+                                                        return 'Tax ' . $totalTax;
+                                                    } else {
+                                                        return 'Tax 0'; // Default value when tax amount is null
                                                     }
                                                 } else {
                                                     return 'Tax';
