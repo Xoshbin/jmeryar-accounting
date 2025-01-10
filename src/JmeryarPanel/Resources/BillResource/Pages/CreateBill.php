@@ -13,7 +13,7 @@ class CreateBill extends CreateRecord
     public function mutateFormDataBeforeCreate(array $data): array
     {
         $data['expense_account_id'] = Account::where('type', Account::TYPE_EXPENSE)->first()->id;
-        $data['liability_account_id'] = Account::where('type', Account::TYPE_LIABILITY)->first()->id;
+        $data['liability_account_id'] = Account::where('name', 'Accounts Payable')->first()->id;
 
         //TODO:: Check if it's good to attach tax to the bill directly beside billitem
 

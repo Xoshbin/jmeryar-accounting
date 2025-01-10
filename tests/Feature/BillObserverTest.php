@@ -6,7 +6,6 @@ use Xoshbin\JmeryarAccounting\Database\Seeders\DatabaseSeeder;
 use Xoshbin\JmeryarAccounting\Models\Account;
 use Xoshbin\JmeryarAccounting\Models\Currency;
 use Xoshbin\JmeryarAccounting\Models\JournalEntry;
-use Xoshbin\JmeryarAccounting\Models\Payment;
 use Xoshbin\JmeryarAccounting\Models\Product;
 use Xoshbin\JmeryarAccounting\Models\Supplier;
 use Xoshbin\JmeryarAccounting\Models\Tax;
@@ -311,7 +310,7 @@ it('attaches the correct journal entries to the bill', function () {
     $taxPayableEntry = $bill->journalEntries()->where('debit', 30 * 100)->first();
 
     // Assert Accounts Payable entry
-    expect($accountsPayableEntry->account_id)->toBe(Account::where('type', Account::TYPE_LIABILITY)->first()->id);
+    expect($accountsPayableEntry->account_id)->toBe(Account::where('name', 'Accounts Payable')->first()->id);
     expect($accountsPayableEntry->credit)->toBe(230.0);
 
     // Assert Expense entry
@@ -368,27 +367,7 @@ it('calculates taxes correctly for multiple bill items with the same product but
 });
 
 it('attaches the correct journal entries when a bill is paid without tax', function () {
-    /**
-     * The journal entries for a bill are recorded in two stages:
-     *
-     * Stage 1: When the bill is received
-     * | Date       | Account              | Debit  | Credit |
-     * |------------|----------------------|--------|--------|
-     * | YYYY-MM-DD | Expense Account      | 200    |        |
-     * | YYYY-MM-DD | Accounts Payable     |        | 200    |
-     *
-     * Stage 2: When the bill is paid
-     * | Date       | Account              | Debit  | Credit |
-     * |------------|----------------------|--------|--------|
-     * | YYYY-MM-DD | Accounts Payable     | 200    |        |
-     * | YYYY-MM-DD | Cash/Bank Account    |        | 200    |
-     *
-     * Explanation:
-     * - Accounts Payable: Credited when the bill is received (liability), debited when paid.
-     * - Expense Account: Debited with the specific expense amount (e.g., "Rent Expense").
-     * - Tax Payable Account: Debited with the tax amount.
-     * - Cash/Bank Account: Credited when the bill is paid, reducing the balance.
-     */
+
     $quantity = 2;
     $costPrice = 100;
     $taxPercent = 0;
@@ -405,7 +384,7 @@ it('attaches the correct journal entries when a bill is paid without tax', funct
     $expenseEntry = $bill->journalEntries()->where('debit', 200 * 100)->first();
 
     // Assert Accounts Payable entry
-    expect($accountsPayableEntry->account_id)->toBe(Account::where('type', Account::TYPE_LIABILITY)->first()->id);
+    expect($accountsPayableEntry->account_id)->toBe(Account::where('name', 'Accounts Payable')->first()->id);
     expect($accountsPayableEntry->credit)->toBe(200.0);
 
     // Assert Expense entry
@@ -468,7 +447,7 @@ it('updates inventory and journal entries when a bill item quantity is updated',
     $expenseEntry = $bill->journalEntries()->where('debit', 200 * 100)->first();
 
     // Assert Accounts Payable entry
-    expect($accountsPayableEntry->account_id)->toBe(Account::where('type', Account::TYPE_LIABILITY)->first()->id);
+    expect($accountsPayableEntry->account_id)->toBe(Account::where('name', 'Accounts Payable')->first()->id);
     expect($accountsPayableEntry->credit)->toBe(200.0);
 
     // Assert Expense entry
@@ -513,7 +492,7 @@ it('updates inventory and journal entries when a bill item quantity is updated',
      */
 
     // Assert Accounts Payable entry
-    expect($accountsPayableEntry->account_id)->toBe(Account::where('type', Account::TYPE_LIABILITY)->first()->id);
+    expect($accountsPayableEntry->account_id)->toBe(Account::where('name', 'Accounts Payable')->first()->id);
     expect($accountsPayableEntry->credit)->toBe(400.0);
 
     // Assert Expense entry
@@ -576,7 +555,7 @@ it('attaches the correct journal entries when a bill is paid with tax', function
     $taxPayableEntry = $bill->journalEntries()->where('debit', 30 * 100)->first();
 
     // Assert Accounts Payable entry
-    expect($accountsPayableEntry->account_id)->toBe(Account::where('type', Account::TYPE_LIABILITY)->first()->id);
+    expect($accountsPayableEntry->account_id)->toBe(Account::where('name', 'Accounts Payable')->first()->id);
     expect($accountsPayableEntry->credit)->toBe(230.0);
 
     // Assert Expense entry
@@ -650,7 +629,7 @@ it('attaches the correct journal entries when a bill is partially paid without t
     $expenseEntry = $bill->journalEntries()->where('debit', 200 * 100)->first();
 
     // Assert Accounts Payable entry
-    expect($accountsPayableEntry->account_id)->toBe(Account::where('type', Account::TYPE_LIABILITY)->first()->id);
+    expect($accountsPayableEntry->account_id)->toBe(Account::where('name', 'Accounts Payable')->first()->id);
     expect($accountsPayableEntry->credit)->toBe(200.0);
 
     // Assert Expense entry
@@ -723,7 +702,7 @@ it('attaches the correct journal entries when a bill is partially paid with tax'
     $taxPayableEntry = $bill->journalEntries()->where('debit', 30 * 100)->first();
 
     // Assert Accounts Payable entry
-    expect($accountsPayableEntry->account_id)->toBe(Account::where('type', Account::TYPE_LIABILITY)->first()->id);
+    expect($accountsPayableEntry->account_id)->toBe(Account::where('name', 'Accounts Payable')->first()->id);
     expect($accountsPayableEntry->credit)->toBe(230.0);
 
     // Assert Expense entry
@@ -945,3 +924,183 @@ it('calculates bill amounts correctly with five items and mixed taxes', function
     expect($bill->tax_amount)->toBe($expectedTaxAmount);
     expect($bill->total_amount)->toBe($expectedTotalAmount);
 });
+
+it('ensures journal entries are correct for two bills with different payment methods', function () {
+
+    $quantity1 = 2;
+    $costPrice1 = 100;
+    $taxPercent1 = 0;
+
+    $quantity2 = 3;
+    $costPrice2 = 50;
+    $taxPercent2 = 5;
+
+    $bill1 = TestServices::createBill($this->supplier, $quantity1, $costPrice1, $taxPercent1);
+    $bill2 = TestServices::createBill($this->supplier, $quantity2, $costPrice2, $taxPercent2);
+
+    $billItem1 = TestServices::createBillItem($bill1, $this->product, $quantity1, $costPrice1, $taxPercent1);
+    $billItem2 = TestServices::createBillItem($bill2, $this->product, $quantity2, $costPrice2, $taxPercent2);
+
+    // Assert that exactly two journal entries are created and attached to the bill 1
+    expect($bill1->journalEntries()->count())->toBe(2);
+
+    // Assert that exactly three journal entries are created and attached to the bill 2
+    expect($bill2->journalEntries()->count())->toBe(3);
+
+    // Assert that the journal entries have the correct amounts and accounts for bill 1
+    $accountsPayableEntry1 = $bill1->journalEntries()->where('credit', 200 * 100)->first(); // * 100 CastMoney
+    $expenseEntry1 = $bill1->journalEntries()->where('debit', 200 * 100)->first();
+
+    // Assert that the journal entries have the correct amounts and accounts for bill 2
+    $accountsPayableEntry2 = $bill2->journalEntries()->where('credit', (150 + 7.5) * 100)->first(); // * 100 CastMoney
+    $expenseEntry2 = $bill2->journalEntries()->where('debit', 150 * 100)->first();
+
+    // Assert Accounts Payable entry
+    expect($accountsPayableEntry1->account_id)->toBe(Account::where('name', 'Accounts Payable')->first()->id);
+    expect($accountsPayableEntry1->credit)->toBe(200.0);
+
+    // Assert Accounts Payable entry
+    expect($accountsPayableEntry2->account_id)->toBe(Account::where('name', 'Accounts Payable')->first()->id);
+    expect($accountsPayableEntry2->credit)->toBe((150 + 7.5));
+
+    // Assert Expense entry
+    expect($expenseEntry1->account_id)->toBe(Account::where('type', Account::TYPE_EXPENSE)->first()->id);
+    expect($expenseEntry1->debit)->toBe(200.0);
+
+    // Assert Expense entry
+    expect($expenseEntry2->account_id)->toBe(Account::where('type', Account::TYPE_EXPENSE)->first()->id);
+    expect($expenseEntry2->debit)->toBe(150.0);
+
+    $currency_id = Currency::where('code', 'USD')->first()->id;
+
+    // Stage 2: Pay the bill
+    $payment1 = TestServices::createPayment($bill1, 200, 'Cash', 'Expense', $currency_id, 1, 200);
+    $payment2 = TestServices::createPayment($bill2, (150 + 7.5), 'Credit Card', 'Expense', $currency_id, 1, (150 + 7.5));
+
+    // Assert that the transaction has two journal entries
+    expect($payment1->journalEntries()->count())->toBe(2);
+    expect($payment2->journalEntries()->count())->toBe(2);
+
+    // Assert that the journal entries have the correct amounts and accounts for payment 1
+    $paymentCreditEntry1 = $payment1->journalEntries()->where('credit', 200 * 100)->first(); // * 100 CastMoney
+    $paymentDebitEntry1 = $payment1->journalEntries()->where('debit', 200 * 100)->first();
+
+
+    expect($paymentCreditEntry1->account_id)->toBe(Account::where('name', 'Cash')->first()->id);
+    expect($paymentCreditEntry1->credit)->toBe(200.0);
+    expect($paymentCreditEntry1->debit)->toBe(0.0);
+
+    expect($paymentDebitEntry1->account_id)->toBe(Account::where('name', 'Accounts Payable')->first()->id);
+    expect($paymentDebitEntry1->credit)->toBe(0.0);
+    expect($paymentDebitEntry1->debit)->toBe(200.0);
+
+    // Assert that the journal entries have the correct amounts and accounts for payment 2
+    $paymentCreditEntry2 = $payment2->journalEntries()->where('credit', 15700)->first(); // * 100 CastMoney
+    $paymentDebitEntry2 = $payment2->journalEntries()->where('debit', 15700)->first();
+
+    expect($paymentCreditEntry2->account_id)->toBe(Account::where('name', 'Cash')->first()->id);
+    expect($paymentCreditEntry2->credit)->toBe(157.0);
+    expect($paymentCreditEntry2->debit)->toBe(0.0);
+
+    expect($paymentDebitEntry2->account_id)->toBe(Account::where('name', 'Accounts Payable')->first()->id);
+    expect($paymentDebitEntry2->credit)->toBe(0.0);
+    expect($paymentDebitEntry2->debit)->toBe(157.0);
+
+    $journalEntriesCount = JournalEntry::count();
+    // at this level there should be 9 records of journal entries
+    expect($journalEntriesCount)->toBe(9);
+
+    // Assert that the journal entries have the correct amounts and accounts
+    $accountsPayableEntry1 = $payment1->journalEntries()
+        ->where('account_id', Account::where('name', 'Accounts Payable')->first()->id)
+        ->where('debit', 200 * 100)
+        ->first();
+
+    $cashEntry1 = $payment1->journalEntries()
+        ->where('account_id', Account::where('name', 'Cash')->first()->id)
+        ->where('credit', 200 * 100)
+        ->first();
+
+    // Assert that the journal entries have the correct amounts and accounts
+    $accountsPayableEntry2 = $payment2->journalEntries()
+        ->where('account_id', Account::where('name', 'Accounts Payable')->first()->id)
+        ->where('debit', 157 * 100)
+        ->first();
+
+    $cashEntry2 = $payment2->journalEntries()
+        ->where('account_id', Account::where('name', 'Cash')->first()->id)
+        ->where('credit', 157 * 100)
+        ->first();
+
+    expect($accountsPayableEntry1)->not->toBeNull();
+    expect($cashEntry1)->not->toBeNull();
+
+    expect($accountsPayableEntry2)->not->toBeNull();
+    expect($cashEntry2)->not->toBeNull();
+
+    $bill1->refresh();
+    $bill2->refresh();
+
+    expect($bill1->status)->toBe('Paid');
+    expect($bill2->status)->toBe('Partial');
+
+    // Ensure total debits equal total credits
+    $totalDebits = $bill1->journalEntries()->sum('debit');
+    $totalCredits = $bill1->journalEntries()->sum('credit');
+
+    expect($totalDebits)->toBe($totalCredits);
+
+    // Assert that the bill's untaxed_amount is correct
+    expect($bill1->untaxed_amount)->toBe(200.0);
+    expect($bill2->untaxed_amount)->toBe(150.0);
+});
+
+it('records journal entries correctly in two stages for a bill', function () {
+    $quantity = 1;
+    $costPrice = 200;
+    $taxPercent = 0;
+
+    // Stage 1: Create a bill
+    $bill = TestServices::createBill($this->supplier, $quantity, $costPrice, $taxPercent);
+
+    // Assert that exactly two journal entries are created and attached to the bill
+    expect($bill->journalEntries()->count())->toBe(2);
+
+
+    // Assert journal entries for Stage 1 (Bill received)
+    $this->assertDatabaseHas('journal_entries', [
+        'account_id' => Account::where('name', 'Expenses')->first()->id,
+        'debit' => $costPrice * 100,
+        'credit' => 0
+    ]);
+    $this->assertDatabaseHas('journal_entries', [
+        'account_id' => Account::where('name', 'Accounts Payable')->first()->id,
+        'debit' => 0,
+        'credit' => $costPrice * 100
+    ]);
+
+    $currency_id = Currency::where('code', 'USD')->first()->id;
+
+
+    $payment = TestServices::createPayment($bill, $costPrice, 'Cash', 'Expense', $currency_id, 1, $costPrice);
+
+    // Assert that exactly two journal entries are created and attached to the payment
+    expect($payment->journalEntries()->count())->toBe(2);
+
+    $journalEntriesCount = JournalEntry::count();
+    // at this level there should be 4 records of journal entries
+    expect($journalEntriesCount)->toBe(4);
+
+    // Assert journal entries for Stage 2 (Bill paid)
+    $this->assertDatabaseHas('journal_entries', [
+        'account_id' => Account::where('name', 'Accounts Payable')->first()->id,
+        'debit' => $costPrice * 100,
+        'credit' => 0
+    ]);
+
+    $this->assertDatabaseHas('journal_entries', [
+        'account_id' => Account::where('name', 'Cash')->first()->id,
+        'debit' => 0,
+        'credit' => $costPrice * 100
+    ]);
+})->only();

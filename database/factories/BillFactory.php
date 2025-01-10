@@ -30,7 +30,7 @@ class BillFactory extends Factory
             'amount_due' => 0, // will be updated after items are added
             'status' => 'Draft',
             'expense_account_id' => Account::where('type', Account::TYPE_EXPENSE)->first()->id,
-            'liability_account_id' => Account::where('type', Account::TYPE_LIABILITY)->first()->id,
+            'liability_account_id' => Account::where('name', 'Accounts Payable')->first()->id,
             'currency_id' => 2,
             'tax_amount' => 0,
             'untaxed_amount' => 0,
