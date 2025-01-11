@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Xoshbin\JmeryarAccounting\Models\JournalEntry;
+use Xoshbin\JmeryarAccounting\Models\Account;
 use Xoshbin\JmeryarAccounting\Models\Setting;
 
 class IncomeStatement extends BaseWidget
@@ -19,27 +19,19 @@ class IncomeStatement extends BaseWidget
     {
         $defaultCurrecny = Setting::first()?->currency->symbol;
 
-        $startDate = ! is_null($this->filters['startDate'] ?? null)
-            ? Carbon::parse($this->filters['startDate'])
+        $startDate = !is_null($this->filters['startDate'] ?? null)
+            ? Carbon::parse($this->filters['startDate'])->startOfDay()
             : null;
 
-        $endDate = ! is_null($this->filters['endDate'] ?? null)
-            ? Carbon::parse($this->filters['endDate'])
-            : now();
+        $endDate = !is_null($this->filters['endDate'] ?? null)
+            ? Carbon::parse($this->filters['endDate'])->endOfDay()
+            : now()->endOfDay();
 
         // Calculate Revenues
-        $revenues = JournalEntry::whereHas('account', function ($query) {
-            $query->where('type', 'Revenue');
-        })
-            ->when($startDate, fn($query) => $query->whereBetween('created_at', [$startDate, $endDate]))
-            ->sum('credit'); // Sum of credits for revenue accounts
+        $revenues = $this->calculateBalance('Revenue', $startDate, $endDate);
 
         // Calculate Expenses
-        $expenses = JournalEntry::whereHas('account', function ($query) {
-            $query->where('type', 'Expense');
-        })
-            ->when($startDate, fn($query) => $query->whereBetween('created_at', [$startDate, $endDate]))
-            ->sum('debit'); // Sum of debits for expense accounts
+        $expenses = $this->calculateBalance('Expense', $startDate, $endDate);
 
         // Calculate Net Profit
         $netProfit = $revenues - $expenses;
@@ -50,5 +42,28 @@ class IncomeStatement extends BaseWidget
             Stat::make('Expenses', $defaultCurrecny . $expenses / 100),
             Stat::make('Profit', $defaultCurrecny . $netProfit / 100),
         ];
+    }
+
+    protected function calculateBalance($accountType, $startDate, $endDate): int
+    {
+        return Account::where('type', $accountType)
+            ->whereHas('journalEntries', function ($query) use ($startDate, $endDate) {
+                if ($startDate && $endDate) {
+                    $query->whereBetween('created_at', [$startDate, $endDate]);
+                }
+            })
+            ->get()
+            ->sum(function ($account) use ($startDate, $endDate) {
+                $debits = $account->journalEntries
+                    ->whereBetween('created_at', [$startDate, $endDate])
+                    ->sum('debit');
+                $credits = $account->journalEntries
+                    ->whereBetween('created_at', [$startDate, $endDate])
+                    ->sum('credit');
+
+                return in_array($account->type, ['Asset', 'Expense'])
+                    ? $debits - $credits
+                    : $credits - $debits;
+            });
     }
 }
