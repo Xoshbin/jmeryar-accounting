@@ -23,7 +23,7 @@ class BillFactory extends Factory
     {
         return [
             'bill_number' => $this->faker->unique()->numerify('BILL-#####'),
-            'bill_date' => $this->faker->date(),
+            'bill_date' => $this->faker->dateTimeBetween('-3 months', 'now'),
             'supplier_id' => Supplier::inRandomOrder()->first()->id,
             'total_amount' => 0, // will be updated after items are added
             'total_paid_amount' => 0, // will be updated after items are added

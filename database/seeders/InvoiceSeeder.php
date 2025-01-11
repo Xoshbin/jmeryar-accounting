@@ -32,31 +32,31 @@ class InvoiceSeeder extends Seeder
             $totalAmount = $invoiceItems->sum('total_price');
             $totalUntaxedAmount = $invoiceItems->sum('untaxed_amount');
             $totalTaxAmount = $invoiceItems->sum('tax_amount');
+
             $invoice->update([
                 'total_amount' => $totalAmount,
                 'untaxed_amount' => $totalUntaxedAmount,
                 'tax_amount' => $totalTaxAmount,
+                'amount_due' => $totalAmount, // Initialize amount due
+                'total_paid_amount' => 0,    // Initialize total paid
+                'status' => 'Draft',        // Initial status
             ]);
 
             $remainingBalance = $totalAmount;
-            $paymentCount = rand(1, 3);
+            $paymentCount = rand(1, 3); // Random number of payments
 
-            $totalPaidAmountInInvoiceCurrency = $invoice->total_paid_amount ?? 0; // Total paid in invoice currency
+            $currency = Currency::where('code', 'USD')->first();
+            $exchangeRate = $currency->exchangeRatesAsBase->first()->rate;
 
             for ($i = 0; $i < $paymentCount; $i++) {
-                // Calculate the payment amount, ensuring it doesn't exceed the remaining balance
-                $paymentAmount = mt_rand(10, 100) / 100 * $remainingBalance;
+                // Calculate the payment amount
+                $paymentAmount = mt_rand(10, 100) / 1000 * $remainingBalance;
                 $paymentAmount = min($paymentAmount, $remainingBalance);
 
-                $currency = Currency::where('code', 'USD')->first();
+                // Convert the payment amount to the invoice currency
+                $amountInInvoiceCurrency = round($paymentAmount / $exchangeRate, 2);
 
-                // Retrieve exchange rate for the invoice's base currency
-                $exchangeRate = $currency->exchangeRatesAsBase->first()->rate;
-
-                // Calculate the amount in the invoice's currency using the exchange rate
-                $amountInInvoiceCurrency = $paymentAmount / $exchangeRate;
-
-                // Create the payment instance without saving to the database yet
+                // Create the payment instance
                 $payment = new Payment([
                     'amount' => $paymentAmount,
                     'payment_date' => now(),
@@ -64,27 +64,12 @@ class InvoiceSeeder extends Seeder
                     'payment_method' => 'Cash',
                     'currency_id' => $currency->id,
                     'exchange_rate' => $exchangeRate,
-                    'amount_in_document_currency' => $amountInInvoiceCurrency, // Payment in invoice currency
+                    'amount_in_document_currency' => $amountInInvoiceCurrency,
                     'note' => 'Generated payment',
                 ]);
 
-                // Attach the payment
+                // Attach the payment to the invoice
                 $invoice->payments()->save($payment);
-
-                // Update the total paid amount in the invoice's currency
-                $totalPaidAmountInInvoiceCurrency += $amountInInvoiceCurrency;
-
-                // Update the remaining balance in the invoice's currency
-                $remainingBalance = $totalAmount - $totalPaidAmountInInvoiceCurrency;
-
-                $invoice->update([
-                    'amount_due' => $remainingBalance,
-                    'total_paid_amount' => $totalPaidAmountInInvoiceCurrency,
-                ]);
-
-                if ($remainingBalance <= 0) {
-                    break;
-                }
             }
         });
     }

@@ -23,7 +23,7 @@ class InvoiceFactory extends Factory
     {
         return [
             'invoice_number' => $this->faker->unique()->numerify('INV-#####'),
-            'invoice_date' => $this->faker->date(),
+            'invoice_date' => $this->faker->dateTimeBetween('-3 months', 'now'),
             'customer_id' => Customer::inRandomOrder()->first()->id,
             'total_amount' => 0, // will be updated after items are added
             'total_paid_amount' => 0, // will be updated after items are added
@@ -33,6 +33,7 @@ class InvoiceFactory extends Factory
             'asset_account_id' => Account::where('name', 'Accounts Receivable')->first()->id,
             'currency_id' => 2,
             'tax_amount' => 0,
+            'untaxed_amount' => 0,
         ];
     }
 }

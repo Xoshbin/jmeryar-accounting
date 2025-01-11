@@ -29,7 +29,7 @@ class BillItemFactory extends Factory
             'product_id' => Product::inRandomOrder()->first()->id,
             'quantity' => $quantity, // FOR FUTURE:: don't get confused again, the number maybe 0 in the database table after seed run, because when invoice seeder run it decreases the quantity
             'cost_price' => $costPrice,
-            'unit_price' => $costPrice * 1.05,
+            'unit_price' => $costPrice * 5, // Add %5 profit
             'total_cost' => $costPrice * $quantity,
         ];
     }
