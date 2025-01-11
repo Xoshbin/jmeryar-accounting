@@ -146,7 +146,7 @@ Payments are handled as polymorphic entities, which means a payment can belong t
 - [ ] **Add notifications for due dates (in app notifications)**:
 - [ ] **Add notifications for inventory - Out of stocks**:
 - [x] **Tax Management**
-- [x] **Add discounts**.
+- [ ] **Add discounts**.
 - [ ] **Dashboard Charts**: Introduce visual dashboards to display key financial metrics, such as cash flow, revenue, and expenses.
 - [x] **Financial Reports**: Develop reporting tools for financial analysis, including income statements, balance sheets, and cash flow reports.
 
