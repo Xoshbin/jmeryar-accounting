@@ -8,7 +8,7 @@ use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Xoshbin\JmeryarAccounting\Models\Account;
 use Xoshbin\JmeryarAccounting\Models\Setting;
-
+use Illuminate\Support\Number;
 class IncomeStatement extends BaseWidget
 {
     use InteractsWithPageFilters;
@@ -17,7 +17,7 @@ class IncomeStatement extends BaseWidget
 
     protected function getStats(): array
     {
-        $defaultCurrecny = Setting::first()?->currency->symbol;
+        $defaultCurrecny = Setting::first()?->currency->code;
 
         $startDate = !is_null($this->filters['startDate'] ?? null)
             ? Carbon::parse($this->filters['startDate'])->startOfDay()
@@ -38,9 +38,9 @@ class IncomeStatement extends BaseWidget
 
         // Return Stats
         return [
-            Stat::make('Revenues', $defaultCurrecny . $revenues / 100),
-            Stat::make('Expenses', $defaultCurrecny . $expenses / 100),
-            Stat::make('Profit', $defaultCurrecny . $netProfit / 100),
+            Stat::make('Revenues', Number::currency($revenues, $defaultCurrecny)),
+            Stat::make('Expenses', Number::currency($expenses, $defaultCurrecny)),
+            Stat::make('Profit', Number::currency($netProfit, $defaultCurrecny)),
         ];
     }
 

@@ -8,7 +8,7 @@ use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Xoshbin\JmeryarAccounting\Models\Account;
 use Xoshbin\JmeryarAccounting\Models\Setting;
-
+use Illuminate\Support\Number;
 class BalanceSheet extends BaseWidget
 {
     use InteractsWithPageFilters;
@@ -17,7 +17,7 @@ class BalanceSheet extends BaseWidget
 
     protected function getStats(): array
     {
-        $defaultCurrecny = Setting::first()?->currency->symbol;
+        $defaultCurrecny = Setting::first()?->currency->code;
 
         $startDate = !is_null($this->filters['startDate'] ?? null)
             ? Carbon::parse($this->filters['startDate'])->startOfDay()
@@ -42,9 +42,9 @@ class BalanceSheet extends BaseWidget
 
         // Return Stats
         return [
-            Stat::make('Assets', $defaultCurrecny . $totalAssets),
-            Stat::make('Liabilities', $defaultCurrecny .  $totalLiabilities),
-            Stat::make('Equity', $defaultCurrecny .  $totalEquity),
+            Stat::make('Assets', Number::currency($totalAssets, $defaultCurrecny)),
+            Stat::make('Liabilities',  Number::currency($totalLiabilities, $defaultCurrecny)),
+            Stat::make('Equity',  Number::currency($totalEquity, $defaultCurrecny)),
         ];
     }
 
