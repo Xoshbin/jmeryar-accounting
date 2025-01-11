@@ -43,11 +43,10 @@ class BillSeeder extends Seeder
             $remainingBalance = $totalAmount;
             $paymentCount = rand(1, 3);
 
-            $totalPaidAmountInInvoiceCurrency = $invoice->total_paid_amount ?? 0; // Total paid in bill currency
 
             for ($i = 0; $i < $paymentCount; $i++) {
                 // Calculate the payment amount, ensuring it doesn't exceed the remaining balance
-                $paymentAmount = mt_rand(10, 100) / 100 * $remainingBalance;
+                $paymentAmount = mt_rand(10, 100) / 1000 * $remainingBalance;
                 $paymentAmount = min($paymentAmount, $remainingBalance);
 
                 $currency = Currency::where('code', 'USD')->first();
@@ -71,21 +70,6 @@ class BillSeeder extends Seeder
 
                 // Attach the payment
                 $bill->payments()->save($payment);
-
-                // Update the total paid amount in the bill's currency
-                $totalPaidAmountInInvoiceCurrency += $amountInBillCurrency;
-
-                // Update the total_paid_amount by adding the current payment amount
-                $remainingBalance = $totalAmount - $totalPaidAmountInInvoiceCurrency;
-
-                $bill->update([
-                    'amount_due' => $remainingBalance,
-                    'total_paid_amount' => $totalPaidAmountInInvoiceCurrency,
-                ]);
-
-                if ($remainingBalance <= 0) {
-                    break;
-                }
             }
         });
     }
