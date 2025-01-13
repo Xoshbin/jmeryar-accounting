@@ -725,8 +725,10 @@
                 <tr>
                     <td class="w-full align-top">
                         <div>
-                            <img src="{{ public_path('storage/' . $setting->company_logo) }}" alt="logo" class="h-12">
-                            <h1 class="text-2xl font-bold text-main">{{ $setting->company_name }}</h1>
+                            @if(isset($setting) && $setting->company_logo && is_file(public_path('storage/' . $setting->company_logo)))
+                                <img src="{{ public_path('storage/' . $setting->company_logo) }}" alt="logo" class="h-12">
+                            @endif
+                                <h1 class="text-2xl font-bold text-main">{{ $setting->company_name }}</h1>
                         </div>
                     </td>
 
