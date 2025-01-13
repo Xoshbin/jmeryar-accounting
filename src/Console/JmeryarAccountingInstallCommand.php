@@ -28,7 +28,7 @@ class JmeryarAccountingInstallCommand extends Command
                 '--class' => 'Xoshbin\JmeryarAccounting\Database\Seeders\FullSeeder',
             ]);
         } else {
-            $this->info('Prompting for base settings...');
+            $this->info('Seeding the database with base settings...');
             $this->call('db:seed', [
                 '--class' => 'Xoshbin\JmeryarAccounting\Database\Seeders\BaseSeeder',
             ]);
