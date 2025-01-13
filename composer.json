@@ -28,8 +28,8 @@
     "illuminate/support": "^10.0|^11.0",
     "filament/filament": "^3.2",
     "filament/support": "^3.2",
-    "barryvdh/laravel-dompdf": "^3.0",
     "spatie/laravel-package-tools": "^1.16.1",
+    "barryvdh/laravel-dompdf": "^3.0",
     "filament/spatie-laravel-media-library-plugin": "^3.2"
   },
   "extra": {
