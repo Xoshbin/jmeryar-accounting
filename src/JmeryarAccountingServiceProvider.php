@@ -18,6 +18,7 @@ class JmeryarAccountingServiceProvider extends PackageServiceProvider
             ->discoversMigrations()
             ->runsMigrations(true)
             ->hasViews('jmeryar-accounting')
+            ->hasCommand(JmeryarAccountingInstallCommand::class)
             ->hasTranslations();
     }
 
@@ -26,12 +27,6 @@ class JmeryarAccountingServiceProvider extends PackageServiceProvider
         // Dynamically set the Spatie Media Library configuration
         // without this some tests fail
         config()->set('media-library.media_model', Media::class);
-
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                JmeryarAccountingInstallCommand::class,
-            ]);
-        }
 
         FilamentAsset::register([
             Css::make('jmeryar-assets', __DIR__ . '/../resources/css/jmeryar/theme.css'),
