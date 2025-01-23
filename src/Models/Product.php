@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Xoshbin\JmeryarAccounting\Casts\MoneyCast;
-use Xoshbin\JmeryarAccounting\Database\Factories\ProductFactory;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Xoshbin\JmeryarAccounting\Casts\MoneyCast;
+use Xoshbin\JmeryarAccounting\Database\Factories\ProductFactory;
 
 /**
  * @property string $type
@@ -22,7 +22,8 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  */
 class Product extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia;
+    use HasFactory;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'type',

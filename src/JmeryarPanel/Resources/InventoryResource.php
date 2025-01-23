@@ -32,39 +32,39 @@ class InventoryResource extends Resource
     {
         return
             $form
-            ->schema([
-                Forms\Components\Grid::make(3)
-                    ->schema([
-                        Forms\Components\Section::make()
-                            ->columns(2)
-                            ->schema([
-                                Forms\Components\Select::make('product_id')
-                                    ->label(__('jmeryar-accounting::inventory.form.name'))
-                                    ->relationship('product', 'name')
-                                    ->required(),
-                                Forms\Components\TextInput::make('quantity')
-                                    ->numeric()
-                                    ->label(__('jmeryar-accounting::inventory.form.quantity'))
-                                    ->maxLength(255),
-                                MoneyInput::make('cost_price')
-                                    ->label(__('jmeryar-accounting::inventory.form.cost_price'))
-                                    ->numeric()
-                                    ->maxLength(255),
-                                MoneyInput::make('unit_price')
-                                    ->label(__('jmeryar-accounting::inventory.form.unit_price'))
-                                    ->numeric(),
-                            ])
-                            ->columnSpan(2),
-                        Forms\Components\Grid::make()
-                            ->schema([
-                                Forms\Components\Section::make()->schema([
-                                    Forms\Components\DatePicker::make('expiry_date')
-                                        ->label(__('jmeryar-accounting::inventory.form.expiry_date')),
-                                ]),
-                            ])
-                            ->columnSpan(1),
-                    ]),
-            ]);
+                ->schema([
+                    Forms\Components\Grid::make(3)
+                        ->schema([
+                            Forms\Components\Section::make()
+                                ->columns(2)
+                                ->schema([
+                                    Forms\Components\Select::make('product_id')
+                                        ->label(__('jmeryar-accounting::inventory.form.name'))
+                                        ->relationship('product', 'name')
+                                        ->required(),
+                                    Forms\Components\TextInput::make('quantity')
+                                        ->numeric()
+                                        ->label(__('jmeryar-accounting::inventory.form.quantity'))
+                                        ->maxLength(255),
+                                    MoneyInput::make('cost_price')
+                                        ->label(__('jmeryar-accounting::inventory.form.cost_price'))
+                                        ->numeric()
+                                        ->maxLength(255),
+                                    MoneyInput::make('unit_price')
+                                        ->label(__('jmeryar-accounting::inventory.form.unit_price'))
+                                        ->numeric(),
+                                ])
+                                ->columnSpan(2),
+                            Forms\Components\Grid::make()
+                                ->schema([
+                                    Forms\Components\Section::make()->schema([
+                                        Forms\Components\DatePicker::make('expiry_date')
+                                            ->label(__('jmeryar-accounting::inventory.form.expiry_date')),
+                                    ]),
+                                ])
+                                ->columnSpan(1),
+                        ]),
+                ]);
     }
 
     public static function table(Table $table): Table
@@ -83,12 +83,12 @@ class InventoryResource extends Resource
                     ->label(__('jmeryar-accounting::inventory.table.cost_price'))
                     ->summarize(Summarizer::make()
                         ->label('Total Cost')
-                        ->using(fn(Builder $query): string => (string) $query->sum(DB::raw('cost_price * quantity')) / 100)),
+                        ->using(fn (Builder $query): string => (string) $query->sum(DB::raw('cost_price * quantity')) / 100)),
                 MoneyColumn::make('unit_price')
                     ->label(__('jmeryar-accounting::inventory.table.unit_price'))
                     ->summarize(Summarizer::make()
                         ->label('Total Value')
-                        ->using(fn(Builder $query): string => (string) $query->sum(DB::raw('unit_price * quantity')) / 100)),
+                        ->using(fn (Builder $query): string => (string) $query->sum(DB::raw('unit_price * quantity')) / 100)),
                 Tables\Columns\TextColumn::make('expiry_date')
                     ->label(__('jmeryar-accounting::inventory.table.expiry_date'))
                     ->searchable(),

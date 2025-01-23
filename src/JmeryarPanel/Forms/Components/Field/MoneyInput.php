@@ -2,15 +2,15 @@
 
 namespace Xoshbin\JmeryarAccounting\JmeryarPanel\Forms\Components\Field;
 
+use Closure;
 use Filament\Forms\Components\TextInput;
 use Filament\Support\RawJs;
 use Xoshbin\JmeryarAccounting\Models\Currency;
 use Xoshbin\JmeryarAccounting\Models\Setting;
-use Closure;
 
 class MoneyInput extends TextInput
 {
-    protected string|Closure|null $currencyCode = null;
+    protected string | Closure | null $currencyCode = null;
 
     protected string $defaultCurrencyCode = 'USD'; // Default currency code
 
@@ -40,7 +40,7 @@ class MoneyInput extends TextInput
         // });
     }
 
-    public function currencyCode(string|Closure|null $currencyCode): static
+    public function currencyCode(string | Closure | null $currencyCode): static
     {
         $this->currencyCode = $currencyCode;
 
@@ -53,7 +53,7 @@ class MoneyInput extends TextInput
         $code = $this->evaluate($this->currencyCode);
 
         // Step 2: Fallback to the currency code from settings if not explicitly set
-        if (!$code) {
+        if (! $code) {
             $code = Setting::first()?->currency->code;
         }
 

@@ -9,11 +9,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use Xoshbin\JmeryarAccounting\Casts\MoneyCast;
 use Xoshbin\JmeryarAccounting\Database\Factories\BillFactory;
 use Xoshbin\JmeryarAccounting\Observers\BillObserver;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
 
 #[ObservedBy([BillObserver::class])]
 /**
@@ -34,7 +34,8 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  */
 class Bill extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia;
+    use HasFactory;
+    use InteractsWithMedia;
 
     protected $fillable = [
         'bill_number',
@@ -59,7 +60,7 @@ class Bill extends Model implements HasMedia
         'amount_due' => MoneyCast::class,
         'untaxed_amount' => MoneyCast::class,
         'tax_amount' => MoneyCast::class,
-        'status' => 'string', //'Draft', 'Received', 'Partial', 'Paid'
+        'status' => 'string', // 'Draft', 'Received', 'Partial', 'Paid'
     ];
 
     public const TYPE_DRAFT = 'Draft';

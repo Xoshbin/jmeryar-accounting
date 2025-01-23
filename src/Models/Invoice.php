@@ -57,7 +57,7 @@ class Invoice extends Model
         'amount_due' => MoneyCast::class,
         'untaxed_amount' => MoneyCast::class,
         'tax_amount' => MoneyCast::class,
-        'status' => 'string', //'Draft', 'Sent', 'Partial', 'Paid'
+        'status' => 'string', // 'Draft', 'Sent', 'Partial', 'Paid'
     ];
 
     public const TYPE_DRAFT = 'Draft';

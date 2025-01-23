@@ -8,7 +8,6 @@ use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 use Xoshbin\JmeryarAccounting\JmeryarPanel\Tables\Columns\MoneyColumn;
-use Xoshbin\JmeryarAccounting\Models\Currency;
 use Xoshbin\JmeryarAccounting\Models\JournalEntry;
 
 class JournalEntryResource extends Resource

@@ -2,8 +2,6 @@
 
 namespace Xoshbin\JmeryarAccounting\JmeryarPanel\Tables\Columns;
 
-use Filament\Tables\Columns\Column;
-
 use Closure;
 use Filament\Tables\Columns\TextColumn;
 use Xoshbin\JmeryarAccounting\Models\Currency;
@@ -11,11 +9,11 @@ use Xoshbin\JmeryarAccounting\Models\Setting;
 
 class MoneyColumn extends TextColumn
 {
-    protected string|Closure|null $currencyCode = null;
+    protected string | Closure | null $currencyCode = null;
 
     protected string $defaultCurrencyCode = 'USD'; // Default currency code
 
-    public function currencyCode(string|Closure|null $currencyCode): static
+    public function currencyCode(string | Closure | null $currencyCode): static
     {
         $this->currencyCode = $currencyCode;
 
@@ -28,7 +26,7 @@ class MoneyColumn extends TextColumn
         $code = $this->evaluate($this->currencyCode);
 
         // Step 2: Fallback to the currency code from settings if not explicitly provided
-        if (!$code) {
+        if (! $code) {
             $code = Setting::first()?->currency->code;
         }
 
@@ -41,6 +39,6 @@ class MoneyColumn extends TextColumn
         parent::setUp();
 
         // Use Filament's currency formatting
-        $this->money(fn() => $this->getCurrency()); // Dynamically sets the currency
+        $this->money(fn () => $this->getCurrency()); // Dynamically sets the currency
     }
 }

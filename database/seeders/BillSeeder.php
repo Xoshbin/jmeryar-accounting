@@ -43,7 +43,6 @@ class BillSeeder extends Seeder
             $remainingBalance = $totalAmount;
             $paymentCount = rand(1, 3);
 
-
             for ($i = 0; $i < $paymentCount; $i++) {
                 // Calculate the payment amount, ensuring it doesn't exceed the remaining balance
                 $paymentAmount = mt_rand(10, 100) / 1000 * $remainingBalance;

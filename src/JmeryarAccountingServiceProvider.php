@@ -6,8 +6,8 @@ use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Xoshbin\JmeryarAccounting\Console\JmeryarAccountingInstallCommand;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Xoshbin\JmeryarAccounting\Console\JmeryarAccountingInstallCommand;
 
 class JmeryarAccountingServiceProvider extends PackageServiceProvider
 {

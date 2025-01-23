@@ -29,40 +29,40 @@ class PaymentResource extends Resource
     {
         return
             $form
-            ->schema([
-                Forms\Components\Grid::make(3)
-                    ->schema([
-                        Forms\Components\Section::make()
-                            ->columns(2)
-                            ->schema([
-                                MoneyInput::make('amount')
-                                    ->label(__('jmeryar-accounting::payments.form.amount'))
-                                    ->required()
-                                    ->numeric(),
-                                Forms\Components\DatePicker::make('payment_date')
-                                    ->label(__('jmeryar-accounting::payments.form.payment_date'))
-                                    ->required(),
-                                Forms\Components\TextInput::make('payment_type')
-                                    ->label(__('jmeryar-accounting::payments.form.payment_type'))
-                                    ->required(),
-                                Forms\Components\TextInput::make('payment_method')
-                                    ->label(__('jmeryar-accounting::payments.form.payment_method'))
-                                    ->required()
-                                    ->maxLength(255),
-                                Forms\Components\Textarea::make('note')
-                                    ->label(__('jmeryar-accounting::payments.form.note'))
-                                    ->columnSpanFull(),
-                            ])
-                            ->columnSpan(2),
-                        Forms\Components\Grid::make()
-                            ->schema([
-                                Forms\Components\Section::make()->schema([
-                                    //
-                                ]),
-                            ])
-                            ->columnSpan(1),
-                    ]),
-            ]);
+                ->schema([
+                    Forms\Components\Grid::make(3)
+                        ->schema([
+                            Forms\Components\Section::make()
+                                ->columns(2)
+                                ->schema([
+                                    MoneyInput::make('amount')
+                                        ->label(__('jmeryar-accounting::payments.form.amount'))
+                                        ->required()
+                                        ->numeric(),
+                                    Forms\Components\DatePicker::make('payment_date')
+                                        ->label(__('jmeryar-accounting::payments.form.payment_date'))
+                                        ->required(),
+                                    Forms\Components\TextInput::make('payment_type')
+                                        ->label(__('jmeryar-accounting::payments.form.payment_type'))
+                                        ->required(),
+                                    Forms\Components\TextInput::make('payment_method')
+                                        ->label(__('jmeryar-accounting::payments.form.payment_method'))
+                                        ->required()
+                                        ->maxLength(255),
+                                    Forms\Components\Textarea::make('note')
+                                        ->label(__('jmeryar-accounting::payments.form.note'))
+                                        ->columnSpanFull(),
+                                ])
+                                ->columnSpan(2),
+                            Forms\Components\Grid::make()
+                                ->schema([
+                                    Forms\Components\Section::make()->schema([
+                                        //
+                                    ]),
+                                ])
+                                ->columnSpan(1),
+                        ]),
+                ]);
     }
 
     public static function table(Table $table): Table
@@ -71,7 +71,7 @@ class PaymentResource extends Resource
             ->columns([
                 MoneyColumn::make('amount')
                     ->label(__('jmeryar-accounting::payments.table.amount'))
-                    ->currencyCode(fn($record) => Currency::find($record->currency_id)?->code)
+                    ->currencyCode(fn ($record) => Currency::find($record->currency_id)?->code)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('payment_date')
                     ->label(__('jmeryar-accounting::payments.table.payment_date'))

@@ -6,9 +6,10 @@ use Carbon\Carbon;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Number;
 use Xoshbin\JmeryarAccounting\Models\Account;
 use Xoshbin\JmeryarAccounting\Models\Setting;
-use Illuminate\Support\Number;
+
 class BalanceSheet extends BaseWidget
 {
     use InteractsWithPageFilters;
@@ -19,11 +20,11 @@ class BalanceSheet extends BaseWidget
     {
         $defaultCurrecny = Setting::first()?->currency->code;
 
-        $startDate = !is_null($this->filters['startDate'] ?? null)
+        $startDate = ! is_null($this->filters['startDate'] ?? null)
             ? Carbon::parse($this->filters['startDate'])->startOfDay()
             : null;
 
-        $endDate = !is_null($this->filters['endDate'] ?? null)
+        $endDate = ! is_null($this->filters['endDate'] ?? null)
             ? Carbon::parse($this->filters['endDate'])->endOfDay()
             : now()->endOfDay();
 
@@ -43,8 +44,8 @@ class BalanceSheet extends BaseWidget
         // Return Stats
         return [
             Stat::make('Assets', Number::currency($totalAssets, $defaultCurrecny)),
-            Stat::make('Liabilities',  Number::currency($totalLiabilities, $defaultCurrecny)),
-            Stat::make('Equity',  Number::currency($totalEquity, $defaultCurrecny)),
+            Stat::make('Liabilities', Number::currency($totalLiabilities, $defaultCurrecny)),
+            Stat::make('Equity', Number::currency($totalEquity, $defaultCurrecny)),
         ];
     }
 
@@ -70,5 +71,4 @@ class BalanceSheet extends BaseWidget
                     : $credits - $debits;
             });
     }
-
 }

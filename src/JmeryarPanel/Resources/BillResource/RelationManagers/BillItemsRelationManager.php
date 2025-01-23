@@ -51,13 +51,13 @@ class BillItemsRelationManager extends RelationManager
                     ->numeric(),
                 Forms\Components\Select::make('expense_account_id')
                     ->relationship('expenseAccount', 'name')
-                    ->default(fn() => Account::where('type', Account::TYPE_EXPENSE)->first()->id)
+                    ->default(fn () => Account::where('type', Account::TYPE_EXPENSE)->first()->id)
                     ->extraAttributes(['class' => 'hidden'])
                     ->label('')
                     ->required(),
                 Forms\Components\Select::make('liability_account_id')
                     ->relationship('liabilityAccount', 'name')
-                    ->default(fn() => Account::where('name', 'Accounts Payable')->first()->id)
+                    ->default(fn () => Account::where('name', 'Accounts Payable')->first()->id)
                     ->extraAttributes(['class' => 'hidden'])
                     ->label('')
                     ->required(),

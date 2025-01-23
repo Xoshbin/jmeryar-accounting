@@ -60,7 +60,7 @@ class TransactionResource extends Resource
                     ->searchable(),
                 MoneyColumn::make('amount')
                     ->label(__('jmeryar-accounting::transactions.table.amount'))
-                    ->currencyCode(fn($record) => $record->payments->first()?->currency?->code ?? 'USD')
+                    ->currencyCode(fn ($record) => $record->payments->first()?->currency?->code ?? 'USD')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('transaction_type')
                     ->label(__('jmeryar-accounting::transactions.table.transaction_type')),

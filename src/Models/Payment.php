@@ -41,7 +41,7 @@ class Payment extends Model
     protected $casts = [
         'amount' => MoneyCast::class,
         'amount_in_document_currency' => MoneyCast::class,
-        'payment_type' => 'string', //'Income', 'Expense'
+        'payment_type' => 'string', // 'Income', 'Expense'
     ];
 
     public const TYPE_INCOME = 'Income';

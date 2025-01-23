@@ -20,10 +20,9 @@ class ProfitLoss extends Page
         $expenses = Account::where('type', 'Expense')->with('journalEntries')->get();
         $defaultCurrecny = Setting::first()?->currency->symbol;
 
-
         // Calculate totals
-        $totalRevenue = $revenues->sum(fn($account) => $account->journalEntries->sum('credit') - $account->journalEntries->sum('debit'));
-        $totalExpenses = $expenses->sum(fn($account) => $account->journalEntries->sum('debit') - $account->journalEntries->sum('credit'));
+        $totalRevenue = $revenues->sum(fn ($account) => $account->journalEntries->sum('credit') - $account->journalEntries->sum('debit'));
+        $totalExpenses = $expenses->sum(fn ($account) => $account->journalEntries->sum('debit') - $account->journalEntries->sum('credit'));
 
         $grossProfit = $totalRevenue - $totalExpenses;
 

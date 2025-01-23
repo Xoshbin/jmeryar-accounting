@@ -985,7 +985,6 @@ it('ensures journal entries are correct for two bills with different payment met
     $paymentCreditEntry1 = $payment1->journalEntries()->where('credit', 200 * 100)->first(); // * 100 CastMoney
     $paymentDebitEntry1 = $payment1->journalEntries()->where('debit', 200 * 100)->first();
 
-
     expect($paymentCreditEntry1->account_id)->toBe(Account::where('name', 'Cash')->first()->id);
     expect($paymentCreditEntry1->credit)->toBe(200.0);
     expect($paymentCreditEntry1->debit)->toBe(0.0);
@@ -1066,21 +1065,19 @@ it('records journal entries correctly in two stages for a bill', function () {
     // Assert that exactly two journal entries are created and attached to the bill
     expect($bill->journalEntries()->count())->toBe(2);
 
-
     // Assert journal entries for Stage 1 (Bill received)
     $this->assertDatabaseHas('journal_entries', [
         'account_id' => Account::where('name', 'Expenses')->first()->id,
         'debit' => $costPrice * 100,
-        'credit' => 0
+        'credit' => 0,
     ]);
     $this->assertDatabaseHas('journal_entries', [
         'account_id' => Account::where('name', 'Accounts Payable')->first()->id,
         'debit' => 0,
-        'credit' => $costPrice * 100
+        'credit' => $costPrice * 100,
     ]);
 
     $currency_id = Currency::where('code', 'USD')->first()->id;
-
 
     $payment = TestServices::createPayment($bill, $costPrice, 'Cash', 'Expense', $currency_id, 1, $costPrice);
 
@@ -1095,12 +1092,12 @@ it('records journal entries correctly in two stages for a bill', function () {
     $this->assertDatabaseHas('journal_entries', [
         'account_id' => Account::where('name', 'Accounts Payable')->first()->id,
         'debit' => $costPrice * 100,
-        'credit' => 0
+        'credit' => 0,
     ]);
 
     $this->assertDatabaseHas('journal_entries', [
         'account_id' => Account::where('name', 'Cash')->first()->id,
         'debit' => 0,
-        'credit' => $costPrice * 100
+        'credit' => $costPrice * 100,
     ]);
 });
