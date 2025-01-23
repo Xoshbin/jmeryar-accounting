@@ -57,6 +57,6 @@ class Accounting implements Plugin
 
     public function boot(Panel $panel): void
     {
-        // TODO: Implement boot() method.
+        //
     }
 }

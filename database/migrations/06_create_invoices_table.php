@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('total_amount');
             $table->unsignedBigInteger('total_paid_amount')->nullable();
             $table->unsignedBigInteger('amount_due')->nullable();
-            $table->unsignedBigInteger('untaxed_amount')->nullable(); //Todo:: change it to required
+            $table->unsignedBigInteger('untaxed_amount');
             $table->unsignedBigInteger('tax_amount')->nullable();
             $table->enum('status', ['Draft', 'Sent', 'Partial', 'Paid'])->default('draft');
             $table->text('note')->nullable();
