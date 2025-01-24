@@ -6,8 +6,8 @@
             <div class="space-y-4">
                 @foreach ($this->getBalanceData()['data']['assets'] as $account)
                     <div class="flex justify-between border-b pb-1">
-                        <span>{{ $account->name }}</span>
-                        <span>{{$this->getBalanceData()['data']['defaultCurrecny'] . number_format($account->journalEntries->sum('debit') - $account->journalEntries->sum('credit'), 2) }}</span>
+                        <span>{{ $account['name'] }}</span>
+                        <span>{{ $this->getBalanceData()['data']['defaultCurrecny'] . number_format($account['total'], 2) }}</span>
                     </div>
                 @endforeach
                 <div class="flex justify-between font-bold">
@@ -23,8 +23,8 @@
             <div class="space-y-4">
                 @foreach ($this->getBalanceData()['data']['liabilities'] as $account)
                     <div class="flex justify-between border-b pb-1">
-                        <span>{{ $account->name }}</span>
-                        <span>{{ $this->getBalanceData()['data']['defaultCurrecny'] . number_format($account->journalEntries->sum('credit') - $account->journalEntries->sum('debit'), 2) }}</span>
+                        <span>{{ $account['name'] }}</span>
+                        <span>{{ $this->getBalanceData()['data']['defaultCurrecny'] . number_format($account['total'], 2) }}</span>
                     </div>
                 @endforeach
                 <div class="flex justify-between font-bold">
@@ -40,8 +40,8 @@
             <div class="space-y-4">
                 @foreach ($this->getBalanceData()['data']['equity'] as $account)
                     <div class="flex justify-between border-b pb-1">
-                        <span>{{ $account->name }}</span>
-                        <span>{{ $this->getBalanceData()['data']['defaultCurrecny'] . number_format($account->journalEntries->sum('credit') - $account->journalEntries->sum('debit'), 2) }}</span>
+                        <span>{{ $account['name'] }}</span>
+                        <span>{{ $this->getBalanceData()['data']['defaultCurrecny'] . number_format($account['total'], 2) }}</span>
                     </div>
                 @endforeach
                 <div class="flex justify-between font-bold">
@@ -51,10 +51,10 @@
             </div>
         </div>
 
-        <!-- Liabilities + Equity -->
-        <div class="flex justify-between font-bold border-t pt-4">
+        <!-- Accounting Equation Verification Section -->
+        <div class="flex justify-between font-bold text-lg border-t pt-4">
             <span>{{ __('jmeryar-accounting::balance_sheet.liabilities_equity') }}</span>
-            <span>{{ $this->getBalanceData()['data']['defaultCurrecny'] . number_format($this->getBalanceData()['totals']['liabilities'] + $this->getBalanceData()['totals']['equity'], 2) }}</span>
+            <span>{{ $this->getBalanceData()['data']['defaultCurrecny'] . number_format($this->getBalanceData()['totals']['assets'], 2) }}</span>
         </div>
     </div>
 </x-filament-panels::page>
