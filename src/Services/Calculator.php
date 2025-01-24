@@ -28,7 +28,7 @@ class Calculator
                         $entryCurrency = $associated?->currency;
 
                         // Default to the current currency if no associated Bill/Invoice
-                        if (!$entryCurrency || $entryCurrency->id === $defaultCurrency->id) {
+                        if (! $entryCurrency || $entryCurrency->id === $defaultCurrency->id) {
                             $exchangeRate = 1; // Default 1:1 rate for the same currency
                         } else {
                             // Get exchange rate from the database
@@ -54,5 +54,4 @@ class Calculator
                     });
             });
     }
-
 }

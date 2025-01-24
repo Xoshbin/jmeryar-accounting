@@ -41,7 +41,7 @@ class ProfitLoss extends Page
             $entryCurrency = $associated?->currency;
 
             // Default to no conversion if the currency matches the default currency
-            if (!$entryCurrency || $entryCurrency->id === $defaultCurrency->id) {
+            if (! $entryCurrency || $entryCurrency->id === $defaultCurrency->id) {
                 $exchangeRate = 1;
             } else {
                 // Fetch the exchange rate
@@ -61,6 +61,7 @@ class ProfitLoss extends Page
         $revenues = $revenues->map(function ($account) use ($convertToDefault) {
             $total = $account->journalEntries->sum(function ($entry) use ($convertToDefault) {
                 $converted = $convertToDefault($entry);
+
                 return $converted['credit'] - $converted['debit']; // Credit - Debit for Revenue
             });
 
@@ -73,6 +74,7 @@ class ProfitLoss extends Page
         $expenses = $expenses->map(function ($account) use ($convertToDefault) {
             $total = $account->journalEntries->sum(function ($entry) use ($convertToDefault) {
                 $converted = $convertToDefault($entry);
+
                 return $converted['debit'] - $converted['credit']; // Debit - Credit for Expense
             });
 

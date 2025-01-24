@@ -37,7 +37,7 @@ class BalanceSheet extends Page
             $entryCurrency = $associated?->currency;
 
             // Default to no conversion if the currency matches the default currency
-            if (!$entryCurrency || $entryCurrency->id === $defaultCurrency->id) {
+            if (! $entryCurrency || $entryCurrency->id === $defaultCurrency->id) {
                 $exchangeRate = 1;
             } else {
                 // Fetch the exchange rate
@@ -58,8 +58,10 @@ class BalanceSheet extends Page
             'assets' => Account::where('type', 'Asset')->with('journalEntries')->get()->map(function ($account) use ($convertToDefault) {
                 $total = $account->journalEntries->sum(function ($entry) use ($convertToDefault) {
                     $converted = $convertToDefault($entry);
+
                     return $converted['debit'] - $converted['credit'];
                 });
+
                 return [
                     'name' => $account->name,
                     'total' => $total,
@@ -68,8 +70,10 @@ class BalanceSheet extends Page
             'liabilities' => Account::where('type', 'Liability')->with('journalEntries')->get()->map(function ($account) use ($convertToDefault) {
                 $total = $account->journalEntries->sum(function ($entry) use ($convertToDefault) {
                     $converted = $convertToDefault($entry);
+
                     return $converted['credit'] - $converted['debit'];
                 });
+
                 return [
                     'name' => $account->name,
                     'total' => $total,
@@ -78,8 +82,10 @@ class BalanceSheet extends Page
             'equity' => Account::where('type', 'Equity')->with('journalEntries')->get()->map(function ($account) use ($convertToDefault) {
                 $total = $account->journalEntries->sum(function ($entry) use ($convertToDefault) {
                     $converted = $convertToDefault($entry);
+
                     return $converted['debit'] - $converted['credit'];
                 });
+
                 return [
                     'name' => $account->name,
                     'total' => $total,
