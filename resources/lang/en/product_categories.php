@@ -2,6 +2,7 @@
 
 return [
     'title' => 'Product Categories',
+    'singular' => 'Category',
     'table' => [
         'name' => 'Name',
         'parent_name' => 'Parent Name',

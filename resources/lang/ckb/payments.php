@@ -2,6 +2,7 @@
 
 return [
     'title' => 'پارەدانەکان',
+    'singular' => 'پارەدان',
     'table' => [
         'amount' => 'بڕ',
         'payment_date' => 'بەرواری پارەدان',

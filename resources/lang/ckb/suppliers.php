@@ -2,6 +2,7 @@
 
 return [
     'title' => 'دابینکەرەکان',
+    'singular' => 'دەبینکەر',
     'table' => [
         'name' => 'ناو',
         'contact_person' => 'کەسی پەیوەندیدار',

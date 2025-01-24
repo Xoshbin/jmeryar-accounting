@@ -2,6 +2,7 @@
 
 return [
     'title' => 'Invoices',
+    'singular' => 'Invoice',
     'table' => [
         'invoice_number' => 'Invoice Number',
         'invoice_date' => 'Invoice Date',

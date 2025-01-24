@@ -2,6 +2,7 @@
 
 return [
     'title' => 'Payments',
+    'singular' => 'Payment',
     'table' => [
         'amount' => 'Amount',
         'payment_date' => 'Payment Date',

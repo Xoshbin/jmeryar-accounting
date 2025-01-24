@@ -2,6 +2,7 @@
 
 return [
     'title' => 'کڕیاران',
+    'singular' => 'کڕیار',
     'table' => [
         'name' => 'ناو',
         'email' => 'ئیمەیڵ',

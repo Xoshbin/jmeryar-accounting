@@ -2,6 +2,7 @@
 
 return [
     'title' => 'Products',
+    'singular' => 'Product',
     'table' => [
         'type' => 'Type',
         'name' => 'Name',

@@ -2,6 +2,7 @@
 
 return [
     'title' => 'پۆلەکانی بەرهەم',
+    'singular' => 'پۆل',
     'table' => [
         'name' => 'ناو',
         'parent_name' => 'ناوی باوان',

@@ -2,6 +2,7 @@
 
 return [
     'title' => 'دراوەکان',
+    'singular' => 'دراو',
     'table' => [
         'code' => 'کۆد',
         'name' => 'ناو',

@@ -2,6 +2,7 @@
 
 return [
     'title' => 'Bills',
+    'singular' => 'Bill',
     'table' => [
         'name' => 'Name',
         'bill_number' => 'Bill Number',

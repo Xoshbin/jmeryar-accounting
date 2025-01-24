@@ -2,6 +2,7 @@
 
 return [
     'title' => 'پسووڵەکان',
+    'singular' => 'پسوڵە',
     'table' => [
         'name' => 'ناو',
         'bill_number' => 'ژمارەی پسووڵە',

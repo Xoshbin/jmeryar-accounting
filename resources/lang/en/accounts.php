@@ -2,6 +2,7 @@
 
 return [
     'title' => 'Accounts',
+    'singular' => 'Account',
     'table' => [
         'name' => 'Name',
         'parent_name' => 'Parent Name',

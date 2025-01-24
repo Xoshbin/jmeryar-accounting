@@ -2,6 +2,7 @@
 
 return [
     'title' => 'Currencies',
+    'singular' => 'Currency',
     'table' => [
         'code' => 'Code',
         'name' => 'Name',

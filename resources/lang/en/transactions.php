@@ -2,6 +2,7 @@
 
 return [
     'title' => 'Transactions',
+    'singular' => 'Transaction',
     'table' => [
         'date' => 'Date',
         'note' => 'Note',

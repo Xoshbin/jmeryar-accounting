@@ -1,7 +1,8 @@
 <?php
 
 return [
-    'title' => 'Inventory',
+    'title' => 'Inventories',
+    'singular' => 'Inventory',
     'table' => [
         'name' => 'Name',
         'quantity' => 'Quantity',

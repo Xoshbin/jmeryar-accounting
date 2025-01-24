@@ -1,7 +1,8 @@
 <?php
 
 return [
-    'title' => 'کۆگا',
+    'title' => 'کۆگاکان',
+    'singular' => 'کۆگا',
     'table' => [
         'name' => 'ناو',
         'quantity' => 'بڕ',
