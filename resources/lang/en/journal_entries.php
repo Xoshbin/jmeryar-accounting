@@ -2,6 +2,7 @@
 
 return [
     'title' => 'Journal Entries',
+    'singular' => 'Journal Entry',
     'table' => [
         'created_at' => 'Created At',
         'journal_entry' => 'Journal Entry',

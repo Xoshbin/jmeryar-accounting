@@ -2,6 +2,7 @@
 
 return [
     'title' => 'Tax Rates',
+    'singular' => 'Tax Rate',
     'table' => [
         'name' => 'Name',
         'tax_computation' => 'Tax Computation',

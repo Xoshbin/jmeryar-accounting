@@ -2,6 +2,7 @@
 
 return [
     'title' => 'ڕێژەی باج',
+    'singular' => 'رێژە',
     'table' => [
         'name' => 'ناو',
         'tax_computation' => 'ژمێرکاری باج',

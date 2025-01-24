@@ -2,6 +2,7 @@
 
 return [
     'title' => 'Suppliers',
+    'singular' => 'Supplier',
     'table' => [
         'name' => 'Name',
         'contact_person' => 'Contact Person',

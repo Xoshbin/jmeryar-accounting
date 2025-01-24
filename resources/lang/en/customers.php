@@ -2,6 +2,7 @@
 
 return [
     'title' => 'Customers',
+    'singular' => 'Customer',
     'table' => [
         'name' => 'Name',
         'email' => 'Email',

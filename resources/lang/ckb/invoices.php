@@ -2,6 +2,7 @@
 
 return [
     'title' => 'بەڵگەنامەکان',
+    'singular' => 'بەڵگەنامە',
     'form' => [
         'PDF/Print' => 'PDF/چاپکردن',
         'Register payment' => 'تۆمارکردنی پارەدان',

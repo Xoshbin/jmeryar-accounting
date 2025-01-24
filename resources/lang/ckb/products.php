@@ -2,6 +2,7 @@
 
 return [
     'title' => 'بەرهەمەکان',
+    'singular' => 'بەرهەم',
     'table' => [
         'type' => 'جۆر',
         'name' => 'ناو',

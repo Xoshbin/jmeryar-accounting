@@ -1,10 +1,11 @@
 <?php
 
 return [
-    'title' => 'ژمێرەکان',
+    'title' => 'هەژمارەکان',
+    'singular' => 'هەژمار',
     'table' => [
         'name' => 'ناو',
-        'parent_name' => 'ژمێرەی سەرەکی',
+        'parent_name' => 'هەژماری سەرەکی',
         'code' => 'کۆد',
         'type' => 'جۆر',
         'created_at' => 'دروستکراوە لە',
@@ -20,6 +21,6 @@ return [
         'revenue' => 'داهات',
         'expense' => 'خەرجی',
         'code' => 'کۆد',
-        'parent_id' => 'ژمێرەی سەرەکی',
+        'parent_id' => 'هەژماری سەرەکی',
     ],
 ];
