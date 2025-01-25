@@ -7,8 +7,8 @@ use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Support\Number;
-use Xoshbin\JmeryarAccounting\Models\Account;
 use Xoshbin\JmeryarAccounting\Models\Setting;
+use Xoshbin\JmeryarAccounting\Services\Calculator;
 
 class BalanceSheet extends BaseWidget
 {
@@ -29,11 +29,11 @@ class BalanceSheet extends BaseWidget
             : now()->endOfDay();
 
         // Calculate Total Balances
-        $totalAssets = $this->calculateBalance('Asset', $startDate, $endDate);
-        $totalLiabilities = $this->calculateBalance('Liability', $startDate, $endDate);
-        $totalEquity = $this->calculateBalance('Equity', $startDate, $endDate);
-        $totalRevenues = $this->calculateBalance('Revenue', $startDate, $endDate);
-        $totalExpenses = $this->calculateBalance('Expense', $startDate, $endDate);
+        $totalAssets = Calculator::calculateBalance('Asset', $startDate, $endDate);
+        $totalLiabilities = Calculator::calculateBalance('Liability', $startDate, $endDate);
+        $totalEquity = Calculator::calculateBalance('Equity', $startDate, $endDate);
+        $totalRevenues = Calculator::calculateBalance('Revenue', $startDate, $endDate);
+        $totalExpenses = Calculator::calculateBalance('Expense', $startDate, $endDate);
 
         // Profit/Loss = Revenues - Expenses
         $profitOrLoss = $totalRevenues - $totalExpenses;
@@ -47,28 +47,5 @@ class BalanceSheet extends BaseWidget
             Stat::make('Liabilities', Number::currency($totalLiabilities, $defaultCurrecny)),
             Stat::make('Equity', Number::currency($totalEquity, $defaultCurrecny)),
         ];
-    }
-
-    protected function calculateBalance($accountType, $startDate, $endDate): int
-    {
-        return Account::where('type', $accountType)
-            ->whereHas('journalEntries', function ($query) use ($startDate, $endDate) {
-                if ($startDate && $endDate) {
-                    $query->whereBetween('created_at', [$startDate, $endDate]);
-                }
-            })
-            ->get()
-            ->sum(function ($account) use ($startDate, $endDate) {
-                $debits = $account->journalEntries
-                    ->whereBetween('created_at', [$startDate, $endDate])
-                    ->sum('debit');
-                $credits = $account->journalEntries
-                    ->whereBetween('created_at', [$startDate, $endDate])
-                    ->sum('credit');
-
-                return in_array($account->type, ['Asset', 'Expense'])
-                    ? $debits - $credits
-                    : $credits - $debits;
-            });
     }
 }

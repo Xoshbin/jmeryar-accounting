@@ -6,8 +6,8 @@
             <div class="space-y-4">
                 @foreach ($this->getIncomeStatementData()['revenues'] as $account)
                     <div class="flex justify-between border-b pb-1">
-                        <span>{{ $account->name }}</span>
-                        <span>{{ $this->getIncomeStatementData()['defaultCurrecny'] . number_format($account->journalEntries->sum('credit') - $account->journalEntries->sum('debit'), 2) }}</span>
+                        <span>{{ $account['name'] }}</span>
+                        <span>{{ $this->getIncomeStatementData()['defaultCurrecny'] . number_format($account['total'], 2) }}</span>
                     </div>
                 @endforeach
                 <div class="flex justify-between font-bold">
@@ -23,8 +23,8 @@
             <div class="space-y-4">
                 @foreach ($this->getIncomeStatementData()['expenses'] as $account)
                     <div class="flex justify-between border-b pb-1">
-                        <span>{{ $account->name }}</span>
-                        <span>{{ $this->getIncomeStatementData()['defaultCurrecny'] . number_format($account->journalEntries->sum('debit') - $account->journalEntries->sum('credit'), 2) }}</span>
+                        <span>{{ $account['name'] }}</span>
+                        <span>{{ $this->getIncomeStatementData()['defaultCurrecny'] . number_format($account['total'], 2) }}</span>
                     </div>
                 @endforeach
                 <div class="flex justify-between font-bold">
