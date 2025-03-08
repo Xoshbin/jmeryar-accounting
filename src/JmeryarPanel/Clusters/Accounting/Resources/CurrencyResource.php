@@ -80,10 +80,10 @@ class CurrencyResource extends Resource
                     ]),
 
                 Forms\Components\Tabs::make('Exchange Rate Tab')
-                    ->disabled(fn($record, string $operation) => $operation === 'edit' && Setting::first()?->currency->code === $record->code)
+                    ->disabled(fn ($record, string $operation) => $operation === 'edit' && Setting::first()?->currency->code === $record->code)
                     ->schema([
                         Forms\Components\Tabs\Tab::make('Exchange Rates')
-                            ->badge(fn($get) => count($get('exchangeRatesAsTarget') ?? []))
+                            ->badge(fn ($get) => count($get('exchangeRatesAsTarget') ?? []))
                             ->icon('heroicon-m-queue-list')
                             ->schema([
                                 Forms\Components\Repeater::make('exchangeRatesAsTarget')
@@ -106,6 +106,7 @@ class CurrencyResource extends Resource
 
                                                     return '1 ' . Setting::first()?->currency->code . ' = x ' . $currentCurrency;
                                                 }
+
                                                 return '';
                                             })
                                             ->live(debounce: 600)
@@ -129,9 +130,9 @@ class CurrencyResource extends Resource
                                                     // Access the main record
                                                     $currentCurrency = $livewire->record->code;
 
-
                                                     return '1 ' . $currentCurrency . ' = x ' . Setting::first()?->currency->code;
                                                 }
+
                                                 return '';
                                             })
                                             ->live(debounce: 300)
