@@ -80,7 +80,7 @@ class CurrencyResource extends Resource
                     ]),
 
                 Forms\Components\Tabs::make('Exchange Rate Tab')
-                    ->disabled(fn ($record) => Setting::first()?->currency->code === $record->code)
+                    ->disabled(fn ($record, string $operation) => $operation === 'edit' && Setting::first()?->currency->code === $record->code)
                     ->schema([
                         Forms\Components\Tabs\Tab::make('Exchange Rates')
                             ->badge(fn ($get) => count($get('exchangeRatesAsTarget') ?? []))
@@ -96,14 +96,18 @@ class CurrencyResource extends Resource
                                             ->label(function () {
                                                 return __('jmeryar-accounting::currencies.form.unit_per_base_currency_label', ['currency' => Setting::first()?->currency->code]);
                                             })
-                                            ->hint(function (Forms\Components\Component $component) {
-                                                // Get the Livewire component instance
-                                                $livewire = $component->getLivewire();
+                                            ->hint(function (Forms\Components\Component $component, string $operation) {
+                                                if ($operation === 'edit') {
+                                                    // Get the Livewire component instance
+                                                    $livewire = $component->getLivewire();
 
-                                                // Access the main record
-                                                $currentCurrency = $livewire->record->code;
+                                                    // Access the main record
+                                                    $currentCurrency = $livewire->record->code;
 
-                                                return '1 ' . Setting::first()?->currency->code . ' = x ' . $currentCurrency;
+                                                    return '1 ' . Setting::first()?->currency->code . ' = x ' . $currentCurrency;
+                                                }
+
+                                                return '';
                                             })
                                             ->live(debounce: 600)
                                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
@@ -118,14 +122,18 @@ class CurrencyResource extends Resource
                                             ->label(function () {
                                                 return __('jmeryar-accounting::currencies.form.rate_label', ['currency' => Setting::first()?->currency->code]);
                                             })
-                                            ->hint(function (Forms\Components\Component $component) {
-                                                // Get the Livewire component instance
-                                                $livewire = $component->getLivewire();
+                                            ->hint(function (Forms\Components\Component $component, string $operation) {
+                                                if ($operation === 'edit') {
+                                                    // Get the Livewire component instance
+                                                    $livewire = $component->getLivewire();
 
-                                                // Access the main record
-                                                $currentCurrency = $livewire->record->code;
+                                                    // Access the main record
+                                                    $currentCurrency = $livewire->record->code;
 
-                                                return '1 ' . $currentCurrency . ' = x ' . Setting::first()?->currency->code;
+                                                    return '1 ' . $currentCurrency . ' = x ' . Setting::first()?->currency->code;
+                                                }
+
+                                                return '';
                                             })
                                             ->live(debounce: 300)
                                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
