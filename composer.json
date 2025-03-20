@@ -1,66 +1,66 @@
 {
-  "name": "xoshbin/jmeryar-accounting",
-  "description": "Accounting management application with Laravel Filament",
-  "type": "library",
-  "license": "LGPL-3.0-only",
-  "autoload": {
-    "psr-4": {
-      "Xoshbin\\JmeryarAccounting\\": "src/",
-      "Xoshbin\\JmeryarAccounting\\Database\\Seeders\\": "database/seeders/",
-      "Xoshbin\\JmeryarAccounting\\Database\\Factories\\": "database/factories/"
+    "name": "xoshbin/jmeryar-accounting",
+    "description": "Accounting management application with Laravel Filament",
+    "type": "library",
+    "license": "LGPL-3.0-only",
+    "autoload": {
+        "psr-4": {
+            "Xoshbin\\JmeryarAccounting\\": "src/",
+            "Xoshbin\\JmeryarAccounting\\Database\\Seeders\\": "database/seeders/",
+            "Xoshbin\\JmeryarAccounting\\Database\\Factories\\": "database/factories/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Khoshbin",
+            "email": "xoshbin@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "illuminate/console": "^10.0|^11.0|^12.0",
+        "illuminate/database": "^10.0|^11.0|^12.0",
+        "illuminate/support": "^10.0|^11.0|^12.0",
+        "filament/filament": "^3.0",
+        "filament/support": "^3.0",
+        "spatie/laravel-package-tools": "^1.16.1",
+        "barryvdh/laravel-dompdf": "^3.0",
+        "filament/spatie-laravel-media-library-plugin": "^3.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Xoshbin\\JmeryarAccounting\\JmeryarAccountingServiceProvider"
+            ]
+        }
+    },
+    "require-dev": {
+        "larastan/larastan": "^2.2",
+        "orchestra/testbench": "^8.20|^9.0",
+        "phpstan/phpstan": "v1.11.1",
+        "laravel/pint": "^1.0",
+        "pestphp/pest": "^2.0",
+        "pestphp/pest-plugin-laravel": "^2.0"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": false,
+    "config": {
+        "sort-package": true,
+        "preferred-install": "dist",
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": "@php ./vendor/bin/testbench package:discover --ansi",
+        "analyse": "vendor/bin/phpstan analyse",
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
+        "pint": "vendor/bin/pint"
     }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Tests\\": "tests/"
-    }
-  },
-  "authors": [
-    {
-      "name": "Khoshbin",
-      "email": "xoshbin@gmail.com"
-    }
-  ],
-  "require": {
-    "php": "^8.1",
-    "illuminate/console": "^10.0|^11.0",
-    "illuminate/database": "^10.0|^11.0",
-    "illuminate/support": "^10.0|^11.0",
-    "filament/filament": "^3.2",
-    "filament/support": "^3.2",
-    "spatie/laravel-package-tools": "^1.16.1",
-    "barryvdh/laravel-dompdf": "^3.0",
-    "filament/spatie-laravel-media-library-plugin": "^3.2"
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "Xoshbin\\JmeryarAccounting\\JmeryarAccountingServiceProvider"
-      ]
-    }
-  },
-  "require-dev": {
-    "larastan/larastan": "^2.2",
-    "orchestra/testbench": "^8.20|^9.0",
-    "phpstan/phpstan": "v1.11.1",
-    "laravel/pint": "^1.0",
-    "pestphp/pest": "^2.0",
-    "pestphp/pest-plugin-laravel": "^2.0"
-  },
-  "minimum-stability": "stable",
-  "prefer-stable": true,
-  "config": {
-    "sort-package": true,
-    "preferred-install": "dist",
-    "allow-plugins": {
-      "pestphp/pest-plugin": true
-    }
-  },
-  "scripts": {
-    "post-autoload-dump": "@php ./vendor/bin/testbench package:discover --ansi",
-    "analyse": "vendor/bin/phpstan analyse",
-    "test": "vendor/bin/pest",
-    "test-coverage": "vendor/bin/pest --coverage",
-    "pint": "vendor/bin/pint"
-  }
 }
